@@ -1,0 +1,338 @@
+ Here are the remaining code files for the Event Lottery System Android app using the PAC (Presentation-Abstraction-Control) pattern:
+
+Event.java (Abstraction):
+```java
+public class Event {
+    private String id;
+    private String title;
+    private String description;
+    private Date startDate;
+    private Date endDate;
+    private int capacity;
+    private List<Entrant> waitingList;
+    private List<Entrant> selectedEntrants;
+
+    // Constructor, getters, and setters
+    // ...
+}
+```
+
+Entrant.java (Abstraction):
+```java
+public class Entrant {
+    private String id;
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private String profilePicture;
+    private EntrantStatus status;
+
+    // Constructor, getters, and setters
+    // ...
+}
+```
+
+User.java (Abstraction):
+```java
+public class User {
+    private String id;
+    private String name;
+    private String email;
+    private UserRole role;
+    private boolean eventNotificationsEnabled;
+    private boolean resultNotificationsEnabled;
+
+    // Constructor, getters, and setters
+    // ...
+}
+```
+
+EventAdapter.java (Presentation):
+```java
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+    private List<Event> events;
+
+    public EventAdapter(List<Event> events) {
+        this.events = events;
+    }
+
+    @NonNull
+    @Override
+    public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
+        return new EventViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
+        Event event = events.get(position);
+        holder.bind(event);
+    }
+
+    @Override
+    public int getItemCount() {
+        return events.size();
+    }
+
+    public class EventViewHolder extends RecyclerView.ViewHolder {
+        private TextView eventTitleTextView;
+        private TextView eventDateTextView;
+
+        public EventViewHolder(@NonNull View itemView) {
+            super(itemView);
+            eventTitleTextView = itemView.findViewById(R.id.event_title_text_view);
+            eventDateTextView = itemView.findViewById(R.id.event_date_text_view);
+        }
+
+        public void bind(Event event) {
+            eventTitleTextView.setText(event.getTitle());
+            eventDateTextView.setText(DateFormat.getDateInstance().format(event.getStartDate()));
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Handle event click
+                    // ...
+                }
+            });
+        }
+    }
+}
+```
+
+EntrantAdapter.java (Presentation):
+```java
+public class EntrantAdapter extends RecyclerView.Adapter<EntrantAdapter.EntrantViewHolder> {
+    private List<Entrant> entrants;
+
+    public EntrantAdapter(List<Entrant> entrants) {
+        this.entrants = entrants;
+    }
+
+    @NonNull
+    @Override
+    public EntrantViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_entrant, parent, false);
+        return new EntrantViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull EntrantViewHolder holder, int position) {
+        Entrant entrant = entrants.get(position);
+        holder.bind(entrant);
+    }
+
+    @Override
+    public int getItemCount() {
+        return entrants.size();
+    }
+
+    public class EntrantViewHolder extends RecyclerView.ViewHolder {
+        private TextView entrantNameTextView;
+        private TextView entrantStatusTextView;
+
+        public EntrantViewHolder(@NonNull View itemView) {
+            super(itemView);
+            entrantNameTextView = itemView.findViewById(R.id.entrant_name_text_view);
+            entrantStatusTextView = itemView.findViewById(R.id.entrant_status_text_view);
+        }
+
+        public void bind(Entrant entrant) {
+            entrantNameTextView.setText(entrant.getName());
+            entrantStatusTextView.setText(entrant.getStatus().toString());
+        }
+    }
+}
+```
+
+FirebaseService.java (Control):
+```java
+public class FirebaseService {
+    private static final String EVENTS_COLLECTION = "events";
+    private static final String USERS_COLLECTION = "users";
+
+    private FirebaseFirestore db;
+
+    public FirebaseService() {
+        db = FirebaseFirestore.getInstance();
+    }
+
+    public void getEvents(EventListCallback callback) {
+        db.collection(EVENTS_COLLECTION)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Event> events = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            Event event = documentSnapshot.toObject(Event.class);
+                            events.add(event);
+                        }
+                        callback.onEventsLoaded(events);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure
+                        // ...
+                    }
+                });
+    }
+
+    public void getEventDetails(String eventId, EventDetailsCallback callback) {
+        db.collection(EVENTS_COLLECTION)
+                .document(eventId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Event event = documentSnapshot.toObject(Event.class);
+                        callback.onEventDetailsLoaded(event);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure
+                        // ...
+                    }
+                });
+    }
+
+    public void addToWaitingList(String eventId, User user) {
+        // Add user to waiting list in Firestore
+        // ...
+    }
+
+    public void getWaitingList(String eventId, WaitingListCallback callback) {
+        // Retrieve waiting list from Firestore
+        // ...
+    }
+
+    // Other methods for user management, notifications, etc.
+    // ...
+
+    public interface EventListCallback {
+        void onEventsLoaded(List<Event> events);
+    }
+
+    public interface EventDetailsCallback {
+        void onEventDetailsLoaded(Event event);
+    }
+
+    public interface WaitingListCallback {
+        void onWaitingListLoaded(List<Entrant> waitingList);
+    }
+}
+```
+
+NotificationService.java (Control):
+```java
+public class NotificationService {
+    private static final String CHANNEL_ID = "event_lottery_channel";
+    private static final int NOTIFICATION_ID = 1;
+
+    private Context context;
+
+    public NotificationService(Context context) {
+        this.context = context;
+    }
+
+    public void sendEventNotification(String eventTitle) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("New Event")
+                .setContentText(eventTitle)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+
+    public void sendResultNotification(String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Lottery Result")
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+}
+```
+
+QRCodeGenerator.java (Control):
+```java
+public class QRCodeGenerator {
+    public static Bitmap generateQRCode(String eventId) {
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(eventId, BarcodeFormat.QR_CODE, 200, 200);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            int[] pixels = new int[width * height];
+            for (int y = 0; y < height; y++) {
+                int offset = y * width;
+                for (int x = 0; x < width; x++) {
+                    pixels[offset + x] = bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE;
+                }
+            }
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+            return bitmap;
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
+```
+
+ImageUploadUtil.java (Control):
+```java
+public class ImageUploadUtil {
+    private static final String PROFILE_PICTURES_STORAGE = "profile_pictures";
+
+    private StorageReference storageReference;
+
+    public ImageUploadUtil() {
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
+
+    public void uploadProfilePicture(Uri imageUri, String userId, final OnImageUploadListener listener) {
+        StorageReference fileReference = storageReference.child(PROFILE_PICTURES_STORAGE).child(userId + ".jpg");
+        UploadTask uploadTask = fileReference.putFile(imageUri);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageUrl = uri.toString();
+                        listener.onImageUploadSuccess(imageUrl);
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onImageUploadFailure(e.getMessage());
+            }
+        });
+    }
+
+    public interface OnImageUploadListener {
+        void onImageUploadSuccess(String imageUrl);
+        void onImageUploadFailure(String errorMessage);
+    }
+}
+```
+
+
+
+Please note that the code provided assumes the existence of certain dependencies, such as the Firebase Firestore and Storage libraries, and the ZXing library for QR code generation. Make sure to include the necessary dependencies in your project's build.gradle file.
+
+Also, remember to handle error cases, implement user authentication and authorization, and follow Android development best practices and guidelines while building your app.
