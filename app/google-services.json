@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "542602573766",
+    "project_id": "iconic-raffleevent",
+    "storage_bucket": "iconic-raffleevent.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542602573766:android:c9d7d028a3c17641c964c7",
+        "android_client_info": {
+          "package_name": "com.example.iconic_raffleevent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ5QAo9MbjS1Xg1RRuMQsFEf4Jnl6wQUw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
