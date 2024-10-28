@@ -1,7 +1,6 @@
 package com.example.iconic_raffleevent.controller;
 
 import com.example.iconic_raffleevent.model.Event;
-import com.example.iconic_raffleevent.model.User;
 
 /**
  * EventController handles the logic related to event creation, modification, and management.
@@ -9,68 +8,63 @@ import com.example.iconic_raffleevent.model.User;
  */
 public class EventController {
 
-    private FirebaseController firebaseController;
+    private FirebaseAttendee firebaseAttendee;
 
     public EventController() {
-        // Controller to access firebase
-        this.firebaseController = new FirebaseController();
+        this.firebaseAttendee = new FirebaseAttendee();
     }
 
-    /**
-     * Creates a new event and saves it to Firebase.
-     *
-     * @param event The event object containing event details.
-     */
-    public void createEvent(Event event) {
-        // Validate event data (e.g., check if all fields are filled)
-        if (event.getEventTitle().isEmpty() || event.getEventId().isEmpty() || event.getFacility() == null || event.getOrganizer() == null) {
-            // Handle validation error (show message to the user)
-            return;
-        }
-
-        // Save event to Firebase
-        firebaseController.addEvent(event);
+    public void getEventDetails(String eventId, EventDetailsCallback callback) {
+        firebaseAttendee.getEventDetails(eventId, callback);
     }
 
-    /**
-     * Fetches event details from Firebase and updates the view.
-     *
-     * @param eventID The ID of the event to fetch.
-     */
-    public void getEvent(String eventID) {
-        // Fetch event from Firebase and pass the data to the view via listener
-        firebaseController.getEvent(eventID, new OnEventRetrievedListener() {
-
-            @Override
-            public void onEventRetrieved(Event event) {
-                if (event == null) {
-                    // Implement error checking for null
-                } else {
-                    // Send event information to view
-                    System.out.println("Event: " + event.getEventTitle());
-                }
-            }
-        });
+    public void joinWaitingList(String eventId, String userId, JoinWaitingListCallback callback) {
+        firebaseAttendee.joinWaitingList(eventId, userId, callback);
     }
 
-    /**
-     * Fetches user details from Firebase and updates the view.
-     *
-     * @param userID The ID of the user to fetch.
-     */
-    public void getUser(String userID) {
-        // Fetch event from Firebase and pass the data to the view via listener
-        firebaseController.getUser(userID, new OnUserRetrievedListener() {
-            @Override
-            public void onUserRetrieved(User user) {
-                if (user == null) {
-                    // Implement what we should do for null
-                } else {
-                    // Send user information to view
-                    System.out.println("User name: " + user.getName());
-                }
-            }
-        });
+    public void leaveWaitingList(String eventId, String userId, LeaveWaitingListCallback callback) {
+        firebaseAttendee.leaveWaitingList(eventId, userId, callback);
     }
 
+    public void acceptEventInvitation(String eventId, String userId, AcceptInvitationCallback callback) {
+        firebaseAttendee.acceptEventInvitation(eventId, userId, callback);
+    }
+
+    public void declineEventInvitation(String eventId, String userId, DeclineInvitationCallback callback) {
+        firebaseAttendee.declineEventInvitation(eventId, userId, callback);
+    }
+
+    public void scanQRCode(String qrCodeData, ScanQRCodeCallback callback) {
+        firebaseAttendee.scanQRCode(qrCodeData, callback);
+    }
+
+    public interface EventDetailsCallback {
+        void onEventDetailsFetched(Event event);
+        void onError(String message);
+    }
+
+    public interface JoinWaitingListCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface LeaveWaitingListCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface AcceptInvitationCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface DeclineInvitationCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface ScanQRCodeCallback {
+        void onEventFound(String eventId);
+        void onError(String message);
+    }
 }

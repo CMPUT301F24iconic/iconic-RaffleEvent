@@ -1,7 +1,5 @@
 package com.example.iconic_raffleevent.model;
 
-import android.content.Context;
-import android.provider.Settings;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,24 +16,19 @@ public class User {
     private String name;
     private String email;
     private String phoneNo;
-    private List<Role> roles;
+    private String profileImageUrl;
+    private boolean locationPermission;
+    private List<String> waitingListEventIds;
+    private List<String> registeredEventIds;
+    private boolean notificationsEnabled;
 
-    public User(String userId, String username, String name, String email, String phoneNo, List<Role> roles) {
-        this.userId = userId;
-        this.username = username;
-        this.name = name;
-        this.email = email;
-        this.phoneNo = phoneNo;
-        this.roles = roles;
-    }
-    public enum Role {
-        ADMIN,
-        ORGANIZER,
-        USER
-    }
     public User() {
-        roles = new ArrayList<>();
+        waitingListEventIds = new ArrayList<>();
+        registeredEventIds = new ArrayList<>();
+        notificationsEnabled = true;
     }
+
+    // Getters and setters
 
     public String getUserId() {
         return userId;
@@ -77,20 +70,44 @@ public class User {
         this.phoneNo = phoneNo;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
-    public boolean hasRole(Role role) {
-        return roles.contains(role);
+    public boolean isLocationPermission() {
+        return locationPermission;
     }
 
-    public void addRole(Role role) {
-        roles.add(role);
+    public void setLocationPermission(boolean locationPermission) {
+        this.locationPermission = locationPermission;
+    }
+
+    public List<String> getWaitingListEventIds() {
+        return waitingListEventIds;
+    }
+
+    public void setWaitingListEventIds(List<String> waitingListEventIds) {
+        this.waitingListEventIds = waitingListEventIds;
+    }
+
+    public List<String> getRegisteredEventIds() {
+        return registeredEventIds;
+    }
+
+    public void setRegisteredEventIds(List<String> registeredEventIds) {
+        this.registeredEventIds = registeredEventIds;
+    }
+
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
     }
 
 //    /**

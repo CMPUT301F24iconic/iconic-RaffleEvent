@@ -8,20 +8,13 @@ import com.example.iconic_raffleevent.model.User;
 public class UserController {
 
     private User currentUser;
-    private FirebaseController firebaseController;
+    private FirebaseAttendee firebaseAttendee;
 
     public UserController(User currentUser) {
-        // Controller to access firebase
-        this.firebaseController = new FirebaseController();
         this.currentUser = currentUser;
+        this.firebaseAttendee = new FirebaseAttendee();
     }
 
-    /**
-     * Updates the user's profile information.
-     *
-     * @param name The updated name of the user.
-     * @param email The updated email of the user.
-     */
     public void updateProfile(String name, String email, String phoneNo) {
         if (name.isEmpty() || email.isEmpty()) {
             // Handle validation error
@@ -30,50 +23,64 @@ public class UserController {
 
         currentUser.setName(name);
         currentUser.setEmail(email);
-
-        if (!phoneNo.isEmpty()) {
-            currentUser.setPhoneNo(phoneNo);
-        }
+        currentUser.setPhoneNo(phoneNo);
 
         saveProfileToDatabase();
     }
 
-    /**
-     * Creates a new user and saves it to Firebase
-     *
-     * @param user The User object to add
-     */
-    public void addUserToDatabase(User user) {
-        // Minor error checking (TODO: implement more)
-        if (user.getName().isEmpty() || user.getRoles().isEmpty() || user.getEmail().isEmpty()
-                || user.getUserId().isEmpty() || user.getUsername().isEmpty()) {
-            // Handle error validation
-            return;
-        }
-
-        firebaseController.addUser(user);
+    public void uploadProfileImage(String imageUrl) {
+        currentUser.setProfileImageUrl(imageUrl);
+        saveProfileToDatabase();
     }
 
-    /**
-     * Saves the updated profile information to the database (Firebase).
-     */
+    public void removeProfileImage() {
+        currentUser.setProfileImageUrl(null);
+        saveProfileToDatabase();
+    }
+
+    public void joinWaitingList(String eventId) {
+        currentUser.getWaitingListEventIds().add(eventId);
+        saveWaitingListToDatabase();
+    }
+
+    public void leaveWaitingList(String eventId) {
+        currentUser.getWaitingListEventIds().remove(eventId);
+        saveWaitingListToDatabase();
+    }
+
+    public void acceptEventInvitation(String eventId) {
+        currentUser.getWaitingListEventIds().remove(eventId);
+        currentUser.getRegisteredEventIds().add(eventId);
+        saveRegisteredEventsToDatabase();
+    }
+
+    public void declineEventInvitation(String eventId) {
+        currentUser.getWaitingListEventIds().remove(eventId);
+        saveWaitingListToDatabase();
+    }
+
+    public void setNotificationsEnabled(boolean enabled) {
+        currentUser.setNotificationsEnabled(enabled);
+        saveNotificationPreferenceToDatabase();
+    }
+
     private void saveProfileToDatabase() {
-        // Code to update Firebase with new user details
-        // This can be integrated with the FirebaseModel
-        firebaseController.updateUser(currentUser);
+        firebaseAttendee.updateUser(currentUser);
+    }
+
+    private void saveWaitingListToDatabase() {
+        firebaseAttendee.updateWaitingList(currentUser);
+    }
+
+    private void saveRegisteredEventsToDatabase() {
+        firebaseAttendee.updateRegisteredEvents(currentUser);
+    }
+
+    private void saveNotificationPreferenceToDatabase() {
+        firebaseAttendee.updateNotificationPreference(currentUser);
     }
 
     public User getCurrentUser() {
         return currentUser;
-    }
-
-    /**
-     * Loads the user's profile from the database and returns it to the view.
-     *
-     * @param userId The ID of the user whose profile needs to be loaded.
-     */
-    public void loadUserProfile(String userId) {
-        // Code to retrieve user profile from Firebase or other database
-        // Example: firebaseModel.getUserProfile(userId)
     }
 }

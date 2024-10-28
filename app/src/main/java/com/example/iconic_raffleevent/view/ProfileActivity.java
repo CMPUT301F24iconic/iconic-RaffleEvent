@@ -3,46 +3,84 @@ package com.example.iconic_raffleevent.view;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
+import android.widget.ImageView;
+import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.iconic_raffleevent.R;
-import com.example.iconic_raffleevent.controller.UserController;
-import com.example.iconic_raffleevent.databinding.ActivityProfileBinding;
-import com.example.iconic_raffleevent.model.User;
+import com.bumptech.glide.Glide;
+import com.example.swiftcheckin.R;
+import com.example.swiftcheckin.controller.UserController;
+import com.example.swiftcheckin.model.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private ActivityProfileBinding binding;
+    private ImageView profileImageView;
+    private EditText nameEditText;
+    private EditText emailEditText;
+    private EditText phoneEditText;
+    private Switch notificationsSwitch;
+    private Button saveButton;
+    private Button removePhotoButton;
+
     private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_profile);
+
+        profileImageView = findViewById(R.id.profile_image);
+        nameEditText = findViewById(R.id.name_edit_text);
+        emailEditText = findViewById(R.id.email_edit_text);
+        phoneEditText = findViewById(R.id.phone_edit_text);
+        notificationsSwitch = findViewById(R.id.notifications_switch);
+        saveButton = findViewById(R.id.save_button);
+        removePhotoButton = findViewById(R.id.remove_photo_button);
 
         User currentUser = getCurrentUser();
         userController = new UserController(currentUser);
 
         loadUserProfile();
 
-        binding.saveProfileButton.setOnClickListener(v -> {
-            String name = binding.nameEditText.getText().toString().trim();
-            String email = binding.emailEditText.getText().toString().trim();
-            String phoneNo = binding.phoneEditText.getText().toString().trim();
+        saveButton.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
+            String phoneNo = phoneEditText.getText().toString().trim();
+            boolean notificationsEnabled = notificationsSwitch.isChecked();
 
             userController.updateProfile(name, email, phoneNo);
-            Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+            userController.setNotificationsEnabled(notificationsEnabled);
+        });
+
+        profileImageView.setOnClickListener(v -> {
+            // Open image picker or camera to select profile image
+            // Upload the selected image to Firebase Storage
+            // Get the download URL of the uploaded image
+            String imageUrl = ""; // Replace with the actual download URL
+            userController.uploadProfileImage(imageUrl);
+        });
+
+        removePhotoButton.setOnClickListener(v -> {
+            userController.removeProfileImage();
+            loadUserProfile();
         });
     }
 
     private void loadUserProfile() {
         User user = userController.getCurrentUser();
-        binding.nameEditText.setText(user.getName());
-        binding.emailEditText.setText(user.getEmail());
-        binding.phoneEditText.setText(user.getPhoneNo());
+
+        nameEditText.setText(user.getName());
+        emailEditText.setText(user.getEmail());
+        phoneEditText.setText(user.getPhoneNo());
+        notificationsSwitch.setChecked(user.isNotificationsEnabled());
+
+        String profileImageUrl = user.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Glide.with(this).load(profileImageUrl).into(profileImageView);
+        } else {
+            // Generate avatar image based on profile name
+            AvatarGenerator.generateAvatar(user.getName(), avatar ->
+                    runOnUiThread(() -> profileImageView.setImageBitmap(avatar)));
+        }
     }
 
     private User getCurrentUser() {
