@@ -1,7 +1,8 @@
 package com.example.iconic_raffleevent.controller;
 
-import com.example.swiftcheckin.model.Event;
-import com.example.swiftcheckin.model.User;
+import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
