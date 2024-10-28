@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -38,8 +39,8 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -52,4 +53,31 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     testImplementation(libs.mockito.core) // Adds Mockito for unit testing
     androidTestImplementation(libs.mockito.android) // Adds Mockito for Android tests
+
+    // Additional dependencies created by Zhiyuan
+    // The additional dependencies for Firebase Storage, ZXing core, and ZXing Android Embedded are added.
+    implementation(libs.firebase.storage)
+    implementation(libs.core)
+    implementation(libs.zxing.android.embedded)
+
+
+    implementation(libs.constraintlayout)
+    implementation (libs.glide)
+    implementation(libs.firebase.storage.v2030)
+    implementation(libs.play.services.tasks)
+    implementation(libs.play.services.maps)
+    implementation(libs.barcode.scanning.common)
+    androidTestImplementation(libs.uiautomator)
+
+    // CameraX core library
+    implementation (libs.camera.core)
+    implementation (libs.camera.camera2)
+    implementation (libs.camera.lifecycle)
+    implementation (libs.camera.view)
+
+    implementation (libs.barcode.scanning)
+    implementation (libs.play.services.mlkit.barcode.scanning)
+    implementation (libs.firebase.messaging)
+    implementation (libs.volley)
+
 }

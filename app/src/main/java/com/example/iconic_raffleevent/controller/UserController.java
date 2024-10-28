@@ -22,18 +22,19 @@ public class UserController {
      * @param name The updated name of the user.
      * @param email The updated email of the user.
      */
-    public void updateProfile(String name, String email) {
-        // Validate new profile data
+    public void updateProfile(String name, String email, String phoneNo) {
         if (name.isEmpty() || email.isEmpty()) {
-            // Handle validation error (e.g., show error message)
+            // Handle validation error
             return;
         }
 
-        // Update the user's profile data
         currentUser.setName(name);
         currentUser.setEmail(email);
 
-        // Logic to save updated profile to the database (e.g., Firebase)
+        if (!phoneNo.isEmpty()) {
+            currentUser.setPhoneNo(phoneNo);
+        }
+
         saveProfileToDatabase();
     }
 
@@ -59,6 +60,11 @@ public class UserController {
     private void saveProfileToDatabase() {
         // Code to update Firebase with new user details
         // This can be integrated with the FirebaseModel
+        firebaseController.updateUser(currentUser);
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     /**

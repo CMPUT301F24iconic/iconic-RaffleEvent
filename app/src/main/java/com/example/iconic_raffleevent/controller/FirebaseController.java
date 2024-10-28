@@ -2,7 +2,7 @@ package com.example.iconic_raffleevent.controller;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
@@ -14,7 +14,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FirebaseController handles all logic related to firebase including the addition,
@@ -116,6 +120,17 @@ public class FirebaseController {
                 listener.onEventRetrieved(null);
             }
         });
+
+    }
+    public void updateUser(User user) {
+        String userId = user.getUserId();
+
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("name", user.getName());
+        updatedData.put("email", user.getEmail());
+        updatedData.put("phoneNo", user.getPhoneNo());
+
+        userRef.document(userId).update(updatedData);
     }
 
     /**

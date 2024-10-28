@@ -1,39 +1,57 @@
 package com.example.iconic_raffleevent.view;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.EditText;
-import com.example.iconic_raffleevent.R;
+import android.widget.Toast;
 
-/**
- * ProfileActivity allows users to view and edit their profile information, such as name, email, and profile picture.
- */
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.databinding.ActivityProfileBinding;
+import com.example.iconic_raffleevent.model.User;
+
 public class ProfileActivity extends AppCompatActivity {
 
-    private EditText nameEditText;
-    private EditText emailEditText;
+    private ActivityProfileBinding binding;
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        // Initialize UI components
-        nameEditText = findViewById(R.id.nameEditText);
-        emailEditText = findViewById(R.id.emailEditText);
+        User currentUser = getCurrentUser();
+        userController = new UserController(currentUser);
 
-        // Example: Load user profile data
         loadUserProfile();
 
-        // Example: Save profile updates
-        findViewById(R.id.saveProfileButton).setOnClickListener(v -> {
-            // Logic to save updated profile information
+        binding.saveProfileButton.setOnClickListener(v -> {
+            String name = binding.nameEditText.getText().toString().trim();
+            String email = binding.emailEditText.getText().toString().trim();
+            String phoneNo = binding.phoneEditText.getText().toString().trim();
+
+            userController.updateProfile(name, email, phoneNo);
+            Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
         });
     }
 
     private void loadUserProfile() {
-        // Example: Load user's profile details from database
-        nameEditText.setText("John Doe");
-        emailEditText.setText("john.doe@example.com");
+        User user = userController.getCurrentUser();
+        binding.nameEditText.setText(user.getName());
+        binding.emailEditText.setText(user.getEmail());
+        binding.phoneEditText.setText(user.getPhoneNo());
+    }
+
+    private User getCurrentUser() {
+        // Placeholder implementation. Replace with actual logic to get the current user.
+        User user = new User();
+        user.setUserId("user123");
+        user.setUsername("johndoe");
+        user.setName("John Doe");
+        user.setEmail("john.doe@example.com");
+        return user;
     }
 }
