@@ -30,6 +30,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    // Added to dependencies to allow for unit testing
+    tasks.withType<Test>{
+        useJUnitPlatform()
+    }
 }
 
 dependencies {
@@ -40,6 +45,11 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.ext.junit)
+
+    // Added the following dependencies
     androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.mockito.core) // Adds Mockito for unit testing
+    androidTestImplementation(libs.mockito.android) // Adds Mockito for Android tests
 }

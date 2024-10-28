@@ -8,8 +8,11 @@ import com.example.iconic_raffleevent.model.User;
 public class UserController {
 
     private User currentUser;
+    private FirebaseController firebaseController;
 
     public UserController(User currentUser) {
+        // Controller to access firebase
+        this.firebaseController = new FirebaseController();
         this.currentUser = currentUser;
     }
 
@@ -32,6 +35,22 @@ public class UserController {
 
         // Logic to save updated profile to the database (e.g., Firebase)
         saveProfileToDatabase();
+    }
+
+    /**
+     * Creates a new user and saves it to Firebase
+     *
+     * @param user The User object to add
+     */
+    public void addUserToDatabase(User user) {
+        // Minor error checking (TODO: implement more)
+        if (user.getName().isEmpty() || user.getRoles().isEmpty() || user.getEmail().isEmpty()
+                || user.getUserId().isEmpty() || user.getUsername().isEmpty()) {
+            // Handle error validation
+            return;
+        }
+
+        firebaseController.addUser(user);
     }
 
     /**

@@ -39,6 +39,17 @@ public class User {
     }
 
     /**
+     * This is a test constructor, so we can test the User model without needing a context
+     * @param username The username entered by the user
+     */
+    public User(String userId, String username) {
+        this.username = username;
+        this.userId = userId;
+        this.roles = new ArrayList<>();      // Initialize the list of roles
+        this.roles.add(Role.USER);           // Every user has the USER role by default
+    }
+
+    /**
      * Returns the Android ID of the device, which serves as a unique identifier for the user.
      *
      * @param context The context from which to retrieve system services.
