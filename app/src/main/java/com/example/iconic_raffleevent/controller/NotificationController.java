@@ -12,11 +12,35 @@ public class NotificationController {
     }
 
     public void getNotifications(String userId, GetNotificationsCallback callback) {
-        firebaseAttendee.getNotifications(userId, callback);
+        // Implement the logic to fetch notifications from Firebase
+        // Example:
+        firebaseAttendee.getNotificationsForUser(userId, new FirebaseAttendee.GetNotificationsCallback() {
+            @Override
+            public void onNotificationsFetched(List<Notification> notifications) {
+                callback.onNotificationsFetched(notifications);
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
     }
 
     public void markNotificationAsRead(String notificationId, MarkNotificationAsReadCallback callback) {
-        firebaseAttendee.markNotificationAsRead(notificationId, callback);
+        // Implement the logic to mark a notification as read in Firebase
+        // Example:
+        firebaseAttendee.markNotificationAsRead(notificationId, new FirebaseAttendee.MarkNotificationAsReadCallback() {
+            @Override
+            public void onSuccess() {
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
     }
 
     public interface GetNotificationsCallback {

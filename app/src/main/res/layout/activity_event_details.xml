@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/event_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/event_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/event_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/event_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/event_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/join_waiting_list_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Join Waiting List" />
+
+        <Button
+            android:id="@+id/leave_waiting_list_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leave Waiting List" />
+
+        <Button
+            android:id="@+id/accept_invitation_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accept Invitation" />
+
+        <Button
+            android:id="@+id/decline_invitation_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Decline Invitation" />
+
+    </LinearLayout>
+
+</ScrollView>

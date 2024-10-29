@@ -35,7 +35,26 @@ public class EventController {
     }
 
     public void scanQRCode(String qrCodeData, ScanQRCodeCallback callback) {
-        firebaseAttendee.scanQRCode(qrCodeData, callback);
+        // Implement the logic to handle QR code scanning
+        // Example:
+        if (isValidQRCode(qrCodeData)) {
+            String eventId = extractEventIdFromQRCode(qrCodeData);
+            callback.onEventFound(eventId);
+        } else {
+            callback.onError("Invalid QR code");
+        }
+    }
+
+    private boolean isValidQRCode(String qrCodeData) {
+        // Implement the logic to validate the QR code data
+        // Example: Check if the QR code data contains a valid event ID
+        return qrCodeData != null && qrCodeData.startsWith("event_");
+    }
+
+    private String extractEventIdFromQRCode(String qrCodeData) {
+        // Implement the logic to extract the event ID from the QR code data
+        // Example: Remove the "event_" prefix from the QR code data
+        return qrCodeData.substring(6);
     }
 
     public interface EventDetailsCallback {
