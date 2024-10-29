@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor">
+
+    <!-- Top Navigation Bar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:titleTextColor="@color/black"
+        app:menu="@menu/top_navigation_menu"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Event Image with Rounded Corners -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/eventImageCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        app:cardCornerRadius="@dimen/button_corner_radius"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar">
+
+        <ImageView
+            android:id="@+id/eventImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/event_image_height"
+            android:scaleType="centerCrop"
+            android:background="@drawable/sample_event_image"
+            android:src="@drawable/sample_event_image" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Event Title -->
+    <TextView
+        android:id="@+id/eventTitle"
+        style="@style/TextTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:text="@string/sample_event_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventImageCard" />
+
+    <!-- Event Date -->
+    <TextView
+        android:id="@+id/eventDate"
+        style="@style/TextBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="@string/sample_event_date"
+        app:layout_constraintTop_toBottomOf="@id/eventTitle"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Event Location -->
+    <TextView
+        android:id="@+id/eventLocation"
+        style="@style/TextBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="@string/sample_event_location"
+        app:layout_constraintTop_toBottomOf="@id/eventDate"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Event Description -->
+    <TextView
+        android:id="@+id/eventDescription"
+        style="@style/TextBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:text="@string/sample_event_description"
+        app:layout_constraintTop_toBottomOf="@id/eventLocation" />
+
+    <!-- Join Waiting List Button -->
+    <Button
+        android:id="@+id/joinWaitingListButton"
+        style="@style/ButtonPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:text="@string/join_waiting_list"
+        android:textColor="@color/buttonTextColor"
+        android:backgroundTint="@color/buttonPrimary"
+        app:layout_constraintTop_toBottomOf="@id/eventDescription"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Leave Waiting List Button -->
+    <Button
+        android:id="@+id/leaveWaitingListButton"
+        style="@style/ButtonSecondary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:text="@string/leave_waiting_list"
+        android:textColor="@color/buttonTextColor"
+        android:backgroundTint="@color/buttonPrimary"
+        app:layout_constraintTop_toBottomOf="@id/eventDescription"
+        app:layout_constraintStart_toEndOf="@id/joinWaitingListButton" />
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/bottom_navigation_menu"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
