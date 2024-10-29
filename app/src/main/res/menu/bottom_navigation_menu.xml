@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Home Button -->
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/bottom_navBar_home_button"
+        android:title="Home"
+        app:showAsAction="always" />
+
+    <!-- QR Scan Button (Center Button) -->
+    <item
+        android:id="@+id/qr_scan"
+        android:icon="@drawable/bottom_navBar_scan_button"
+        android:title="Scan"
+        app:showAsAction="always" />
+
+    <!-- Add Event Button -->
+    <item
+        android:id="@+id/add_event"
+        android:icon="@drawable/bottom_navBar_add_button"
+        android:title="Add Event"
+        app:showAsAction="always" />
+</menu>
