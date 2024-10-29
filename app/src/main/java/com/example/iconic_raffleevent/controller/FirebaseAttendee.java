@@ -15,13 +15,27 @@ public class FirebaseAttendee {
 
     public FirebaseAttendee() {
         db = FirebaseFirestore.getInstance();
-        usersCollection = db.collection("users");
+        //usersCollection = db.collection("users");
+        usersCollection = db.collection("User");
         eventsCollection = db.collection("events");
     }
 
+    // -- User related Database fetching, and updating -- //
     public void updateUser(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.set(user);
+    }
+
+    public void getUser(String userID, UserController.UserFetchCallback callback) {
+        DocumentReference userRef = usersCollection.document(userID);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User user = task.getResult().toObject(User.class);
+                callback.onUserFetched(user);
+            } else {
+                callback.onError("No user with that ID");
+            }
+        });
     }
 
     public void updateWaitingList(User user) {
@@ -38,6 +52,10 @@ public class FirebaseAttendee {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("notificationsEnabled", user.isNotificationsEnabled());
     }
+
+
+    // -- Event related Database fetching, and updating -- //
+
 
     public void getEventDetails(String eventId, EventController.EventDetailsCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);

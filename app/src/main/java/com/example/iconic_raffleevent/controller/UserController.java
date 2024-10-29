@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.controller;
 
+import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
 /**
@@ -7,12 +8,23 @@ import com.example.iconic_raffleevent.model.User;
  */
 public class UserController {
 
+    // Aiden Teal
+    private String currentUserID;
+
     private User currentUser;
     private FirebaseAttendee firebaseAttendee;
 
     public UserController(User currentUser) {
         this.currentUser = currentUser;
         this.firebaseAttendee = new FirebaseAttendee();
+    }
+
+    /*
+        Test constructor to see if we can get User from firebase
+     */
+    public UserController(String userID) {
+        this.firebaseAttendee = new FirebaseAttendee();
+        this.currentUserID = userID;
     }
 
     public void updateProfile(String name, String email, String phoneNo) {
@@ -82,5 +94,16 @@ public class UserController {
 
     public User getCurrentUser() {
         return currentUser;
+    }
+
+    // Aiden Teal
+    public void getUserInformation(UserFetchCallback callback) {
+        firebaseAttendee.getUser(this.currentUserID, callback);
+    }
+
+    // Callback Interfaces
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
     }
 }

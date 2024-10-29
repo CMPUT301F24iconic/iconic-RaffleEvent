@@ -38,8 +38,12 @@ public class ProfileActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.save_button);
         removePhotoButton = findViewById(R.id.remove_photo_button);
 
-        User currentUser = getCurrentUser();
-        userController = new UserController(currentUser);
+        //User currentUser = getCurrentUser();
+        //userController = new UserController(currentUser);
+
+        // Aiden Teal
+        String userID = getUserID();
+        userController = new UserController(userID);
 
         loadUserProfile();
 
@@ -68,8 +72,42 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile() {
-        User user = userController.getCurrentUser();
+        // User user = userController.getCurrentUser();
 
+        /* Aiden Teal code with user info from database */
+        /* Aiden Teal code with user info from database */
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    nameEditText.setText(user.getName());
+                    emailEditText.setText(user.getEmail());
+                    phoneEditText.setText(user.getPhoneNo());
+                    notificationsSwitch.setChecked(user.isNotificationsEnabled());
+                    String profileImageUrl = user.getProfileImageUrl();
+                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                        Glide.with(ProfileActivity.this).load(profileImageUrl).into(profileImageView);
+                    } else {
+                        // Generate avatar image based on profile name
+                        Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
+                        profileImageView.setImageBitmap(avatar);
+                    }
+                } else {
+                    System.out.println("User information is null");
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Cannot fetch user information");
+            }
+        });
+
+
+
+
+
+        /*
         nameEditText.setText(user.getName());
         emailEditText.setText(user.getEmail());
         phoneEditText.setText(user.getPhoneNo());
@@ -83,6 +121,8 @@ public class ProfileActivity extends AppCompatActivity {
             Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
             profileImageView.setImageBitmap(avatar);
         }
+
+         */
     }
 
     private User getCurrentUser() {
@@ -93,5 +133,12 @@ public class ProfileActivity extends AppCompatActivity {
         user.setName("John Doe");
         user.setEmail("john.doe@example.com");
         return user;
+    }
+
+    /*
+    Aiden Teal function to see if user data can be fetched from firebase
+     */
+    private String getUserID() {
+        return "oeRE79IursTNym5vGkX2";
     }
 }
