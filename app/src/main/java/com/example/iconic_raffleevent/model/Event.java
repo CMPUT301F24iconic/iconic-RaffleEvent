@@ -121,6 +121,10 @@ public class Event {
         this.waitingList = waitingList;
     }
 
+    public void addWaitingListEntrant(String entrantID) {
+        this.waitingList.add(entrantID);
+    }
+
     public List<String> getRegisteredAttendees() {
         return registeredAttendees;
     }
@@ -128,4 +132,9 @@ public class Event {
     public void setRegisteredAttendees(List<String> registeredAttendees) {
         this.registeredAttendees = registeredAttendees;
     }
+
+    public void addRegisteredAttendees(String registeredID) {
+        this.registeredAttendees.add(registeredID);
+    }
+
 }
