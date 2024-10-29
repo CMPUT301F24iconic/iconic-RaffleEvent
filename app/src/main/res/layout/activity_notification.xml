@@ -24,6 +24,6 @@
         android:layout_height="wrap_content"
         android:text="Settings" />
 
-    <include layout="@layout/footer_layout" />
+    <include layout="@layout/bottom_navbar" />
 
 </LinearLayout>
