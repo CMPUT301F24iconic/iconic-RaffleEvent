@@ -20,6 +20,7 @@ public class UserController {
     }
 
     /*
+        Aiden Teal
         Test constructor to see if we can get User from firebase
      */
     public UserController(String userID) {
@@ -27,17 +28,24 @@ public class UserController {
         this.currentUserID = userID;
     }
 
-    public void updateProfile(String name, String email, String phoneNo) {
+    public void updateProfile(User userObj, String name, String email, String phoneNo) {
         if (name.isEmpty() || email.isEmpty()) {
             // Handle validation error
             return;
         }
 
+        /*
         currentUser.setName(name);
         currentUser.setEmail(email);
         currentUser.setPhoneNo(phoneNo);
+        saveProfileToDatabase(currentUser);
+         */
 
-        saveProfileToDatabase();
+        userObj.setName(name);
+        userObj.setEmail(email);
+        userObj.setPhoneNo(phoneNo);
+
+        saveProfileToDatabaseTest(userObj);
     }
 
     public void uploadProfileImage(String imageUrl) {
@@ -45,9 +53,21 @@ public class UserController {
         saveProfileToDatabase();
     }
 
+    // Aiden Teal method
+    public void uploadProfileImageTest(User userObj, String imageUrl) {
+        userObj.setProfileImageUrl(imageUrl);
+        saveProfileToDatabaseTest(userObj);
+    }
+
     public void removeProfileImage() {
         currentUser.setProfileImageUrl(null);
         saveProfileToDatabase();
+    }
+
+    // Aiden Teal method
+    public void removeProfileImage(User userObj) {
+        userObj.setProfileImageUrl(null);
+        saveProfileToDatabaseTest(userObj);
     }
 
     public void joinWaitingList(String eventId) {
@@ -71,13 +91,25 @@ public class UserController {
         saveWaitingListToDatabase();
     }
 
+    /*
     public void setNotificationsEnabled(boolean enabled) {
         currentUser.setNotificationsEnabled(enabled);
         saveNotificationPreferenceToDatabase();
+    } */
+
+    // Aiden Teal method
+    public void setNotificationsEnabled(User userObj, boolean enabled) {
+        userObj.setNotificationsEnabled(enabled);
+        saveNotificationPreferenceToDatabaseTest(userObj);
     }
 
     private void saveProfileToDatabase() {
         firebaseAttendee.updateUser(currentUser);
+    }
+
+    // Aiden Teal method
+    private void saveProfileToDatabaseTest(User userObj) {
+        firebaseAttendee.updateUser(userObj);
     }
 
     private void saveWaitingListToDatabase() {
@@ -88,8 +120,9 @@ public class UserController {
         firebaseAttendee.updateRegisteredEvents(currentUser);
     }
 
-    private void saveNotificationPreferenceToDatabase() {
-        firebaseAttendee.updateNotificationPreference(currentUser);
+    // Aiden Teal method
+    private void saveNotificationPreferenceToDatabaseTest(User userObj) {
+        firebaseAttendee.updateNotificationPreference(userObj);
     }
 
     public User getCurrentUser() {
