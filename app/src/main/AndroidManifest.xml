@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.iconic_raffleevent">
+
+    <!--    Citation: Claude AI, 2024-10-28-->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -12,15 +23,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IconicRaffleEvent"
         tools:targetApi="31">
+
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".view.MainActivity"
+            android:exported="true"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".view.ProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.EventListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.EventDetailsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.QRScannerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.NotificationsActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -7,9 +8,10 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
-import com.example.swiftcheckin.R;
-import com.example.swiftcheckin.controller.UserController;
-import com.example.swiftcheckin.model.User;
+import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.model.User;
+import com.example.iconic_raffleevent.AvatarGenerator;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -78,8 +80,8 @@ public class ProfileActivity extends AppCompatActivity {
             Glide.with(this).load(profileImageUrl).into(profileImageView);
         } else {
             // Generate avatar image based on profile name
-            AvatarGenerator.generateAvatar(user.getName(), avatar ->
-                    runOnUiThread(() -> profileImageView.setImageBitmap(avatar)));
+            Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
+            profileImageView.setImageBitmap(avatar);
         }
     }
 

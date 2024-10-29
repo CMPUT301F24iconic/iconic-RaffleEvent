@@ -8,27 +8,35 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Button to create a new event -->
         <Button
-            android:id="@+id/createEventButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Event" />
-
-        <!-- Button to view profile -->
-        <Button
-            android:id="@+id/profileButton"
+            android:id="@+id/profile_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profile" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/events_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Events" />
 
+        <Button
+            android:id="@+id/notifications_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notifications" />
+
+        <Button
+            android:id="@+id/scan_qr_code_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan QR Code" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

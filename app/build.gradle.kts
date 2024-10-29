@@ -45,6 +45,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.play.services.vision.common)
+    implementation(libs.play.services.vision)
+    implementation(libs.cronet.embedded)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.ext.junit)
@@ -79,5 +82,4 @@ dependencies {
     implementation (libs.play.services.mlkit.barcode.scanning)
     implementation (libs.firebase.messaging)
     implementation (libs.volley)
-
 }
