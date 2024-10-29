@@ -1,11 +1,15 @@
 package com.example.iconic_raffleevent.controller;
 
+import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
 /**
  * UserController manages user interactions such as profile management, registration, and authentication.
  */
 public class UserController {
+
+    // Aiden Teal
+    private String currentUserID;
 
     private User currentUser;
     private FirebaseAttendee firebaseAttendee;
@@ -15,17 +19,33 @@ public class UserController {
         this.firebaseAttendee = new FirebaseAttendee();
     }
 
-    public void updateProfile(String name, String email, String phoneNo) {
+    /*
+        Aiden Teal
+        Test constructor to see if we can get User from firebase
+     */
+    public UserController(String userID) {
+        this.firebaseAttendee = new FirebaseAttendee();
+        this.currentUserID = userID;
+    }
+
+    public void updateProfile(User userObj, String name, String email, String phoneNo) {
         if (name.isEmpty() || email.isEmpty()) {
             // Handle validation error
             return;
         }
 
+        /*
         currentUser.setName(name);
         currentUser.setEmail(email);
         currentUser.setPhoneNo(phoneNo);
+        saveProfileToDatabase(currentUser);
+         */
 
-        saveProfileToDatabase();
+        userObj.setName(name);
+        userObj.setEmail(email);
+        userObj.setPhoneNo(phoneNo);
+
+        saveProfileToDatabaseTest(userObj);
     }
 
     public void uploadProfileImage(String imageUrl) {
@@ -33,9 +53,21 @@ public class UserController {
         saveProfileToDatabase();
     }
 
+    // Aiden Teal method
+    public void uploadProfileImageTest(User userObj, String imageUrl) {
+        userObj.setProfileImageUrl(imageUrl);
+        saveProfileToDatabaseTest(userObj);
+    }
+
     public void removeProfileImage() {
         currentUser.setProfileImageUrl(null);
         saveProfileToDatabase();
+    }
+
+    // Aiden Teal method
+    public void removeProfileImage(User userObj) {
+        userObj.setProfileImageUrl(null);
+        saveProfileToDatabaseTest(userObj);
     }
 
     public void joinWaitingList(String eventId) {
@@ -59,13 +91,25 @@ public class UserController {
         saveWaitingListToDatabase();
     }
 
+    /*
     public void setNotificationsEnabled(boolean enabled) {
         currentUser.setNotificationsEnabled(enabled);
         saveNotificationPreferenceToDatabase();
+    } */
+
+    // Aiden Teal method
+    public void setNotificationsEnabled(User userObj, boolean enabled) {
+        userObj.setNotificationsEnabled(enabled);
+        saveNotificationPreferenceToDatabaseTest(userObj);
     }
 
     private void saveProfileToDatabase() {
         firebaseAttendee.updateUser(currentUser);
+    }
+
+    // Aiden Teal method
+    private void saveProfileToDatabaseTest(User userObj) {
+        firebaseAttendee.updateUser(userObj);
     }
 
     private void saveWaitingListToDatabase() {
@@ -76,11 +120,23 @@ public class UserController {
         firebaseAttendee.updateRegisteredEvents(currentUser);
     }
 
-    private void saveNotificationPreferenceToDatabase() {
-        firebaseAttendee.updateNotificationPreference(currentUser);
+    // Aiden Teal method
+    private void saveNotificationPreferenceToDatabaseTest(User userObj) {
+        firebaseAttendee.updateNotificationPreference(userObj);
     }
 
     public User getCurrentUser() {
         return currentUser;
+    }
+
+    // Aiden Teal
+    public void getUserInformation(UserFetchCallback callback) {
+        firebaseAttendee.getUser(this.currentUserID, callback);
+    }
+
+    // Callback Interfaces
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
     }
 }

@@ -94,12 +94,20 @@ public class User {
         this.waitingListEventIds = waitingListEventIds;
     }
 
+    public void addWaitingListEvent(String waitlistID) {
+        this.waitingListEventIds.add(waitlistID);
+    }
+
     public List<String> getRegisteredEventIds() {
         return registeredEventIds;
     }
 
     public void setRegisteredEventIds(List<String> registeredEventIds) {
         this.registeredEventIds = registeredEventIds;
+    }
+
+    public void addRegisteredEvent(String registeredEventID) {
+        this.registeredEventIds.add(registeredEventID);
     }
 
     public boolean isNotificationsEnabled() {
