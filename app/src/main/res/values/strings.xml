@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">iconic-RaffleEvent</string>
+    <string name="welcome_to_raffleevent">Welcome to RaffleEvent !</string>
+    <string name="efficiently_manage_your_events">Efficiently manage your events!</string>
+    <string name="enter_your_username">Enter Your Username</string>
+    <string name="join">Join</string>
+    <string name="welcome_image_of_application">Welcome image of application</string>
 </resources>
