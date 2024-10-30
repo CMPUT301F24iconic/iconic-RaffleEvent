@@ -50,10 +50,9 @@
         android:background="@drawable/rounded_corner"
         android:ems="10"
         android:inputType="text"
-        android:text="@string/enter_your_username"
         android:textAlignment="center"
         android:textColor="@color/input_text_color"
-        android:hint="Enter Your Username"
+        android:hint="@string/enter_your_username"
         app:layout_constraintBottom_toTopOf="@+id/join_app_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

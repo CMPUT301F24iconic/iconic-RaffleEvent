@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="8dp">
+
+    <!-- Home Button -->
+    <ImageButton
+        android:id="@+id/home_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/home_icon"
+        android:background="@null"
+        android:contentDescription="Home" />
+
+    <!-- QR Scan Button -->
+    <ImageButton
+        android:id="@+id/qr_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/qr_scanner_icon"
+        android:background="@null"
+        android:contentDescription="QR Scan" />
+
+    <!-- Add Event Button -->
+    <ImageButton
+        android:id="@+id/add_event_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/add_icon"
+        android:background="@null"
+        android:contentDescription="Add Event" />
+
+</LinearLayout>
