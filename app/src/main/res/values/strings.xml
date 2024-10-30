@@ -19,5 +19,11 @@
     <string name="home">Home</string>
     <string name="scan_qr">Scan QR</string>
     <string name="add_event">Add Event</string>
+
+    <string name="welcome_to_raffleevent">Welcome to RaffleEvent !</string>
+    <string name="efficiently_manage_your_events">Efficiently manage your Events!</string>
+    <string name="welcome_image_of_application">Welcome image of application</string>
+    <string name="enter_your_username">Enter your username</string>
+    <string name="join">Join</string>
     >
 </resources>

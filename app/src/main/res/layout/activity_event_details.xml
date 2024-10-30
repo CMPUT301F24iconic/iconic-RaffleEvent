@@ -28,8 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/event_image_height"
             android:scaleType="centerCrop"
-            android:background="@drawable/sample_event_image"
-            android:src="@drawable/sample_event_image" />
+            android:background="@drawable/sample_event_image_background"
+            android:src="@drawable/sample_event_image_background" />
     </androidx.cardview.widget.CardView>
 
     <!-- Event Title -->

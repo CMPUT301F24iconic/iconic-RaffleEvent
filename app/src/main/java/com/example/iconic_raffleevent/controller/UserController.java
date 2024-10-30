@@ -3,6 +3,9 @@ package com.example.iconic_raffleevent.controller;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * UserController manages user interactions such as profile management, registration, and authentication.
  */
@@ -134,9 +137,29 @@ public class UserController {
         firebaseAttendee.getUser(this.currentUserID, callback);
     }
 
+    // Aiden Teal
+    public void addUser(User newUser) {
+        /*
+        Map<String, Object> userObj = new HashMap<>();
+        userObj.put("email", newUser.getEmail());
+        userObj.put("locationPermission", newUser.isLocationPermission();
+        userObj.put("name", newUser.getName());
+        userObj.put("notificationsEnabled", newUser.isNotificationsEnabled());
+        userObj.put("phoneNo", newUser.getPhoneNo());
+        userObj.put("profileImageUrl", newUser.getProfileImageUrl());
+        userObj.put("registeredEventIds", newUser.getProfileImageUrl());
+        userObj.put("userId", newUser.getUserId());
+        userObj.put("username", newUser.getUsername());
+        userObj.put("waitingListEventIds", newUser.getWaitingListEventIds());
+         */
+
+        firebaseAttendee.updateUser(newUser);
+    }
+
     // Callback Interfaces
     public interface UserFetchCallback {
         void onUserFetched(User user);
         void onError(String message);
     }
+
 }

@@ -67,7 +67,7 @@
     <!-- Input Field Style (e.g., Search Bar) -->
     <style name="InputField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_height">@dimen/search_bar_height</item>
-        <item name="android:hintTextColor">@color/textColorSecondary</item>
+        <!-- <item name="android:hintTextColor">@color/textColorSecondary</item> -->
         <item name="android:textColor">@color/textColorPrimary</item>
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="boxCornerRadiusTopStart">@dimen/search_bar_corner_radius</item>
