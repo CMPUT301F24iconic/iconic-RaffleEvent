@@ -3,13 +3,14 @@ package com.example.iconic_raffleevent.controller;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * UserController manages user interactions such as profile management, registration, and authentication.
  */
-public class UserController {
+public class UserController implements Serializable {
 
     // Aiden Teal
     private String currentUserID;
@@ -32,18 +33,6 @@ public class UserController {
     }
 
     public void updateProfile(User userObj, String name, String email, String phoneNo) {
-        if (name.isEmpty() || email.isEmpty()) {
-            // Handle validation error
-            return;
-        }
-
-        /*
-        currentUser.setName(name);
-        currentUser.setEmail(email);
-        currentUser.setPhoneNo(phoneNo);
-        saveProfileToDatabase(currentUser);
-         */
-
         userObj.setName(name);
         userObj.setEmail(email);
         userObj.setPhoneNo(phoneNo);
@@ -139,20 +128,6 @@ public class UserController {
 
     // Aiden Teal
     public void addUser(User newUser) {
-        /*
-        Map<String, Object> userObj = new HashMap<>();
-        userObj.put("email", newUser.getEmail());
-        userObj.put("locationPermission", newUser.isLocationPermission();
-        userObj.put("name", newUser.getName());
-        userObj.put("notificationsEnabled", newUser.isNotificationsEnabled());
-        userObj.put("phoneNo", newUser.getPhoneNo());
-        userObj.put("profileImageUrl", newUser.getProfileImageUrl());
-        userObj.put("registeredEventIds", newUser.getProfileImageUrl());
-        userObj.put("userId", newUser.getUserId());
-        userObj.put("username", newUser.getUsername());
-        userObj.put("waitingListEventIds", newUser.getWaitingListEventIds());
-         */
-
         firebaseAttendee.updateUser(newUser);
     }
 
@@ -161,5 +136,4 @@ public class UserController {
         void onUserFetched(User user);
         void onError(String message);
     }
-
 }
