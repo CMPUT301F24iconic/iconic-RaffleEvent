@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="input_background"> #F0F0F0 </color>
-    <color name="input_text_color"> #99A8BB </color>
-    <color name="purple_for_app"> #D129ED </color>
+    <string name="app_name">iconic-RaffleEvent</string>
+    <string name="welcome_to_raffleevent">Welcome to RaffleEvent !</string>
+    <string name="efficiently_manage_your_events">Efficiently manage your events!</string>
+    <string name="enter_your_username">Enter Your Username</string>
+    <string name="join">Join</string>
+    <string name="welcome_image_of_application">Welcome image of application</string>
 </resources>
