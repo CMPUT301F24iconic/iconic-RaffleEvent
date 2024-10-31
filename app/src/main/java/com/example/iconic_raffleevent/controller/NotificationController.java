@@ -1,46 +1,46 @@
 package com.example.iconic_raffleevent.controller;
 
 import com.example.iconic_raffleevent.model.Notification;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationController {
 
-    private FirebaseAttendee firebaseAttendee;
+    private FirebaseFirestore db;
+    private CollectionReference notificationsCollection;
 
     public NotificationController() {
-        this.firebaseAttendee = new FirebaseAttendee();
+        db = FirebaseFirestore.getInstance();
+        notificationsCollection = db.collection("notifications");
     }
 
     public void getNotifications(String userId, GetNotificationsCallback callback) {
-        // Implement the logic to fetch notifications from Firebase
-        // Example:
-        firebaseAttendee.getNotificationsForUser(userId, new FirebaseAttendee.GetNotificationsCallback() {
-            @Override
-            public void onNotificationsFetched(List<Notification> notifications) {
-                callback.onNotificationsFetched(notifications);
-            }
-
-            @Override
-            public void onError(String message) {
-                callback.onError(message);
-            }
-        });
+        notificationsCollection.whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Notification> notifications = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Notification notification = document.toObject(Notification.class);
+                            notifications.add(notification);
+                        }
+                        callback.onNotificationsFetched(notifications);
+                    } else {
+                        callback.onError(task.getException().getMessage());
+                    }
+                });
     }
 
     public void markNotificationAsRead(String notificationId, MarkNotificationAsReadCallback callback) {
-        // Implement the logic to mark a notification as read in Firebase
-        // Example:
-        firebaseAttendee.markNotificationAsRead(notificationId, new FirebaseAttendee.MarkNotificationAsReadCallback() {
-            @Override
-            public void onSuccess() {
-                callback.onSuccess();
-            }
-
-            @Override
-            public void onError(String message) {
-                callback.onError(message);
-            }
-        });
+        notificationsCollection.document(notificationId)
+                .update("read", true)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
     public interface GetNotificationsCallback {

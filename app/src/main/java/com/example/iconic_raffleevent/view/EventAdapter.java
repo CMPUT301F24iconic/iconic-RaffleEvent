@@ -42,7 +42,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         Glide.with(context)
                 .load(event.getEventImageUrl())
-                .placeholder(R.drawable.ic_placeholder) // Replace with your own placeholder image
+                .placeholder(R.drawable.placeholder_image)
                 .into(eventImageView);
 
         eventTitleTextView.setText(event.getEventTitle());
