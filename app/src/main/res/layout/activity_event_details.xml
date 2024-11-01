@@ -29,7 +29,7 @@
             android:layout_height="@dimen/event_image_height"
             android:scaleType="centerCrop"
             android:background="@drawable/sample_event_image_background"
-            android:src="@drawable/sample_event_image_background" />
+            android:src="@drawable/sample_event_image" />
     </androidx.cardview.widget.CardView>
 
     <!-- Event Title -->
@@ -77,6 +77,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/medium_margin"
         android:text="@string/sample_event_description"
+        android:maxLines="3"
+        android:ellipsize="end"
         app:layout_constraintTop_toBottomOf="@id/eventLocation" />
 
     <!-- Join Waiting List Button -->
@@ -88,7 +90,7 @@
         android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:text="@string/join_waiting_list"
-        android:textColor="@color/buttonTextColor"
+        android:textColor="@color/textColorOnPrimary"
         android:backgroundTint="@color/buttonPrimary"
         app:layout_constraintTop_toBottomOf="@id/eventDescription"
         app:layout_constraintStart_toStartOf="parent" />
@@ -102,7 +104,7 @@
         android:layout_marginStart="@dimen/large_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:text="@string/leave_waiting_list"
-        android:textColor="@color/buttonTextColor"
+        android:textColor="@color/textColorOnPrimary"
         android:backgroundTint="@color/buttonPrimary"
         app:layout_constraintTop_toBottomOf="@id/eventDescription"
         app:layout_constraintStart_toEndOf="@id/joinWaitingListButton" />

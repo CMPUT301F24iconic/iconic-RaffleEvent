@@ -20,10 +20,17 @@
     <string name="scan_qr">Scan QR</string>
     <string name="add_event">Add Event</string>
 
+    <!-- Geolocation Screen -->
+    <string name="geolocation_warning_title">Geolocation Required</string>
+    <string name="geolocation_warning_message">To join the waiting list for this event, we need access to your location. This helps us provide accurate event details based on your current position.</string>
+    <string name="allow_access">Allow Access</string>
+    <string name="decline">Decline</string>
+
+
     <string name="welcome_to_raffle_event">Welcome to RaffleEvent !</string>
     <string name="efficiently_manage_your_events">Efficiently manage your Events!</string>
     <string name="welcome_image_of_application">Welcome image of application</string>
     <string name="enter_your_username">Enter your username</string>
     <string name="join">Join</string>
-
+    <string name="events_title">Events</string>
 </resources>
