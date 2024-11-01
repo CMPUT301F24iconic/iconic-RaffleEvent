@@ -19,11 +19,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventDescriptionTextView;
     private TextView eventLocationTextView;
     private TextView eventDateTextView;
-    private TextView eventTimeTextView;
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
-    private Button acceptInvitationButton;
-    private Button declineInvitationButton;
 
     private EventController eventController;
     private User currentUser;
@@ -34,16 +31,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
-        eventImageView = findViewById(R.id.event_image);
-        eventTitleTextView = findViewById(R.id.event_title);
-        eventDescriptionTextView = findViewById(R.id.event_description);
-        eventLocationTextView = findViewById(R.id.event_location);
-        eventDateTextView = findViewById(R.id.event_date);
-        eventTimeTextView = findViewById(R.id.event_time);
-        joinWaitingListButton = findViewById(R.id.join_waiting_list_button);
-        leaveWaitingListButton = findViewById(R.id.leave_waiting_list_button);
-        acceptInvitationButton = findViewById(R.id.accept_invitation_button);
-        declineInvitationButton = findViewById(R.id.decline_invitation_button);
 
         eventController = new EventController();
         currentUser = getCurrentUser();
@@ -53,8 +40,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         joinWaitingListButton.setOnClickListener(v -> joinWaitingList());
         leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
-        acceptInvitationButton.setOnClickListener(v -> acceptInvitation());
-        declineInvitationButton.setOnClickListener(v -> declineInvitation());
     }
 
     private void fetchEventDetails() {
@@ -74,14 +59,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void updateUI(Event event) {
         Glide.with(this)
                 .load(event.getEventImageUrl())
-                .placeholder(R.drawable.placeholder_image)
                 .into(eventImageView);
 
         eventTitleTextView.setText(event.getEventTitle());
         eventDescriptionTextView.setText(event.getEventDescription());
         eventLocationTextView.setText(event.getEventLocation());
         eventDateTextView.setText(event.getEventStartDate());
-        eventTimeTextView.setText(event.getEventStartTime() + " - " + event.getEventEndTime());
 
         if (event.isGeolocationRequired()) {
             showGeolocationWarning();
@@ -107,34 +90,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void acceptInvitation() {
-        eventController.acceptEventInvitation(eventId, currentUser.getUserId(), new EventController.AcceptInvitationCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(EventDetailsActivity.this, "Invitation accepted", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void declineInvitation() {
-        eventController.declineEventInvitation(eventId, currentUser.getUserId(), new EventController.DeclineInvitationCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(EventDetailsActivity.this, "Invitation declined", Toast.LENGTH_SHORT).show();
             }
 
             @Override

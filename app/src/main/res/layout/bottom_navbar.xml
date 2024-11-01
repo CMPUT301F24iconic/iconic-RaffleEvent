@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="@color/white">
+
+    <!-- Home Button -->
+    <ImageButton
+        android:id="@+id/home_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/home_icon"
+        android:background="@null"
+        android:contentDescription="Home" />
+
+<!--    &lt;!&ndash; Add Events Button &ndash;&gt;-->
+<!--    <ImageButton-->
+<!--        android:id="@+id/events_button"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        android:src="@drawable/events_icon"-->
+<!--        android:background="@null"-->
+<!--        android:contentDescription="Events" />-->
+
+    <!-- QR Scan Button -->
+    <ImageButton
+        android:id="@+id/qr_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/qr_scanner_icon"
+        android:background="@null"
+        android:contentDescription="QR Scan" />
+
+    <!-- Profile Button -->
+    <ImageButton
+        android:id="@+id/profile_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/profile_icon"
+        android:background="@null"
+        android:contentDescription="Profile" />
+
+</LinearLayout>

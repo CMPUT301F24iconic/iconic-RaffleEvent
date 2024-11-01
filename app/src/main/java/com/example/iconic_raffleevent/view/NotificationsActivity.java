@@ -1,10 +1,12 @@
 package com.example.iconic_raffleevent.view;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.FirebaseAttendee;
 import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
@@ -38,12 +40,16 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void fetchNotifications() {
-        notificationController.getNotifications(currentUser.getUserId(), new NotificationController.GetNotificationsCallback() {
+        notificationController.getNotifications(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID),
+                new NotificationController.GetNotificationsCallback() {
             @Override
             public void onNotificationsFetched(List<Notification> notifications) {
-                notificationList.clear();
-                notificationList.addAll(notifications);
-                notificationAdapter.notifyDataSetChanged();
+                if (notifications != null) {
+                    notificationList.clear();
+                    notificationList.addAll(notifications);
+                    notificationAdapter.notifyDataSetChanged();
+                    System.out.println(notificationList.get(0).getMessage());
+                }
             }
 
             @Override
@@ -52,6 +58,7 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private User getCurrentUser() {
         // Placeholder implementation. Replace with actual logic to get the current user.

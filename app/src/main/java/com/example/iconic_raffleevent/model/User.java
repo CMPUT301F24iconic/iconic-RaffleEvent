@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,13 @@ public class User {
         waitingListEventIds = new ArrayList<>();
         registeredEventIds = new ArrayList<>();
         notificationsEnabled = true;
+        locationPermission = false;
+        userId = "";
+        username = "";
+        name = "";
+        email = "";
+        phoneNo = "";
+        profileImageUrl = "";
     }
 
     // Getters and setters
@@ -94,12 +102,20 @@ public class User {
         this.waitingListEventIds = waitingListEventIds;
     }
 
+    public void addWaitingListEvent(String waitlistID) {
+        this.waitingListEventIds.add(waitlistID);
+    }
+
     public List<String> getRegisteredEventIds() {
         return registeredEventIds;
     }
 
     public void setRegisteredEventIds(List<String> registeredEventIds) {
         this.registeredEventIds = registeredEventIds;
+    }
+
+    public void addRegisteredEvent(String registeredEventID) {
+        this.registeredEventIds.add(registeredEventID);
     }
 
     public boolean isNotificationsEnabled() {

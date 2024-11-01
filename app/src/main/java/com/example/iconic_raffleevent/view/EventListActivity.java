@@ -1,6 +1,9 @@
 package com.example.iconic_raffleevent.view;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.iconic_raffleevent.R;
@@ -20,10 +23,24 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        eventListView = findViewById(R.id.event_list);
+        eventListView = findViewById(R.id.eventListView);
         eventList = new ArrayList<>();
         eventAdapter = new EventAdapter(this, eventList);
         eventListView.setAdapter(eventAdapter);
+
+        // Set item click listener for the event list
+        eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Get the selected event
+                Event selectedEvent = eventList.get(position);
+
+                // Create an intent to start the EventDetailsActivity
+                Intent intent = new Intent(EventListActivity.this, EventDetailsActivity.class);
+                intent.putExtra("eventId", selectedEvent.getEventId());
+                startActivity(intent);
+            }
+        });
 
         // Fetch events from the server or local database
         fetchEvents();
@@ -32,6 +49,7 @@ public class EventListActivity extends AppCompatActivity {
     private void fetchEvents() {
         // Placeholder implementation. Replace with actual logic to fetch events.
         Event event1 = new Event();
+        event1.setEventId("event1");
         event1.setEventTitle("Event 1");
         event1.setEventDescription("Description for Event 1");
         event1.setEventLocation("Location 1");
@@ -44,6 +62,7 @@ public class EventListActivity extends AppCompatActivity {
         event1.setGeolocationRequired(false);
 
         Event event2 = new Event();
+        event2.setEventId("event2");
         event2.setEventTitle("Event 2");
         event2.setEventDescription("Description for Event 2");
         event2.setEventLocation("Location 2");

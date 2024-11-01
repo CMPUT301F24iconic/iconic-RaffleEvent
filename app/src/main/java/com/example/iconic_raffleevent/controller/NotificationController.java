@@ -13,27 +13,16 @@ public class NotificationController {
 
     private FirebaseFirestore db;
     private CollectionReference notificationsCollection;
+    private FirebaseAttendee firebaseAttendee;
 
     public NotificationController() {
         db = FirebaseFirestore.getInstance();
         notificationsCollection = db.collection("notifications");
+        firebaseAttendee = new FirebaseAttendee();
     }
 
     public void getNotifications(String userId, GetNotificationsCallback callback) {
-        notificationsCollection.whereEqualTo("userId", userId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<Notification> notifications = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Notification notification = document.toObject(Notification.class);
-                            notifications.add(notification);
-                        }
-                        callback.onNotificationsFetched(notifications);
-                    } else {
-                        callback.onError(task.getException().getMessage());
-                    }
-                });
+        firebaseAttendee.getNotifications(userId, callback);
     }
 
     public void markNotificationAsRead(String notificationId, MarkNotificationAsReadCallback callback) {
