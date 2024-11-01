@@ -2,11 +2,14 @@ package com.example.iconic_raffleevent.view;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
@@ -45,8 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
         //userController = new UserController(currentUser);
 
         // Aiden Teal
-        String userID = getUserID();
-        userController = new UserController(userID);
+        userController = getUserController();
 
         loadUserProfile();
 
@@ -82,22 +84,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile() {
-        /* User user = userController.getCurrentUser();
-        nameEditText.setText(user.getName());
-        emailEditText.setText(user.getEmail());
-        phoneEditText.setText(user.getPhoneNo());
-        notificationsSwitch.setChecked(user.isNotificationsEnabled());
-        String profileImageUrl = user.getProfileImageUrl();
-        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-            Glide.with(ProfileActivity.this).load(profileImageUrl).into(profileImageView);
-        } else {
-            // Generate avatar image based on profile name
-            Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
-            profileImageView.setImageBitmap(avatar);
-        }
-
-         */
-
         /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -113,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Glide.with(ProfileActivity.this).load(profileImageUrl).into(profileImageView);
                     } else {
                         // Generate avatar image based on profile name
-                        Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
+                        Bitmap avatar = AvatarGenerator.generateAvatar(user.getUsername(), 200);
                         profileImageView.setImageBitmap(avatar);
                     }
                 } else {
@@ -132,12 +118,34 @@ public class ProfileActivity extends AppCompatActivity {
     Aiden Teal function to get userID
      */
     private String getUserID() {
-        return "oeRE79IursTNym5vGkX2";
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private UserController getUserController() {
+        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(getUserID());
+        userController = userControllerViewModel.getUserController();
+        return userController;
     }
 
 
+    /*
+    private void loadUserProfile() {
+        User user = userController.getCurrentUser();
+        nameEditText.setText(user.getName());
+        emailEditText.setText(user.getEmail());
+        phoneEditText.setText(user.getPhoneNo());
+        notificationsSwitch.setChecked(user.isNotificationsEnabled());
+        String profileImageUrl = user.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            Glide.with(ProfileActivity.this).load(profileImageUrl).into(profileImageView);
+        } else {
+            // Generate avatar image based on profile name
+            Bitmap avatar = AvatarGenerator.generateAvatar(user.getName(), 200);
+            profileImageView.setImageBitmap(avatar);
+        }
+       }
 
-       /*
     private User getCurrentUser() {
         // Placeholder implementation. Replace with actual logic to get the current user.
         User user = new User();

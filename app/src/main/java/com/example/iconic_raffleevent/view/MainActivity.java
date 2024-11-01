@@ -3,11 +3,14 @@ package com.example.iconic_raffleevent.view;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
@@ -26,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private Button notificationsButton;
     private Button scanQRCodeButton;
 
+    private UserControllerViewModel userControllerViewModel;
     private UserController userController;
+    private User userObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
         String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         System.out.println("Device ID: " + deviceID);
 
-        userController = new UserController(deviceID);
+        userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(deviceID);
+        userController = userControllerViewModel.getUserController();
+
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
@@ -59,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
         eventsButton = findViewById(R.id.events_button);
         notificationsButton = findViewById(R.id.notifications_button);
         scanQRCodeButton = findViewById(R.id.scan_qr_code_button);
-
-        User currentUser = getCurrentUser();
-        userController = new UserController(currentUser);
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
     private User getCurrentUser() {
         // Placeholder implementation. Replace with actual logic to get the current user.
         User user = new User();
@@ -101,4 +107,5 @@ public class MainActivity extends AppCompatActivity {
         user.setEmail("john.doe@example.com");
         return user;
     }
+     */
 }

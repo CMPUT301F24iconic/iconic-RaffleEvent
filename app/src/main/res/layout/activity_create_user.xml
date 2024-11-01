@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="@string/welcome_to_raffleevent"
+        android:text="@string/welcome_to_raffle_event"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="40sp"

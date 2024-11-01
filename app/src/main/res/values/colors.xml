@@ -29,7 +29,7 @@
     <!-- Transparent Colors -->
     <color name="transparent">#00000000</color> <!-- Fully transparent color -->
 
-    <color name="input_text_color"> #99a8bb </color>
-    <color name="purple_for_app"> #d129ed </color>
-    <color name="input_background"> #f0f0f0 </color>
+    <color name="input_text_color">#99a8bb</color>
+    <color name="purple_for_app">#d129ed</color>
+    <color name="input_background">#f0f0f0</color>
 </resources>

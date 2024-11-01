@@ -26,8 +26,8 @@
 
     <!-- Image Sizes -->
     <dimen name="event_image_height">200dp</dimen>
+    <dimen name="event_image_width">200dp</dimen>
     <dimen name="event_list_image_height">150dp</dimen>
-    <dimen name="event_image_width">match_parent</dimen>
     <dimen name="icon_size">24dp</dimen>
 
     <!-- Icon Sizes -->
