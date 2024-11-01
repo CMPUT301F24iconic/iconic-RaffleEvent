@@ -46,6 +46,9 @@
             android:name=".view.EventDetailsActivity"
             android:exported="false" />
 
+        <activity android:name=".view.NewUserActivity"
+            android:exported="false" />
+
         <activity
             android:name=".view.QRScannerActivity"
             android:exported="false" />

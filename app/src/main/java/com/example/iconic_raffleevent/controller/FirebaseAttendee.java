@@ -18,7 +18,7 @@ public class FirebaseAttendee {
 
     public FirebaseAttendee() {
         db = FirebaseFirestore.getInstance();
-        usersCollection = db.collection("users");
+        usersCollection = db.collection("User");
         eventsCollection = db.collection("events");
         notificationsCollection = db.collection("notifications");
     }
@@ -27,6 +27,18 @@ public class FirebaseAttendee {
     public void updateUser(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.set(user);
+    }
+
+    public void getUser(String userID, OnUserRetrievedListener callback) {
+        DocumentReference userRef = usersCollection.document(userID);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User user = task.getResult().toObject(User.class);
+                callback.onUserRetrieved(user);
+            } else {
+                callback.onUserRetrieved(null);
+            }
+        });
     }
 
     public void updateWaitingList(User user) {

@@ -2,4 +2,33 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary App Colors -->
+    <color name="colorPrimary">#EDCEF2</color> <!-- Light theme primary color -->
+    <color name="colorPrimaryVariant">#D129ED</color> <!-- Dark theme color for buttons and accents -->
+
+    <!-- Background Colors -->
+    <color name="backgroundColor">#F5F5F5</color> <!-- Main background color for the app -->
+    <color name="cardBackgroundColor">#FFFFFF</color> <!-- Background color for cards -->
+    <color name="dividerColor">#E0E0E0</color> <!-- Color for dividers or separators -->
+
+    <!-- Text Colors -->
+    <color name="textColorPrimary">#212121</color> <!-- Primary text color -->
+    <color name="textColorSecondary">#757575</color> <!-- Secondary text color for subtext -->
+    <color name="textColorOnPrimary">#FFFFFF</color> <!-- Text color on primary color backgrounds -->
+
+    <!-- Button Colors -->
+    <color name="buttonTextColor">#FFFFFF</color> <!-- Text color for buttons with Dark theme background -->
+    <color name="buttonPrimary">#D129ED</color> <!-- Dark color for primary buttons -->
+    <color name="buttonSecondary">#757575</color> <!-- Optional secondary color if needed -->
+
+    <!-- Icon and Navigation Colors -->
+    <color name="iconColor">#000000</color> <!-- Black color for icons in the toolbar and bottom navigation -->
+
+    <!-- Transparent Colors -->
+    <color name="transparent">#00000000</color> <!-- Fully transparent color -->
+
+    <color name="input_text_color"> #99a8bb </color>
+    <color name="purple_for_app"> #d129ed </color>
+    <color name="input_background"> #f0f0f0 </color>
 </resources>
