@@ -19,8 +19,8 @@ public class FirebaseAttendee {
     public FirebaseAttendee() {
         db = FirebaseFirestore.getInstance();
         usersCollection = db.collection("User");
-        eventsCollection = db.collection("events");
-        notificationsCollection = db.collection("notifications");
+        eventsCollection = db.collection("Event");
+        notificationsCollection = db.collection("Notification");
     }
 
     // User-related methods
@@ -29,14 +29,14 @@ public class FirebaseAttendee {
         userRef.set(user);
     }
 
-    public void getUser(String userID, OnUserRetrievedListener callback) {
+    public void getUser(String userID, UserController.UserFetchCallback callback) {
         DocumentReference userRef = usersCollection.document(userID);
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 User user = task.getResult().toObject(User.class);
-                callback.onUserRetrieved(user);
+                callback.onUserFetched(user);
             } else {
-                callback.onUserRetrieved(null);
+                callback.onUserFetched(null);
             }
         });
     }
