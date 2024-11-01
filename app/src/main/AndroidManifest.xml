@@ -57,6 +57,14 @@
             android:name=".view.NotificationsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".view.RoleSelectionActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.HubActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
