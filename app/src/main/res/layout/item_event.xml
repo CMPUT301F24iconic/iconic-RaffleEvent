@@ -1,84 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:orientation="horizontal"-->
-<!--    android:padding="16dp">-->
-
-<!--    <ImageView-->
-<!--        android:id="@+id/event_image"-->
-<!--        android:layout_width="80dp"-->
-<!--        android:layout_height="80dp"-->
-<!--        android:scaleType="centerCrop" />-->
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:orientation="vertical">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/event_title"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textSize="18sp"-->
-<!--            android:textStyle="bold" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/event_date"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textSize="14sp" />-->
-
-<!--    </LinearLayout>-->
-
-<!--</LinearLayout>-->
-
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/small_margin"
-    android:layout_marginEnd="@dimen/small_margin"
-    android:layout_marginTop="@dimen/recycler_item_spacing"
-    android:layout_marginBottom="@dimen/recycler_item_spacing"
-    app:cardCornerRadius="@dimen/button_corner_radius"
-    app:cardElevation="@dimen/elevation_medium"
-    android:background="@color/white">
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/event_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/small_padding">
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
 
-        <!-- Event Poster Image -->
-        <ImageView
-            android:id="@+id/eventPoster"
+        <TextView
+            android:id="@+id/event_title"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/event_list_image_height"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/sample_event_name"
-            android:background="@drawable/sample_event_image_background"
-            android:src="@drawable/sample_event_image" />
-
-        <!-- Event Name -->
-        <TextView
-            android:id="@+id/eventName"
-            style="@style/TextTitle"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
-            android:text="@string/sample_event_name" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <!-- Event Date -->
         <TextView
-            android:id="@+id/eventDate"
-            style="@style/TextCaption"
-            android:layout_width="wrap_content"
+            android:id="@+id/event_date"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
-            android:text="@string/sample_event_date" />
+            android:textSize="14sp" />
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</LinearLayout>
+
+<!--<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_marginStart="@dimen/small_margin"-->
+<!--    android:layout_marginEnd="@dimen/small_margin"-->
+<!--    android:layout_marginTop="@dimen/recycler_item_spacing"-->
+<!--    android:layout_marginBottom="@dimen/recycler_item_spacing"-->
+<!--    app:cardCornerRadius="@dimen/button_corner_radius"-->
+<!--    app:cardElevation="@dimen/elevation_medium"-->
+<!--    android:background="@color/white">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:padding="@dimen/small_padding">-->
+
+<!--        &lt;!&ndash; Event Poster Image &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/eventPoster"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/event_list_image_height"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:contentDescription="@string/sample_event_name"-->
+<!--            android:background="@drawable/sample_event_image_background"-->
+<!--            android:src="@drawable/sample_event_image" />-->
+
+<!--        &lt;!&ndash; Event Name &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/eventName"-->
+<!--            style="@style/TextTitle"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/small_margin"-->
+<!--            android:text="@string/sample_event_name" />-->
+
+<!--        &lt;!&ndash; Event Date &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/eventDate"-->
+<!--            style="@style/TextCaption"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/small_margin"-->
+<!--            android:text="@string/sample_event_date" />-->
+
+<!--    </LinearLayout>-->
+<!--</androidx.cardview.widget.CardView>-->
