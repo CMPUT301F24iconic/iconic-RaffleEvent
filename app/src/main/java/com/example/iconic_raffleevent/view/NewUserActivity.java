@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
@@ -15,6 +16,8 @@ import com.example.iconic_raffleevent.model.User;
 public class NewUserActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private Button joinAppButton;
+    private UserControllerViewModel userControllerViewModel;
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +35,14 @@ public class NewUserActivity extends AppCompatActivity {
                 User newUser = new User();
                 newUser.setUsername(username);
                 newUser.setUserId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
-                UserController userController = new UserController(newUser.getUserId());
+
+                userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+                userControllerViewModel.setUserController(newUser.getUserId());
+                userController = userControllerViewModel.getUserController();
                 userController.addUser(newUser);
 
                 // Just sending to profile activity for now to see if user is created
-                startActivity(new Intent(NewUserActivity.this, ProfileActivity.class));
-            }
+                startActivity(new Intent(NewUserActivity.this, ProfileActivity.class));}
         });
 
     }
