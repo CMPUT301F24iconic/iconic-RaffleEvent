@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:padding="@dimen/small_margin"
+android:background="@color/colorPrimary">
+
+    <!-- Events Title -->
+    <TextView
+        android:id="@+id/eventsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/events_title"
+        android:textSize="@dimen/text_size_title"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/small_margin" />
+
+    <!-- Notification Icon -->
+    <ImageButton
+        android:id="@+id/notification_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@+id/profile_icon"
+        android:background="@null"
+        android:contentDescription="Notifications"
+        android:src="@drawable/notifications_icon" />
+
+    <!-- Profile Icon -->
+    <ImageButton
+        android:id="@+id/profile_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@null"
+        android:contentDescription="Profile"
+        android:src="@drawable/profile_icon" />
+
+</RelativeLayout>
