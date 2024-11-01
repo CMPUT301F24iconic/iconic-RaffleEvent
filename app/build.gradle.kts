@@ -61,6 +61,8 @@ dependencies {
     // The additional dependencies for Firebase Storage, ZXing core, and ZXing Android Embedded are added.
     implementation(libs.firebase.storage)
     implementation(libs.core)
+
+    //Zxing Android Embedded (https://github.com/journeyapps/zxing-android-embedded)
     implementation(libs.zxing.android.embedded)
 
 

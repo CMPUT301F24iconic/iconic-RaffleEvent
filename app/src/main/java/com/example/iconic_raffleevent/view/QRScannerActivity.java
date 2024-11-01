@@ -1,6 +1,7 @@
 package com.example.iconic_raffleevent.view;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.SparseArray;
@@ -107,8 +108,10 @@ public class QRScannerActivity extends AppCompatActivity {
         eventController.scanQRCode(qrCodeData, new EventController.ScanQRCodeCallback() {
             @Override
             public void onEventFound(String eventId) {
-                // Handle the event found
-                Toast.makeText(QRScannerActivity.this, "Event found: " + eventId, Toast.LENGTH_SHORT).show();
+                // Navigate to the event details screen
+                Intent intent = new Intent(QRScannerActivity.this, EventDetailsActivity.class);
+                intent.putExtra("eventId", eventId);
+                startActivity(intent);
             }
 
             @Override

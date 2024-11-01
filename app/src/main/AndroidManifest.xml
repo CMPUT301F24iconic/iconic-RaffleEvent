@@ -4,14 +4,24 @@
     package="com.example.iconic_raffleevent">
 
     <!--    Citation: Claude AI, 2024-10-28-->
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <!--    storage result permisssion-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+
+    <!--    camera permission-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--    location permission-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -51,7 +61,10 @@
 
         <activity
             android:name=".view.QRScannerActivity"
-            android:exported="false" />
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            tools:ignore="DiscouragedApi" />
 
         <activity
             android:name=".view.NotificationsActivity"
