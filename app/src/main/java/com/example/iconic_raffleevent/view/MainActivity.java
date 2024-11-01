@@ -23,12 +23,6 @@ import java.util.Set;
  */
 
 public class MainActivity extends AppCompatActivity {
-
-    private Button profileButton;
-    private Button eventsButton;
-    private Button notificationsButton;
-    private Button scanQRCodeButton;
-
     private UserControllerViewModel userControllerViewModel;
     private UserController userController;
     private User userObj;
@@ -55,57 +49,17 @@ public class MainActivity extends AppCompatActivity {
                     // User null, redirect to create user page to make a user
                     startActivity(new Intent(MainActivity.this, NewUserActivity.class));
                 }
+                else if (user.checkAdminRole() == Boolean.TRUE) {
+                    startActivity(new Intent(MainActivity.this, RoleSelectionActivity.class));
+                }
+                else {
+                    startActivity(new Intent(MainActivity.this, HubActivity.class));
+                }
             }
-
             @Override
             public void onError(String message) {
                 System.out.println("There was an error");
             }
         });
-
-        profileButton = findViewById(R.id.profile_button);
-        eventsButton = findViewById(R.id.events_button);
-        notificationsButton = findViewById(R.id.notifications_button);
-        scanQRCodeButton = findViewById(R.id.scan_qr_code_button);
-
-        profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-            }
-        });
-
-        eventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, EventListActivity.class));
-            }
-        });
-
-        notificationsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, NotificationsActivity.class));
-            }
-        });
-
-        scanQRCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, QRScannerActivity.class));
-            }
-        });
     }
-
-    /*
-    private User getCurrentUser() {
-        // Placeholder implementation. Replace with actual logic to get the current user.
-        User user = new User();
-        user.setUserId("user123");
-        user.setUsername("johndoe");
-        user.setName("John Doe");
-        user.setEmail("john.doe@example.com");
-        return user;
-    }
-     */
 }
