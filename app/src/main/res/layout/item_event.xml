@@ -6,6 +6,7 @@
     android:padding="16dp">
 
     <ImageView
+
         android:id="@+id/event_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
