@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -25,6 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Switch notificationsSwitch;
     private Button saveButton;
     private Button removePhotoButton;
+    private Button backButton;
 
     // Aiden Teal
     private User userObj;
@@ -43,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
         notificationsSwitch = findViewById(R.id.notifications_switch);
         saveButton = findViewById(R.id.save_button);
         removePhotoButton = findViewById(R.id.remove_photo_button);
+        backButton = findViewById(R.id.back_to_hub_button);
 
         //User currentUser = getCurrentUser();
         //userController = new UserController(currentUser);
@@ -80,6 +83,10 @@ public class ProfileActivity extends AppCompatActivity {
             userController.removeProfileImage(userObj);
 
             loadUserProfile();
+        });
+
+        backButton.setOnClickListener(v -> {
+            startActivity(new Intent(ProfileActivity.this, HubActivity.class));
         });
     }
 

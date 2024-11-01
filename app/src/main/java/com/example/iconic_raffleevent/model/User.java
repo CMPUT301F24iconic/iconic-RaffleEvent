@@ -23,6 +23,9 @@ public class User {
     private List<String> registeredEventIds;
     private boolean notificationsEnabled;
 
+    // Needed for testing role selection page
+    private List<String> roles;
+
     public User() {
         waitingListEventIds = new ArrayList<>();
         registeredEventIds = new ArrayList<>();
@@ -34,6 +37,8 @@ public class User {
         email = "";
         phoneNo = "";
         profileImageUrl = "";
+        this.roles = new ArrayList<>();
+        this.roles.add("entrant");
     }
 
     // Getters and setters
@@ -124,6 +129,22 @@ public class User {
 
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
+    }
+
+    public List<String> getRoles() {
+        return this.roles;
+    }
+
+    public void addOrganizerRole() {
+        this.roles.add("organizer");
+    }
+
+    public void removeRole(String role) {
+        this.roles.remove(role);
+    }
+
+    public boolean checkAdminRole() {
+        return this.roles.contains("admin");
     }
 
 //    /**
