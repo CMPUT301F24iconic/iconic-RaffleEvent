@@ -26,8 +26,16 @@
 
     <!-- Image Sizes -->
     <dimen name="event_image_height">200dp</dimen>
+    <dimen name="event_list_image_height">150dp</dimen>
     <dimen name="event_image_width">match_parent</dimen>
     <dimen name="icon_size">24dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="warning_icon_height">60dp</dimen>
+    <dimen name="warning_icon_width">60dp</dimen>
+    <dimen name="warning_icon_top_margin">120dp</dimen>
+    <dimen name="warning_icon_horiz_bias">0.500</dimen>
+    <dimen name="geolocation_mssg_vert_bias">0.150</dimen>
 
     <!-- Button Sizes -->
     <dimen name="button_height">48dp</dimen>
