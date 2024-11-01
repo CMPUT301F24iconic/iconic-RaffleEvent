@@ -1,7 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <!-- Old parent theme: parent="Theme.Material3.DayNight.NoActionBar" -->
-    <style name="Base.Theme.IconicRaffleEvent" parent="Theme.AppCompat.Light.NoActionBar">
+    <!--    <style name="Base.Theme.IconicRaffleEvent" parent="Theme.AppCompat.Light.NoActionBar">-->
+    <style name="Base.Theme.IconicRaffleEvent" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
