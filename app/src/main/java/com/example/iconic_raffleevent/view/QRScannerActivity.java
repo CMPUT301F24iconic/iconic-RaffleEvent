@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
+import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -34,6 +35,7 @@ public class QRScannerActivity extends AppCompatActivity {
     private BarcodeDetector barcodeDetector;
 
     private EventController eventController;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class QRScannerActivity extends AppCompatActivity {
         qrCodeTextView = findViewById(R.id.qr_code_text);
 
         eventController = new EventController();
+        currentUser = getCurrentUser();
 
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
@@ -105,7 +108,7 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     private void processQRCodeData(String qrCodeData) {
-        eventController.scanQRCode(qrCodeData, new EventController.ScanQRCodeCallback() {
+        eventController.scanQRCode(qrCodeData, currentUser.getUserId(), new EventController.ScanQRCodeCallback() {
             @Override
             public void onEventFound(String eventId) {
                 // Navigate to the event details screen
@@ -132,5 +135,15 @@ public class QRScannerActivity extends AppCompatActivity {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private User getCurrentUser() {
+        // Placeholder implementation. Replace with actual logic to get the current user.
+        User user = new User();
+        user.setUserId("user123");
+        user.setUsername("johndoe");
+        user.setName("John Doe");
+        user.setEmail("john.doe@example.com");
+        return user;
     }
 }
