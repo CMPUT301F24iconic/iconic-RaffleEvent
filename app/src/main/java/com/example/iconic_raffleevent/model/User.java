@@ -22,6 +22,8 @@ public class User {
     private List<String> waitingListEventIds;
     private List<String> registeredEventIds;
     private boolean notificationsEnabled;
+    private boolean winNotificationPref;
+    private boolean loseNotificationPref;
 
     // Needed for testing role selection page
     private List<String> roles;
@@ -30,6 +32,8 @@ public class User {
         waitingListEventIds = new ArrayList<>();
         registeredEventIds = new ArrayList<>();
         notificationsEnabled = true;
+        winNotificationPref = true;
+        loseNotificationPref = true;
         locationPermission = false;
         userId = "";
         username = "";
@@ -130,6 +134,24 @@ public class User {
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+
+    // Duong Hoang
+    public boolean isLoseNotificationPref() {
+        return loseNotificationPref;
+    }
+
+    public void setLoseNotificationPref(boolean loseNotificationPref) {
+        this.loseNotificationPref = loseNotificationPref;
+    }
+
+    public boolean isWinNotificationPref() {
+        return winNotificationPref;
+    }
+
+    public void setWinNotificationPref(boolean winNotificationPref) {
+        this.winNotificationPref = winNotificationPref;
+    }
+    //
 
     public List<String> getRoles() {
         return this.roles;

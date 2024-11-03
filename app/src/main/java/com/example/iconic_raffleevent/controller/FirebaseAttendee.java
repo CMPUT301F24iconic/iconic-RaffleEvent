@@ -56,6 +56,18 @@ public class FirebaseAttendee {
         userRef.update("notificationsEnabled", user.isNotificationsEnabled());
     }
 
+    // Manh Duong Hoang
+    public void updateWinNotificationPreference(User user) {
+        DocumentReference userRef = usersCollection.document(user.getUserId());
+        userRef.update("winNotificationPref", user.isWinNotificationPref());
+    }
+
+    public void updateLoseNotificationPreference(User user) {
+        DocumentReference userRef = usersCollection.document(user.getUserId());
+        userRef.update("loseNotificationPref", user.isLoseNotificationPref());
+    }
+    //
+
     // Event-related methods
     public void getEventDetails(String eventId, EventController.EventDetailsCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);

@@ -106,6 +106,18 @@ public class UserController {
         saveNotificationPreferenceToDatabaseTest(userObj);
     }
 
+    // Manh Duong Hoang
+    public void setWinNotificationsEnabled(User userObj, boolean enabled) {
+        userObj.setWinNotificationPref(enabled);
+        saveWinNotificationPreferenceToDatabase(userObj);
+    }
+
+    public void setLoseNotificationsEnabled(User userObj, boolean enabled) {
+        userObj.setLoseNotificationPref(enabled);
+        saveLoseNotificationPreferenceToDatabase(userObj);
+    }
+    //
+
     private void saveProfileToDatabase() {
         firebaseAttendee.updateUser(currentUser);
     }
@@ -127,6 +139,16 @@ public class UserController {
     private void saveNotificationPreferenceToDatabaseTest(User userObj) {
         firebaseAttendee.updateNotificationPreference(userObj);
     }
+
+    // Manh Duong Hoang
+    private void saveWinNotificationPreferenceToDatabase(User userObj) {
+        firebaseAttendee.updateWinNotificationPreference(userObj);
+    }
+
+    private void saveLoseNotificationPreferenceToDatabase(User userObj) {
+        firebaseAttendee.updateLoseNotificationPreference(userObj);
+    }
+    //
 
     public User getCurrentUser() {
         return currentUser;

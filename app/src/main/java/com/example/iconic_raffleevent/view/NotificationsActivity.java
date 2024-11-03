@@ -1,7 +1,11 @@
 package com.example.iconic_raffleevent.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +27,12 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationController notificationController;
     private User currentUser;
 
+    private Button settingsButton;
+
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +42,46 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
-
         notificationController = new NotificationController();
+
         currentUser = getCurrentUser();
 
+        settingsButton = findViewById(R.id.notification_settings);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NotificationsActivity.this, NotificationSettingsActivity.class));
+            }
+        });
+
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NotificationsActivity.this, HubActivity.class));
+            }
+        });
+
+        qrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NotificationsActivity.this, QRScannerActivity.class));
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(NotificationsActivity.this, ProfileActivity.class));
+            }
+        });
+
         fetchNotifications();
+
     }
 
     private void fetchNotifications() {
@@ -44,11 +89,11 @@ public class NotificationsActivity extends AppCompatActivity {
                 new NotificationController.GetNotificationsCallback() {
             @Override
             public void onNotificationsFetched(List<Notification> notifications) {
-                if (notifications != null) {
+                if (notifications != null && !notifications.isEmpty()) {
                     notificationList.clear();
                     notificationList.addAll(notifications);
                     notificationAdapter.notifyDataSetChanged();
-                    System.out.println(notificationList.get(0).getMessage());
+                    // System.out.println(notifications);
                 }
             }
 
@@ -58,6 +103,8 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     private User getCurrentUser() {
