@@ -1,6 +1,9 @@
 package com.example.iconic_raffleevent.controller;
 
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.User;
+
+import java.util.ArrayList;
 
 /**
  * EventController handles the logic related to event creation, modification, and management.
@@ -16,6 +19,10 @@ public class EventController {
 
     public void getEventDetails(String eventId, EventDetailsCallback callback) {
         firebaseAttendee.getEventDetails(eventId, callback);
+    }
+
+    public void getAllEvents(EventListCallback callback) {
+        firebaseAttendee.getAllEvents(callback);
     }
 
     public void joinWaitingList(String eventId, String userId, JoinWaitingListCallback callback) {
@@ -57,8 +64,19 @@ public class EventController {
         return qrCodeData.substring(6);
     }
 
+    // Aiden Teal
+    // Add event to database
+    public void saveEventToDatabase(Event event, User user) {
+        firebaseAttendee.addEvent(event, user);
+    }
+
     public interface EventDetailsCallback {
         void onEventDetailsFetched(Event event);
+        void onError(String message);
+    }
+
+    public interface EventListCallback {
+        void onEventsFetched(ArrayList<Event> events);
         void onError(String message);
     }
 

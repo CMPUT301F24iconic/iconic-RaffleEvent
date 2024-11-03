@@ -3,7 +3,9 @@ package com.example.iconic_raffleevent.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,9 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
+import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
+import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -34,8 +40,10 @@ public class QRScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
 
+    private UserController userController;
     private EventController eventController;
     private User currentUser;
+    private User userObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +53,13 @@ public class QRScannerActivity extends AppCompatActivity {
         cameraPreview = findViewById(R.id.camera_preview);
         qrCodeTextView = findViewById(R.id.qr_code_text);
 
+        // Aiden Teal
+        userController = getUserController();
         eventController = new EventController();
-        currentUser = getCurrentUser();
+        getCurrentUser();
+        //currentUser = getCurrentUser();
 
+        /*
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
@@ -93,6 +105,8 @@ public class QRScannerActivity extends AppCompatActivity {
                 }
             }
         });
+
+         */
     }
 
     private void startCamera() {
@@ -108,7 +122,7 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     private void processQRCodeData(String qrCodeData) {
-        eventController.scanQRCode(qrCodeData, currentUser.getUserId(), new EventController.ScanQRCodeCallback() {
+        eventController.scanQRCode(qrCodeData, userObj.getUserId(), new EventController.ScanQRCodeCallback() {
             @Override
             public void onEventFound(String eventId) {
                 // Navigate to the event details screen
@@ -137,13 +151,37 @@ public class QRScannerActivity extends AppCompatActivity {
         }
     }
 
-    private User getCurrentUser() {
-        // Placeholder implementation. Replace with actual logic to get the current user.
-        User user = new User();
-        user.setUserId("user123");
-        user.setUsername("johndoe");
-        user.setName("John Doe");
-        user.setEmail("john.doe@example.com");
-        return user;
+
+    private String getUserID() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private UserController getUserController() {
+        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(getUserID());
+        userController = userControllerViewModel.getUserController();
+        return userController;
+    }
+
+    private void getCurrentUser() {
+        /* Aiden Teal code with user info from database */
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+
+                    // "Scan" QR code and see if it works
+                    processQRCodeData("event_event1");
+                } else {
+                    System.out.println("User information is null");
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Cannot fetch user information");
+            }
+        });
     }
 }

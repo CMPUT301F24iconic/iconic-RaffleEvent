@@ -40,6 +40,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
         Event event = eventList.get(position);
 
+
         Glide.with(context)
                 .load(event.getEventImageUrl())
                 .placeholder(R.drawable.placeholder_image)

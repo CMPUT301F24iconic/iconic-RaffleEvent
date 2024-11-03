@@ -1,12 +1,18 @@
 package com.example.iconic_raffleevent.controller;
 
+import android.graphics.Bitmap;
+
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FirebaseAttendee {
@@ -79,6 +85,33 @@ public class FirebaseAttendee {
                 callback.onError("Failed to fetch event details");
             }
         });
+    }
+
+    public void getAllEvents(EventController.EventListCallback callback) {
+        eventsCollection.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<Event> events = new ArrayList<>(task.getResult().toObjects(Event.class));
+                callback.onEventsFetched(events);
+            } else {
+                callback.onError("Failed to fetch events");
+            }
+        });
+    }
+
+    // Add event and generate a new qrcode
+    public void addEvent(Event event, User user) {
+        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        String hashed_qr_data = "event_" + event.getEventId();
+        // Code to generate a bitmap qr code
+        event.setQrCode(hashed_qr_data);
+        event.setBitmap();
+        event.setOrganizerID(user.getUserId());
+        eventRef.set(event);
+    }
+
+    public void updateEventDetails(Event event) {
+        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        eventRef.set(event);
     }
 
     public void joinWaitingList(String eventId, String userId, EventController.JoinWaitingListCallback callback) {
