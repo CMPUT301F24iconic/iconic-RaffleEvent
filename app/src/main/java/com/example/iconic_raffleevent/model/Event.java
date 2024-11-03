@@ -2,6 +2,7 @@ package com.example.iconic_raffleevent.model;
 
 import android.graphics.Bitmap;
 
+import com.google.firebase.firestore.GeoPoint;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -27,6 +28,7 @@ public class Event {
     private String organizerId;
     private ArrayList<String> declinedList;
     private ArrayList<String> invitedList;
+    private ArrayList<GeoPoint> entrantLocations;
 
     // Qrcode Bitmap
     private Bitmap eventQRImage;
@@ -36,6 +38,7 @@ public class Event {
         invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
+        entrantLocations = new ArrayList<>();
     }
 
     // Getters and setters
@@ -211,5 +214,22 @@ public class Event {
 
     public void removeFromDeclinedList(String userId) {
         this.declinedList.remove(userId);
+    }
+
+    public ArrayList<GeoPoint> getEntrantLocations() {
+        return this.entrantLocations;
+    }
+
+    public void addEntrantLocation(GeoPoint entrantLocation) {
+        this.entrantLocations.add(entrantLocation);
+    }
+
+    public void deleteEntrantLocation(GeoPoint entrantLocation) {
+        this.entrantLocations.remove(entrantLocation);
+    }
+
+    public void setEntrantLocations(ArrayList<GeoPoint> entrantLocations) {
+        this.entrantLocations.clear();
+        this.entrantLocations.addAll(entrantLocations);
     }
 }

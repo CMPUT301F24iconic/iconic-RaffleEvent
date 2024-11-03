@@ -2,6 +2,7 @@ package com.example.iconic_raffleevent.controller;
 
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -25,8 +26,8 @@ public class EventController {
         firebaseAttendee.getAllEvents(callback);
     }
 
-    public void joinWaitingList(String eventId, String userId, JoinWaitingListCallback callback) {
-        firebaseAttendee.joinWaitingList(eventId, userId, callback);
+    public void joinWaitingList(String eventId, String userId, GeoPoint userLocation, JoinWaitingListCallback callback) {
+        firebaseAttendee.joinWaitingList(eventId, userId, userLocation, callback);
     }
 
     public void leaveWaitingList(String eventId, String userId, LeaveWaitingListCallback callback) {
@@ -100,8 +101,8 @@ public class EventController {
         void onError(String message);
     }
 
-    public void scanQRCode(String qrCodeData, String userId, ScanQRCodeCallback callback) {
-        firebaseAttendee.scanQRCode(qrCodeData, userId, callback);
+    public void scanQRCode(String qrCodeData, String userId, GeoPoint userLocation, ScanQRCodeCallback callback) {
+        firebaseAttendee.scanQRCode(qrCodeData, userId, userLocation, callback);
     }
     public interface ScanQRCodeCallback {
         void onEventFound(String eventId);

@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.play.services.vision.common)
     implementation(libs.play.services.vision)
     implementation(libs.cronet.embedded)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.ext.junit)
