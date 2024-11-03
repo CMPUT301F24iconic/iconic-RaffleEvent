@@ -28,8 +28,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     // Added to dependencies to allow for unit testing
@@ -84,4 +84,7 @@ dependencies {
     implementation (libs.play.services.mlkit.barcode.scanning)
     implementation (libs.firebase.messaging)
     implementation (libs.volley)
+
+    // avatar generation
+    implementation (libs.avatarview.coil)
 }
