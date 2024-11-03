@@ -1,5 +1,11 @@
 package com.example.iconic_raffleevent.model;
 
+import android.graphics.Bitmap;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +24,16 @@ public class Event {
     private List<String> waitingList;
     private List<String> registeredAttendees;
     private String qrCode;
+    private String organizerId;
+    private ArrayList<String> declinedList;
+    private ArrayList<String> invitedList;
+
+    // Qrcode Bitmap
+    private Bitmap eventQRImage;
 
     public Event() {
+        declinedList = new ArrayList<>();
+        invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
     }
@@ -144,5 +158,58 @@ public class Event {
 
     public void setQrCode(String qrCode) {
         this.qrCode = qrCode;
+    }
+
+    public void setBitmap() {
+        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+        try {
+            this.eventQRImage = barcodeEncoder.encodeBitmap(this.qrCode, BarcodeFormat.QR_CODE, 400, 400);
+        } catch (WriterException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Bitmap getEventQR() {
+        return eventQRImage;
+    }
+
+    public void setOrganizerID(String organizerID) {
+        this.organizerId = organizerID;
+    }
+
+    public String getOrganizerID() {
+        return this.organizerId;
+    }
+
+    public ArrayList<String> getDeclinedList() {
+        return this.declinedList;
+    }
+
+    public ArrayList<String> getInvitedList() {
+        return this.invitedList;
+    }
+
+    public void setInvitedList(ArrayList<String> invitedList) {
+        this.invitedList = invitedList;
+    }
+
+    public void setDeclinedList(ArrayList<String> declinedList) {
+        this.declinedList = declinedList;
+    }
+
+    public void addToInviteList(String userId) {
+        this.invitedList.add(userId);
+    }
+
+    public void addToDeclineList(String userId) {
+        this.declinedList.add(userId);
+    }
+
+    public void removeFromInviteList(String userId) {
+        this.invitedList.remove(userId);
+    }
+
+    public void removeFromDeclinedList(String userId) {
+        this.declinedList.remove(userId);
     }
 }
