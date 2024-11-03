@@ -82,6 +82,9 @@ public class EventController {
         void onError(String message);
     }
 
+    public void scanQRCode(String qrCodeData, String userId, ScanQRCodeCallback callback) {
+        firebaseAttendee.scanQRCode(qrCodeData, userId, callback);
+    }
     public interface ScanQRCodeCallback {
         void onEventFound(String eventId);
         void onError(String message);

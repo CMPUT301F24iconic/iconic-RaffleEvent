@@ -17,6 +17,7 @@ public class Event {
     private boolean geolocationRequired;
     private List<String> waitingList;
     private List<String> registeredAttendees;
+    private String qrCode;
 
     public Event() {
         waitingList = new ArrayList<>();
@@ -137,4 +138,11 @@ public class Event {
         this.registeredAttendees.add(registeredID);
     }
 
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
 }

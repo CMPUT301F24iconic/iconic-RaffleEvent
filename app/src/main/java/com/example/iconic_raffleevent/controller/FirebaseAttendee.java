@@ -97,16 +97,24 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to decline invitation"));
     }
 
-    public void scanQRCode(String qrCodeData, EventController.ScanQRCodeCallback callback) {
-        // Implement the logic to handle QR code scanning and retrieving the associated event from Firestore
-        // Example:
+    public void scanQRCode(String qrCodeData, String userId, EventController.ScanQRCodeCallback callback) {
         eventsCollection.whereEqualTo("qrCode", qrCodeData)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             String eventId = task.getResult().getDocuments().get(0).getId();
-                            callback.onEventFound(eventId);
+                            joinWaitingList(eventId, userId, new EventController.JoinWaitingListCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    callback.onEventFound(eventId);
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    callback.onError(message);
+                                }
+                            });
                         } else {
                             callback.onError("Event not found");
                         }
