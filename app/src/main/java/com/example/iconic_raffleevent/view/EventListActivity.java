@@ -9,6 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -18,11 +20,15 @@ import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EventListActivity extends AppCompatActivity {
+
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     private ListView eventListView;
     private EventAdapter eventAdapter;
@@ -33,6 +39,7 @@ public class EventListActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
+    private ImageButton menuButton;
 
     //Aiden Teal
     private User userObj;
@@ -50,10 +57,17 @@ public class EventListActivity extends AppCompatActivity {
         eventListView.setAdapter(eventAdapter);
         eventController = new EventController();
 
+        // Initialize DrawerLayout and NavigationView
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+
         // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
+        menuButton = findViewById(R.id.menu_button);
+
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Aiden Teal
         userController = getUserController();
@@ -76,7 +90,7 @@ public class EventListActivity extends AppCompatActivity {
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventListActivity.this, HubActivity.class));
+            startActivity(new Intent(EventListActivity.this, EventListActivity.class));
         });
 
         qrButton.setOnClickListener(v -> {
@@ -87,26 +101,30 @@ public class EventListActivity extends AppCompatActivity {
             startActivity(new Intent(EventListActivity.this, ProfileActivity.class));
         });
 
+        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
         // Fetch events from the server or local database
         fetchEvents();
     }
 
     private void fetchEvents() {
-        // get all events for now (will need to update this to only fetch events a user is in a waitlist for)
-        eventController.getAllEvents(new EventController.EventListCallback() {
+        String userId = getUserID();  // Get the user ID
+        eventController.getUserWaitingListEvents(userId, new EventController.EventListCallback() {
             @Override
             public void onEventsFetched(ArrayList<Event> events) {
-                eventList.addAll(events);
+                eventList.clear();  // Clear the list to avoid duplicates
+                eventList.addAll(events);  // Add the fetched events
                 eventAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onError(String message) {
-                // Handle errors
-                System.out.println(message);
+                // Handle errors, e.g., display a toast or log the error
+                System.out.println("Error fetching waiting list events: " + message);
             }
         });
     }
+
 
     /*
    Aiden Teal function to get userID

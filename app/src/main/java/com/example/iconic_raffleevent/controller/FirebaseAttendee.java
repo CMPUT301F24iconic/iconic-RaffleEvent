@@ -191,4 +191,18 @@ public class FirebaseAttendee {
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to mark notification as read"));
     }
+
+    public void getUserWaitingListEvents(String userId, EventController.EventListCallback callback) {
+        eventsCollection.whereArrayContains("waitingList", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Event> events = task.getResult().toObjects(Event.class);
+                        callback.onEventsFetched(new ArrayList<>(events));
+                    } else {
+                        callback.onError("Failed to fetch events for user waiting list.");
+                    }
+                });
+    }
+
 }

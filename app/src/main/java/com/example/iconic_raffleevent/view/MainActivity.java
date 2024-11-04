@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, RoleSelectionActivity.class));
                 }
                 else {
-                    startActivity(new Intent(MainActivity.this, HubActivity.class));
+                    startActivity(new Intent(MainActivity.this, EventListActivity.class));
                 }
             }
             @Override

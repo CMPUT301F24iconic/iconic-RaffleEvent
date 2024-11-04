@@ -86,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         backButton.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, HubActivity.class));
+            startActivity(new Intent(ProfileActivity.this, EventListActivity.class));
         });
     }
 

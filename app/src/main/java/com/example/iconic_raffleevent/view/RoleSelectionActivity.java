@@ -22,7 +22,7 @@ public class RoleSelectionActivity extends AppCompatActivity {
 
         entrant_button.setOnClickListener(v -> {
             // Just sending to profile activity for now to see if user choses entrant/organizer role
-            startActivity(new Intent(RoleSelectionActivity.this, HubActivity.class));
+            startActivity(new Intent(RoleSelectionActivity.this, EventListActivity.class));
         });
 
         admin_button.setOnClickListener(v -> {
