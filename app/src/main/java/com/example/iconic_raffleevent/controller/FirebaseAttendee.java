@@ -1,16 +1,14 @@
 package com.example.iconic_raffleevent.controller;
 
-import android.graphics.Bitmap;
-
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,10 +112,14 @@ public class FirebaseAttendee {
         eventRef.set(event);
     }
 
-    public void joinWaitingList(String eventId, String userId, EventController.JoinWaitingListCallback callback) {
+    public void joinWaitingList(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
-        eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
+        WriteBatch writebatch = FirebaseFirestore.getInstance().batch();
+
+        writebatch.update(eventRef, "waitingList", FieldValue.arrayUnion(userId));
+        writebatch.update(eventRef, "entrantLocations", FieldValue.arrayUnion(userLocation));
+
+        writebatch.commit().addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to join waiting list"));
     }
 
@@ -142,14 +144,14 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to decline invitation"));
     }
 
-    public void scanQRCode(String qrCodeData, String userId, EventController.ScanQRCodeCallback callback) {
+    public void scanQRCode(String qrCodeData, String userId, GeoPoint userLocation, EventController.ScanQRCodeCallback callback) {
         eventsCollection.whereEqualTo("qrCode", qrCodeData)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             String eventId = task.getResult().getDocuments().get(0).getId();
-                            joinWaitingList(eventId, userId, new EventController.JoinWaitingListCallback() {
+                            joinWaitingList(eventId, userId, userLocation, new EventController.JoinWaitingListCallback() {
                                 @Override
                                 public void onSuccess() {
                                     callback.onEventFound(eventId);

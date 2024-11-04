@@ -3,11 +3,9 @@ package com.example.iconic_raffleevent.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.SparseArray;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,16 +16,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
-import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 
@@ -44,6 +41,8 @@ public class QRScannerActivity extends AppCompatActivity {
     private EventController eventController;
     private User currentUser;
     private User userObj;
+    private GeoPoint userLocation;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +98,7 @@ public class QRScannerActivity extends AppCompatActivity {
                         public void run() {
                             String qrCodeData = barcodes.valueAt(0).displayValue;
                             qrCodeTextView.setText(qrCodeData);
+                            getUserLocation();
                             processQRCodeData(qrCodeData);
                         }
                     });
@@ -122,7 +122,7 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     private void processQRCodeData(String qrCodeData) {
-        eventController.scanQRCode(qrCodeData, userObj.getUserId(), new EventController.ScanQRCodeCallback() {
+        eventController.scanQRCode(qrCodeData, userObj.getUserId(), userLocation, new EventController.ScanQRCodeCallback() {
             @Override
             public void onEventFound(String eventId) {
                 // Navigate to the event details screen
@@ -181,6 +181,17 @@ public class QRScannerActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 System.out.println("Cannot fetch user information");
+            }
+        });
+    }
+
+    private void getUserLocation() {
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
+                userLocation = new GeoPoint(latitude, longitude);
             }
         });
     }
