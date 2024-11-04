@@ -41,6 +41,8 @@
     <dimen name="button_height">48dp</dimen>
     <dimen name="button_corner_radius">8dp</dimen>
 
+    <dimen name="add_facility_button_width">376dp</dimen>
+
     <!-- Elevation for Material Components -->
     <dimen name="elevation_low">2dp</dimen>
     <dimen name="elevation_medium">4dp</dimen>
