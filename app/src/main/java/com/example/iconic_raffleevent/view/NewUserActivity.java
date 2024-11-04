@@ -42,7 +42,7 @@ public class NewUserActivity extends AppCompatActivity {
                 userController.addUser(newUser);
 
                 // Just sending to profile activity for now to see if user is created
-                startActivity(new Intent(NewUserActivity.this, HubActivity.class));}
+                startActivity(new Intent(NewUserActivity.this, EventListActivity.class));}
         });
 
     }

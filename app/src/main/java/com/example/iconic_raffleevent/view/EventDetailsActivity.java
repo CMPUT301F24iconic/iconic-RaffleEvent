@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -21,9 +23,13 @@ import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
 public class EventDetailsActivity extends AppCompatActivity {
+
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     private ImageView eventImageView;
     private TextView eventTitleTextView;
@@ -37,6 +43,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
+    private ImageButton menuButton;
 
     private EventController eventController;
     private String eventId;
@@ -52,6 +59,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+
+        // Initialize DrawerLayout and NavigationView
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
 
         // Link UI to views
         eventImageView = findViewById(R.id.eventImage);
@@ -85,6 +96,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
+        menuButton = findViewById(R.id.menu_button);
+
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
 
         /*
@@ -94,7 +108,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventDetailsActivity.this, HubActivity.class));
+            startActivity(new Intent(EventDetailsActivity.this, EventListActivity.class));
         });
 
         qrButton.setOnClickListener(v -> {
@@ -104,6 +118,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
         });
+
+        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
     }
 
     private void fetchEventDetails() {

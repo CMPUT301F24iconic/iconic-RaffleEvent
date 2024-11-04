@@ -34,12 +34,11 @@ public class EventAdapter extends ArrayAdapter<Event> {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_event, parent, false);
         }
 
-        ImageView eventImageView = convertView.findViewById(R.id.event_image);
-        TextView eventTitleTextView = convertView.findViewById(R.id.event_title);
-        TextView eventDateTextView = convertView.findViewById(R.id.event_date);
+        ImageView eventImageView = convertView.findViewById(R.id.event_image); // Changed ID
+        TextView eventTitleTextView = convertView.findViewById(R.id.event_title); // Changed ID
+        TextView eventDateTextView = convertView.findViewById(R.id.event_date);  // Changed ID
 
         Event event = eventList.get(position);
-
 
         Glide.with(context)
                 .load(event.getEventImageUrl())

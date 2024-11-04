@@ -108,4 +108,8 @@ public class EventController {
         void onEventFound(String eventId);
         void onError(String message);
     }
+    public void getUserWaitingListEvents(String userId, EventListCallback callback) {
+        firebaseAttendee.getUserWaitingListEvents(userId, callback);
+    }
+
 }
