@@ -2,6 +2,7 @@
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -89,9 +90,9 @@
             app:layout_constraintTop_toBottomOf="@id/eventLocation" />
 
         <!-- Join Waiting List Button -->
+        <!-- style="@style/ButtonPrimary" -->
         <Button
             android:id="@+id/joinWaitingListButton"
-            style="@style/ButtonPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/medium_margin"
@@ -103,9 +104,9 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Leave Waiting List Button -->
+        <!-- style="@style/ButtonSecondary" -->
         <Button
             android:id="@+id/leaveWaitingListButton"
-            style="@style/ButtonSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/large_margin"
@@ -123,6 +124,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/map_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_margin"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:text="Load Map"
+            android:textColor="@color/textColorOnPrimary"
+            android:backgroundTint="@color/buttonPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/leaveWaitingListButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
