@@ -39,11 +39,18 @@
     <string name="end_date_hint">Dec 20</string>
     <string name="max_attendees">Max Attendees</string>
     <string name="max_attendees_hint">200</string>
-    <string name="event_description">Event Description</string>
+    <string name="event_description">Event Description:</string>
     <string name="event_description_hint">Enter event description</string>
     <string name="add_facility">Add Facility</string>
     <string name="upload_poster">Upload Poster</string>
     <string name="save">Save</string>
+
+    <!-- Create Facilty Screen -->
+    <string name="create_facility">Create Facility</string>
+    <string name="facility_name_hint">Facility Name</string>
+    <string name="location_hint">Location</string>
+    <string name="facility_details">Facility Details:</string>
+    <string name="facility_details_hint">Enter Facility Details</string>
 
 
     <string name="welcome_to_raffle_event">Welcome to RaffleEvent !</string>
