@@ -22,12 +22,20 @@ public class EventController {
         firebaseAttendee.getEventDetails(eventId, callback);
     }
 
+    public void getEventMap(String eventId, EventMapCallback callback) {
+        firebaseAttendee.getEventMap(eventId, callback);
+    }
+
     public void getAllEvents(EventListCallback callback) {
         firebaseAttendee.getAllEvents(callback);
     }
 
-    public void joinWaitingList(String eventId, String userId, GeoPoint userLocation, JoinWaitingListCallback callback) {
-        firebaseAttendee.joinWaitingList(eventId, userId, userLocation, callback);
+    public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, JoinWaitingListCallback callback) {
+        firebaseAttendee.joinWaitingListWithLocation(eventId, userId, userLocation, callback);
+    }
+
+    public void joinWaitingListWithoutLocation(String eventId, String userId, JoinWaitingListCallback callback) {
+        firebaseAttendee.joinWaitingListWithoutLocation(eventId, userId, callback);
     }
 
     public void leaveWaitingList(String eventId, String userId, LeaveWaitingListCallback callback) {
@@ -69,6 +77,11 @@ public class EventController {
     // Add event to database
     public void saveEventToDatabase(Event event, User user) {
         firebaseAttendee.addEvent(event, user);
+    }
+
+    public interface EventMapCallback {
+        void onEventMapFetched(ArrayList<GeoPoint> locations);
+        void onError(String message);
     }
 
     public interface EventDetailsCallback {

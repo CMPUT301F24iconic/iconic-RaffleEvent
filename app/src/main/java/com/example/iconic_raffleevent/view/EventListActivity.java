@@ -1,7 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -13,8 +12,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
-import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.UserController;
@@ -43,7 +40,6 @@ public class EventListActivity extends AppCompatActivity {
 
     //Aiden Teal
     private User userObj;
-
     private UserController userController;
 
     @Override
@@ -71,7 +67,6 @@ public class EventListActivity extends AppCompatActivity {
 
         // Aiden Teal
         userController = getUserController();
-
         loadUserProfile();
 
         // Set item click listener for the event list
@@ -125,10 +120,6 @@ public class EventListActivity extends AppCompatActivity {
         });
     }
 
-
-    /*
-   Aiden Teal function to get userID
-    */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }

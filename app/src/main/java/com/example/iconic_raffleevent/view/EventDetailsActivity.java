@@ -1,15 +1,18 @@
 package com.example.iconic_raffleevent.view;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.location.Location;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.Manifest;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,15 +25,16 @@ import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
 public class EventDetailsActivity extends AppCompatActivity {
 
+    // Navigation UI
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
+    // View elements
     private ImageView eventImageView;
     private TextView eventTitleTextView;
     private TextView eventDescriptionTextView;
@@ -38,6 +42,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventDateTextView;
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
+    private Button mapButton;
 
     // Nav bar
     private ImageButton homeButton;
@@ -45,6 +50,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageButton profileButton;
     private ImageButton menuButton;
 
+    // Controllers and data related to objects
     private EventController eventController;
     private String eventId;
     private UserController userController;
@@ -71,6 +77,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventLocationTextView = findViewById(R.id.eventLocation);
         eventDateTextView = findViewById(R.id.eventDate);
 
+        // Link map button
+        mapButton = findViewById(R.id.map_button);
+
         eventController = new EventController();
         userController = getUserController();
         loadUserProfile();
@@ -87,7 +96,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         leaveWaitingListButton.setEnabled(false);
 
         joinWaitingListButton.setOnClickListener(v -> {
-            getUserLocation();
             joinWaitingList();
         });
         leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
@@ -99,7 +107,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_button);
 
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
-
 
         /*
             Setup geolocation services to obtain location when joining waitlist
@@ -120,6 +127,15 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        // Redirect user when clicking on mapButton
+        mapButton.setOnClickListener(v -> {
+            // Create an intent to start the EventDetailsActivity
+            Intent intent = new Intent(EventDetailsActivity.this, MapActivity.class);
+            intent.putExtra("eventId", eventId);
+            intent.putExtra("eventTitle", eventObj.getEventTitle());
+            startActivity(intent);
+        });
     }
 
     private void fetchEventDetails() {
@@ -156,17 +172,24 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void joinWaitingList() {
-        eventController.joinWaitingList(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
-            }
+        // Check if event requires geolocation
+        if (eventObj.isGeolocationRequired()) {
+            // Bring up geolocation popup
+            showGeolocationDialog();
+        } else {
+            // Add user to waiting list
+            eventController.joinWaitingListWithoutLocation(eventId, userObj.getUserId(), new EventController.JoinWaitingListCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     // Need to implement functionality to remove geolocation from entrantLocations if they leave event
@@ -184,28 +207,65 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    private void showGeolocationDialog() {
+        Dialog dialog = new Dialog(EventDetailsActivity.this);
+        dialog.setContentView(R.layout.activity_warning_geolocation);
+        dialog.show();
+
+        Button allowGeolocation = dialog.findViewById(R.id.allowAccessButton);
+        Button declineGeolocation = dialog.findViewById(R.id.declineButton);
+
+        allowGeolocation.setOnClickListener(v -> {
+            // Implement logic to change user settings to allow location grabbing
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            }
+            // Permissions accepted, get user location
+            // Add entrant to waitlist if location is valid
+            getUserLocation();
+            // close dialog
+            dialog.dismiss();
+        });
+
+        declineGeolocation.setOnClickListener(v -> {
+            // Don't allow user to join event
+            dialog.dismiss();
+        });
+    }
+
     private void showGeolocationWarning() {
         // Show a dialog or toast message to warn the user about geolocation requirement
         Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
     }
 
     private void getUserLocation() {
-        // Placeholder location just to ensure location is being added, will deal with permissions after
-        userLocation = new GeoPoint(30, 40);
-        eventObj.addEntrantLocation(userLocation);
-        // need to update this to request location permissions first. Certain app privileges need to be editted
-        /*
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+        userController.retrieveUserLocation(fusedLocationClient, this, new UserController.OnLocationReceivedCallback() {
             @Override
-            public void onSuccess(Location location) {
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-                userLocation = new GeoPoint(latitude, longitude);
-                System.out.println(location);
-                eventObj.addEntrantLocation(userLocation);
+            public void onLocationReceived(GeoPoint location) {
+                userLocation = location;
+                // If location is successfully received, join waitlist
+                joinWaitlist();
             }
         });
-         */
+    }
+
+    private void joinWaitlist() {
+        eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadUserProfile() {
