@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -81,6 +82,15 @@
         <activity
             android:name=".view.NotificationSettingsActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".view.MapActivity"
+            android:exported="false" />
+
+        <!-- api for google maps -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDLFHkJy-mM8fpvxMXgVd3Fz8VXEnav0iM" />
 
     </application>
 

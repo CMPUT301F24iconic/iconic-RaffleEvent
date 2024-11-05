@@ -107,12 +107,27 @@ public class FirebaseAttendee {
         eventRef.set(event);
     }
 
+    public void getEventMap(String eventId, EventController.EventMapCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(eventId);
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Event event = task.getResult().toObject(Event.class);
+                if (event != null) {
+                    ArrayList<GeoPoint> locations = event.getEntrantLocations();
+                    callback.onEventMapFetched(locations);
+                }
+            } else {
+                callback.onError("Failed to fetch event and entrant locations");
+            }
+        });
+    }
+
     public void updateEventDetails(Event event) {
         DocumentReference eventRef = eventsCollection.document(event.getEventId());
         eventRef.set(event);
     }
 
-    public void joinWaitingList(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
+    public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         WriteBatch writebatch = FirebaseFirestore.getInstance().batch();
 
@@ -121,6 +136,13 @@ public class FirebaseAttendee {
 
         writebatch.commit().addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to join waiting list"));
+    }
+
+    public void joinWaitingListWithoutLocation(String eventId, String userId, EventController.JoinWaitingListCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(eventId);
+        eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
     }
 
     public void leaveWaitingList(String eventId, String userId, EventController.LeaveWaitingListCallback callback) {
@@ -151,7 +173,7 @@ public class FirebaseAttendee {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             String eventId = task.getResult().getDocuments().get(0).getId();
-                            joinWaitingList(eventId, userId, userLocation, new EventController.JoinWaitingListCallback() {
+                            joinWaitingListWithLocation(eventId, userId, userLocation, new EventController.JoinWaitingListCallback() {
                                 @Override
                                 public void onSuccess() {
                                     callback.onEventFound(eventId);

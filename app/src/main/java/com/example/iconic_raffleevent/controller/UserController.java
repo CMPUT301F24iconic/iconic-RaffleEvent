@@ -1,7 +1,16 @@
 package com.example.iconic_raffleevent.controller;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+
+import androidx.core.app.ActivityCompat;
+
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,18 +41,6 @@ public class UserController {
     }
 
     public void updateProfile(User userObj, String name, String email, String phoneNo) {
-        if (name.isEmpty() || email.isEmpty()) {
-            // Handle validation error
-            return;
-        }
-
-        /*
-        currentUser.setName(name);
-        currentUser.setEmail(email);
-        currentUser.setPhoneNo(phoneNo);
-        saveProfileToDatabase(currentUser);
-         */
-
         userObj.setName(name);
         userObj.setEmail(email);
         userObj.setPhoneNo(phoneNo);
@@ -93,12 +90,6 @@ public class UserController {
         currentUser.getWaitingListEventIds().remove(eventId);
         saveWaitingListToDatabase();
     }
-
-    /*
-    public void setNotificationsEnabled(boolean enabled) {
-        currentUser.setNotificationsEnabled(enabled);
-        saveNotificationPreferenceToDatabase();
-    } */
 
     // Aiden Teal method
     public void setNotificationsEnabled(User userObj, boolean enabled) {
@@ -161,21 +152,21 @@ public class UserController {
 
     // Aiden Teal
     public void addUser(User newUser) {
-        /*
-        Map<String, Object> userObj = new HashMap<>();
-        userObj.put("email", newUser.getEmail());
-        userObj.put("locationPermission", newUser.isLocationPermission();
-        userObj.put("name", newUser.getName());
-        userObj.put("notificationsEnabled", newUser.isNotificationsEnabled());
-        userObj.put("phoneNo", newUser.getPhoneNo());
-        userObj.put("profileImageUrl", newUser.getProfileImageUrl());
-        userObj.put("registeredEventIds", newUser.getProfileImageUrl());
-        userObj.put("userId", newUser.getUserId());
-        userObj.put("username", newUser.getUsername());
-        userObj.put("waitingListEventIds", newUser.getWaitingListEventIds());
-         */
-
         firebaseAttendee.updateUser(newUser);
+    }
+
+    public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, Context context, OnLocationReceivedCallback callback) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                fusedLocationClient.getLastLocation().addOnSuccessListener((Activity) context, location -> {
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
+                GeoPoint userLocation = new GeoPoint(latitude, longitude);
+                if (callback != null) {
+                    callback.onLocationReceived(userLocation);
+                }
+            });
+        }
     }
 
     // Callback Interfaces
@@ -184,6 +175,9 @@ public class UserController {
         void onError(String message);
     }
 
+    public interface OnLocationReceivedCallback {
+        void onLocationReceived(GeoPoint location);
+    }
 }
 
 //
