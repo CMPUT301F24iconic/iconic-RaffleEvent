@@ -24,6 +24,7 @@ public class User {
     private boolean notificationsEnabled;
     private boolean winNotificationPref;
     private boolean loseNotificationPref;
+    private Facility facility;
 
     // Needed for testing role selection page
     private List<String> roles;
@@ -167,6 +168,14 @@ public class User {
 
     public boolean checkAdminRole() {
         return this.roles.contains("admin");
+    }
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setFacility(Facility facility) {
+        this.facility = facility;
     }
 
 //    /**
