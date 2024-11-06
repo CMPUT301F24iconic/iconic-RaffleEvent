@@ -27,6 +27,8 @@ public class EventTransitionsTest {
 
     @Test
     public void testClickOnEvent() {
+
+        // Test
         // Click on an item in the list
         /*
         onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.eventListView

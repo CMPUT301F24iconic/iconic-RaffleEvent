@@ -23,6 +23,7 @@ public class MenuDrawerTest {
 
     @Test
     public void testGoToProfile() {
+        // Test
         // Open drawer
         onView(withId(R.id.menu_button)).perform(click());
         // Click on profile button

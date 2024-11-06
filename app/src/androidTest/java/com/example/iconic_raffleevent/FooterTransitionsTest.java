@@ -23,6 +23,7 @@ public class FooterTransitionsTest {
 
     @Test
     public void testGoToProfile() {
+        // Test
         // Click on profile button
         onView(withId(R.id.profile_button)).perform(click());
 
