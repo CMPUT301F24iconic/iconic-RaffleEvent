@@ -92,6 +92,10 @@
             android:name=".view.MapActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".view.CreateFacilityActivity"
+            android:exported="false" />
+
         <!-- api for google maps -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
