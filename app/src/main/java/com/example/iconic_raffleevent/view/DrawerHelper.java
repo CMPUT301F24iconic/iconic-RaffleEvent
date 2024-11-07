@@ -23,7 +23,7 @@ public class DrawerHelper {
             } else if (id == R.id.nav_facility) {
                 context.startActivity(new Intent(context, CreateFacilityActivity.class));
             } else if (id == R.id.nav_create_event) {
-                context.startActivity(new Intent(context, QRScannerActivity.class));
+                context.startActivity(new Intent(context, CreateEventActivity.class));
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;

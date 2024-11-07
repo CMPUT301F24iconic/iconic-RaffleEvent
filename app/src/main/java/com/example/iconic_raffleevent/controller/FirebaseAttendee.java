@@ -1,15 +1,33 @@
 package com.example.iconic_raffleevent.controller;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +40,16 @@ public class FirebaseAttendee {
     private CollectionReference usersCollection;
     private CollectionReference eventsCollection;
     private CollectionReference notificationsCollection;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
     public FirebaseAttendee() {
-        db = FirebaseFirestore.getInstance();
-        usersCollection = db.collection("User");
-        eventsCollection = db.collection("Event");
-        notificationsCollection = db.collection("Notification");
+        this.db = FirebaseFirestore.getInstance();
+        this.usersCollection = db.collection("User");
+        this.eventsCollection = db.collection("Event");
+        this.notificationsCollection = db.collection("Notification");
+        this.firebaseStorage = FirebaseStorage.getInstance();
+        this.storageReference = firebaseStorage.getReference();
     }
 
     // User-related methods
@@ -108,12 +130,8 @@ public class FirebaseAttendee {
     // Add event and generate a new qrcode
     public void addEvent(Event event, User user) {
         DocumentReference eventRef = eventsCollection.document(event.getEventId());
-        String hashed_qr_data = "event_" + event.getEventId();
-        // Code to generate a bitmap qr code
-        event.setQrCode(hashed_qr_data);
         event.setOrganizerID(user.getUserId());
         eventRef.set(event);
-        event.setBitmap();
     }
 
     public void getEventMap(String eventId, EventController.EventMapCallback callback) {
@@ -241,4 +259,46 @@ public class FirebaseAttendee {
                 });
     }
 
+    public void addEventPoster(Uri eventUri, Event eventObj, EventController.UploadEventPosterCallback callback) {
+        String eventId = eventObj.getEventId();
+        String filePath = "event_posters/" + eventId;
+        StorageReference ref = storageReference.child(filePath);
+
+        ref.putFile(eventUri).addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+            String downloadUrl = uri.toString();
+            callback.onSuccessfulUpload(downloadUrl);
+        })).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onError("Unable to upload event poster: " + e.getMessage());
+            }
+        });
+    }
+
+    public void addEventQRCode(Event eventObj, EventController.UploadEventQRCodeCallback callback) {
+        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+        try {
+            Bitmap eventQrCode = barcodeEncoder.encodeBitmap(eventObj.getQrCode(), BarcodeFormat.QR_CODE, 400, 400);
+            String filePath = "event_qrcodes/" + eventObj.getQrCode();
+            StorageReference ref = storageReference.child(filePath);
+
+            // Convert eventQrCode into bytes array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            eventQrCode.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] image = baos.toByteArray();
+
+            ref.putBytes(image).addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                String downloadUrl = uri.toString();
+                callback.onSuccessfulQRUpload(downloadUrl);
+            })).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onError("Unable to upload event QR code: " + e.getMessage());
+                }
+            });
+
+        } catch (WriterException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

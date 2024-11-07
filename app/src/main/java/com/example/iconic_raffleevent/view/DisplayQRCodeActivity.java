@@ -53,8 +53,8 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
 
         showQRCode.setOnClickListener(v -> {
             // Get bitmap from event
-            Bitmap qrCode = event.getEventQR();
-            qrCodeView.setImageBitmap(qrCode);
+            //Bitmap qrCode = event.getEventQR();
+            //qrCodeView.setImageBitmap(qrCode);
         });
 
     }

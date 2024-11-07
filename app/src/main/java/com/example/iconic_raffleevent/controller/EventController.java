@@ -1,8 +1,17 @@
 package com.example.iconic_raffleevent.controller;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 
@@ -79,6 +88,14 @@ public class EventController {
         firebaseAttendee.addEvent(event, user);
     }
 
+    public void uploadEventPoster(Uri imageUri, Event eventObj, UploadEventPosterCallback callback) {
+        firebaseAttendee.addEventPoster(imageUri, eventObj, callback);
+    }
+
+    public void uploadEventQRCode(Event eventObj, UploadEventQRCodeCallback callback) {
+        firebaseAttendee.addEventQRCode(eventObj, callback);
+    }
+
     public interface EventMapCallback {
         void onEventMapFetched(ArrayList<GeoPoint> locations);
         void onError(String message);
@@ -127,4 +144,13 @@ public class EventController {
         firebaseAttendee.getUserWaitingListEvents(userId, callback);
     }
 
+    public interface UploadEventPosterCallback {
+        void onSuccessfulUpload(String posterUrl);
+        void onError(String message);
+    }
+
+    public interface UploadEventQRCodeCallback {
+        void onSuccessfulQRUpload(String qrUrl);
+        void onError(String message);
+    }
 }

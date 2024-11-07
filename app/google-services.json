@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "542602573766",
     "project_id": "iconic-raffleevent",
-    "storage_bucket": "iconic-raffleevent.appspot.com"
+    "storage_bucket": "iconic-raffleevent.firebasestorage.app"
   },
   "client": [
     {
