@@ -75,7 +75,7 @@ dependencies {
 
 
     implementation(libs.constraintlayout)
-    implementation (libs.glide)
+
     implementation(libs.firebase.storage.v2030)
     implementation(libs.play.services.tasks)
     implementation(libs.play.services.maps)
@@ -93,8 +93,12 @@ dependencies {
     implementation (libs.firebase.messaging)
     implementation (libs.volley)
 
-    // avatar generation
+    // avatar generation and image upload
     implementation (libs.avatarview.coil)
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+    implementation (libs.activity.v170)
+
 
     // Other AndroidX and Google Libraries
     implementation(libs.appcompat)

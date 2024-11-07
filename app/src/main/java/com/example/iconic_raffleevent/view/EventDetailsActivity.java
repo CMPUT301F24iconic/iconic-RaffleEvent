@@ -58,9 +58,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     private GeoPoint userLocation;
     private Event eventObj;
 
-    // Will be deleted
-    private Button createEventButton;
-
     // Geolocation
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -93,9 +90,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Link to button views
         joinWaitingListButton = findViewById(R.id.joinWaitingListButton);
         leaveWaitingListButton = findViewById(R.id.leaveWaitingListButton);
-
-        // Will be deleted
-        createEventButton = findViewById(R.id.create_event_button);
 
         //Aiden Teal
         joinWaitingListButton.setEnabled(false);
@@ -142,12 +136,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             intent.putExtra("eventTitle", eventObj.getEventTitle());
             startActivity(intent);
         });
-
-        // will be deleted
-        createEventButton.setOnClickListener(v -> {
-            Intent intent = new Intent(EventDetailsActivity.this, DisplayQRCodeActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void fetchEventDetails() {
@@ -178,9 +166,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventLocationTextView.setText(event.getEventLocation());
         eventDateTextView.setText(event.getEventStartDate());
 
-        //if (event.isGeolocationRequired()) {
-            //showGeolocationWarning();
-        //}
+        if (event.isGeolocationRequired()) {
+            showGeolocationWarning();
+        }
     }
 
     private void joinWaitingList() {
@@ -312,9 +300,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    // Zhiyuan Li
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID());
+        userControllerViewModel.setUserController(getUserID(),getApplicationContext());
         userController = userControllerViewModel.getUserController();
         return userController;
     }

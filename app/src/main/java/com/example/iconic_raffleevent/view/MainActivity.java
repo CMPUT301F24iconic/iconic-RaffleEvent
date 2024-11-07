@@ -1,13 +1,8 @@
 package com.example.iconic_raffleevent.view;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
-import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -15,13 +10,10 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 
-import java.util.Set;
-
 /**
  * MainActivity serves as the home screen of the application.
  * It provides navigation options for users to view events, their profile, or create new events.
  */
-
 public class MainActivity extends AppCompatActivity {
     private UserControllerViewModel userControllerViewModel;
     private UserController userController;
@@ -32,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initializeUserController();
+        checkUserAndNavigate();
+    }
+
+    private void initializeUserController() {
         // Retrieve Device ID
         String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         if (deviceID == null || deviceID.isEmpty()) {
@@ -41,24 +38,30 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("Device ID: " + deviceID);
 
-        // Set up ViewModel
+        // Set up ViewModel with context
         userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(deviceID);
+        userControllerViewModel.setUserController(deviceID, getApplicationContext());
         userController = userControllerViewModel.getUserController();
+    }
 
-        // Fetch User Information
+    private void checkUserAndNavigate() {
+        if (userController == null) {
+            System.out.println("Error: UserController not initialized");
+            return;
+        }
+
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
                 if (user == null) {
                     // No user found, navigate to create user screen
-                    startActivity(new Intent(MainActivity.this, NewUserActivity.class));
+                    navigateToActivity(NewUserActivity.class);
                 } else if (user.checkAdminRole()) {
                     // User is admin, navigate to role selection screen
-                    startActivity(new Intent(MainActivity.this, RoleSelectionActivity.class));
+                    navigateToActivity(RoleSelectionActivity.class);
                 } else {
                     // User is not admin, navigate to event list screen
-                    startActivity(new Intent(MainActivity.this, EventListActivity.class));
+                    navigateToActivity(EventListActivity.class);
                 }
             }
 
@@ -67,5 +70,19 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Error fetching user information: " + message);
             }
         });
+    }
+
+    private void navigateToActivity(Class<?> activityClass) {
+        runOnUiThread(() -> {
+            Intent intent = new Intent(MainActivity.this, activityClass);
+            startActivity(intent);
+            finish(); // Close MainActivity after navigation
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up any resources if needed
     }
 }

@@ -31,6 +31,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+// Zhiyuan Li - upload image error checking
+import android.util.Log;
+
 public class FirebaseAttendee {
 
     private FirebaseFirestore db;
@@ -51,8 +54,14 @@ public class FirebaseAttendee {
 
     // User-related methods
     public void updateUser(User user) {
+        if (user == null || user.getUserId() == null) {
+            return;
+        }
+    //Zhiyuan - ensure that updateUser(User user) actually updates the profileImageUrl in Firestore.
         DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.set(user);
+        userRef.set(user)  // This will update the user document with all current fields
+                .addOnSuccessListener(aVoid -> Log.d("FirebaseAttendee", "User profile updated."))
+                .addOnFailureListener(e -> Log.e("FirebaseAttendee", "Error updating profile", e));
     }
 
     public void getUser(String userID, UserController.UserFetchCallback callback) {

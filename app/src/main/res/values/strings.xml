@@ -59,4 +59,14 @@
     <string name="enter_your_username">Enter your username</string>
     <string name="join">Join</string>
     <string name="events_title">Events</string>
+
+    <!-- Profile Screen - Zhiyuan Li -->
+    <string name="profile_image_desc">Profile Image</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="remove_photo">Remove Photo</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="back">Back</string>
 </resources>
