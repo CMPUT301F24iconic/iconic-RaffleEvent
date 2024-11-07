@@ -93,29 +93,30 @@
         <!-- style="@style/ButtonPrimary" -->
         <Button
             android:id="@+id/joinWaitingListButton"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="@dimen/medium_margin"
+            android:backgroundTint="@color/buttonPrimary"
             android:text="@string/join_waiting_list"
             android:textColor="@color/textColorOnPrimary"
-            android:backgroundTint="@color/buttonPrimary"
-            app:layout_constraintTop_toBottomOf="@id/eventDescription"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/leaveWaitingListButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventDescription" />
 
         <!-- Leave Waiting List Button -->
         <!-- style="@style/ButtonSecondary" -->
         <Button
             android:id="@+id/leaveWaitingListButton"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large_margin"
             android:layout_marginTop="@dimen/medium_margin"
+            android:backgroundTint="@color/buttonPrimary"
             android:text="@string/leave_waiting_list"
             android:textColor="@color/textColorOnPrimary"
-            android:backgroundTint="@color/buttonPrimary"
-            app:layout_constraintTop_toBottomOf="@id/eventDescription"
-            app:layout_constraintStart_toEndOf="@id/joinWaitingListButton" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/joinWaitingListButton"
+            app:layout_constraintTop_toBottomOf="@id/eventDescription" />
 
         <!-- Bottom Navigation Bar -->
         <include
@@ -127,16 +128,29 @@
 
         <Button
             android:id="@+id/map_button"
-            android:layout_width="wrap_content"
+            android:layout_width="175dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/large_margin"
             android:layout_marginTop="@dimen/medium_margin"
+            android:backgroundTint="@color/buttonPrimary"
             android:text="Load Map"
             android:textColor="@color/textColorOnPrimary"
-            android:backgroundTint="@color/buttonPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/leaveWaitingListButton" />
+
+        <Button
+            android:id="@+id/create_event_button"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_margin"
+            android:backgroundTint="@color/buttonPrimary"
+            android:text="Create Event"
+            android:textColor="@color/textColorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/map_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
