@@ -24,7 +24,8 @@ public class User {
     private boolean notificationsEnabled;
     private boolean winNotificationPref;
     private boolean loseNotificationPref;
-    private Facility facility;
+    // private Facility facility;
+    private String facilityId;
 
     // Needed for testing role selection page
     private List<String> roles;
@@ -170,24 +171,32 @@ public class User {
         return this.roles.contains("admin");
     }
 
-    public Facility getFacility() {
-        return facility;
+    public String getFacilityId() {
+        return facilityId;
     }
 
-    public void setFacility(Facility facility) {
-        this.facility = facility;
+    public void setFacilityId(String facilityId) {
+        this.facilityId = facilityId;
     }
 
-//    /**
-//     * Prompts the user to provide their email and phone number when signing up for an event.
-//     * This can be called from the event sign-up process.
-//     *
-//     * @param email The email provided by the user.
-//     * @param phoneNo The phone number provided by the user.
-//     */
-//    public void signUpForEvent(String name, String email, String phoneNo) {
-//        this.name = name;
-//        this.email = email;
-//        this.phoneNo = phoneNo;
-//    }
+    //public Facility getFacility() {
+        //return facility;
+    //}
+
+    //public void setFacility(Facility facility) {
+        //this.facility = facility;
+    //}
+
+    /**
+    * Prompts the user to provide their email and phone number when signing up for an event.
+    * This can be called from the event sign-up process.
+    *
+    * @param email The email provided by the user.
+    * @param phoneNo The phone number provided by the user.
+    */
+    public void signUpForEvent(String name, String email, String phoneNo) {
+        this.name = name;
+        this.email = email;
+        this.phoneNo = phoneNo;
+    }
 }
