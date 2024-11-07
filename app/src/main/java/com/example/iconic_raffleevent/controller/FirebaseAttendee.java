@@ -102,9 +102,9 @@ public class FirebaseAttendee {
         String hashed_qr_data = "event_" + event.getEventId();
         // Code to generate a bitmap qr code
         event.setQrCode(hashed_qr_data);
-        event.setBitmap();
         event.setOrganizerID(user.getUserId());
         eventRef.set(event);
+        event.setBitmap();
     }
 
     public void getEventMap(String eventId, EventController.EventMapCallback callback) {
