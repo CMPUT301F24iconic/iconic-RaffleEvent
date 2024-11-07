@@ -9,6 +9,7 @@ import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.database.Cursor;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -236,6 +237,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+
     private void saveProfile() {
         if (currentUser == null) {
             Toast.makeText(this, "Unable to save profile: User data not loaded", Toast.LENGTH_SHORT).show();
@@ -253,10 +255,21 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        // Validate email format
+        if (!isValidEmail(email)) {
+            emailEditText.setError("Please enter a valid email address");
+            emailEditText.requestFocus();
+            return;
+        }
+
         userController.updateProfile(currentUser, name, email, phoneNo);
         userController.setNotificationsEnabled(currentUser, notificationsEnabled);
 
         Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isValidEmail(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void loadUserProfile() {
