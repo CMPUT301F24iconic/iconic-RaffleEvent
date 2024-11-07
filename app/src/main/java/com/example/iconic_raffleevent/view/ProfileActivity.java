@@ -28,6 +28,8 @@ import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 
+import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator class
+
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 71;
@@ -285,16 +287,24 @@ public class ProfileActivity extends AppCompatActivity {
         notificationsSwitch.setChecked(user.isNotificationsEnabled());
 
         String profileImageUrl = user.getProfileImageUrl();
+
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            // Load profile image from URL if available
             Glide.with(this)
                     .load(profileImageUrl)
                     .error(R.drawable.default_profile)
                     .into(profileImageView);
         } else {
-            profileImageView.setImageResource(R.drawable.default_profile);
+            // Generate avatar if no profile image is available
+            generateAndSetAvatar(user.getName());
         }
     }
 
+    private void generateAndSetAvatar(String name) {
+        // Generate an avatar bitmap using the user's name initials
+        Bitmap avatar = AvatarGenerator.generateAvatar(name, 120); // Size 120 is used for demonstration
+        profileImageView.setImageBitmap(avatar); // Set the generated avatar as profile image
+    }
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
