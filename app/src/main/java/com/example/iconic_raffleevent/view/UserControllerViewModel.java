@@ -3,7 +3,6 @@ package com.example.iconic_raffleevent.view;
 import android.provider.Settings;
 
 import androidx.lifecycle.ViewModel;
-
 import com.example.iconic_raffleevent.controller.UserController;
 
 public class UserControllerViewModel extends ViewModel {

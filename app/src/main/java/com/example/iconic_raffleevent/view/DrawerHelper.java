@@ -20,6 +20,10 @@ public class DrawerHelper {
                 context.startActivity(new Intent(context, NotificationsActivity.class));
             } else if (id == R.id.nav_scan_qr) {
                 context.startActivity(new Intent(context, QRScannerActivity.class));
+            } else if (id == R.id.nav_facility) {
+                context.startActivity(new Intent(context, CreateFacilityActivity.class));
+            } else if (id == R.id.nav_create_event) {
+                context.startActivity(new Intent(context, QRScannerActivity.class));
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
