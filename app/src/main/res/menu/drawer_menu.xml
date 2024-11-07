@@ -12,4 +12,10 @@
     <item
         android:id="@+id/nav_scan_qr"
         android:title="Scan QR Code" />
+    <item
+        android:id="@+id/nav_create_event"
+        android:title="Create Event" />
+    <item
+        android:id="@+id/nav_facility"
+        android:title="Access Facility" />
 </menu>
