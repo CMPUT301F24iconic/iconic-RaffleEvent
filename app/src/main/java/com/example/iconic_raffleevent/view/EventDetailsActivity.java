@@ -260,8 +260,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onLocationReceived(GeoPoint location) {
                 userLocation = location;
-                // If location is successfully received, join waitlist
                 joinWaitlist();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error retrieving location: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
