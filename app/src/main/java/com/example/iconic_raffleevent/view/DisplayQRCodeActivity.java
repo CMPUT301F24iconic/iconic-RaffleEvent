@@ -85,10 +85,9 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    private UserController getUserController() {
+    private void getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID());
+        userControllerViewModel.setUserController(getUserID(),getApplicationContext());
         userController = userControllerViewModel.getUserController();
-        return userController;
     }
 }
