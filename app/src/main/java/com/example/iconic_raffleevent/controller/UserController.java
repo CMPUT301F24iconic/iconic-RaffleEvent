@@ -1,6 +1,5 @@
 package com.example.iconic_raffleevent.controller;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -9,231 +8,116 @@ import android.net.Uri;
 
 import androidx.core.app.ActivityCompat;
 
-import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-
-import java.util.UUID;
-
-/**
- * UserController manages user interactions such as profile management, registration, and authentication.
- */
 public class UserController {
 
-    // Aiden Teal
+    private FirebaseAttendee firebaseAttendee;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
     private String currentUserID;
 
-    private User currentUser;
-    private FirebaseAttendee firebaseAttendee;
-
-    //Zhiyuan Li - profile image upload and removal functionality
-    private FirebaseStorage storage;
-
-    // Zhiyuan - modified usercontroller for usercontrollerviewmodel.java
-    public UserController(String deviceID) {
+    public UserController(String userID) {
+        this.currentUserID = userID;
         this.firebaseAttendee = new FirebaseAttendee();
-        this.storage = FirebaseStorage.getInstance();
-
-        // Fetch the user based on deviceID, create if not found
-        firebaseAttendee.getUser(deviceID, new UserFetchCallback() {
-            @Override
-            public void onUserFetched(User user) {
-                if (user != null) {
-                    currentUser = user;
-                } else {
-                    // Create a new user if none exists
-                    currentUser = new User();
-                    currentUser.setUserId(deviceID);
-                    addUser(currentUser);
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                System.out.println("Error fetching user: " + message);
-            }
-        });
+        this.firebaseStorage = FirebaseStorage.getInstance();
+        this.storageReference = firebaseStorage.getReference();
     }
 
-    /*
-        Aiden Teal
-        Test constructor to see if we can get User from firebase
-     */
-//    public UserController(String userID) {
-//        this.firebaseAttendee = new FirebaseAttendee();
-//        this.currentUserID = userID;
-//    }
-
-    /**
-     * Updates the user's profile information in Firestore.
-     */
-    public void updateProfile(User userObj, String name, String email, String phoneNo) {
-        userObj.setName(name);
-        userObj.setEmail(email);
-        userObj.setPhoneNo(phoneNo);
-        saveProfileToDatabase(userObj);
+    // Adds a new user to the database
+    public void addUser(User user) {
+        firebaseAttendee.updateUser(user);
     }
 
-
-    public void uploadProfileImage(User userObj, Uri filePath, ProfileImageUploadCallback callback) {
-        if (filePath != null) {
-            // Generate a unique path for the image in Firebase Storage
-            StorageReference ref = storage.getReference().child("profile_images/" + UUID.randomUUID().toString());
-
-            ref.putFile(filePath)
-                    .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String downloadUrl = uri.toString();
-                        userObj.setProfileImageUrl(downloadUrl);
-                        saveProfileToDatabase(userObj);
-                        callback.onProfileImageUploaded(downloadUrl);
-                    }))
-                    .addOnFailureListener(e -> callback.onError("Upload failed: " + e.getMessage()));
-        } else {
-            callback.onError("No image selected");
-        }
+    // Updates the profile with new details
+    public void updateProfile(User user, String name, String email, String phoneNo) {
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhoneNo(phoneNo);
+        firebaseAttendee.updateUser(user);
     }
 
-//    // Aiden Teal method
-//    public void uploadProfileImage(User userObj, String imageUrl) {
-//        userObj.setProfileImageUrl(imageUrl);
-//        saveProfileToDatabase(userObj);
-//    }
+    // Uploads the profile image to Firebase Storage and updates the user profile with the image URL
+    public void uploadProfileImage(User user, Uri imageUri, ProfileImageUploadCallback callback) {
+        String userId = user.getUserId();
+        StorageReference ref = storageReference.child("profile_images/" + userId + "/" + imageUri.getLastPathSegment());
 
-    // Aiden Teal method (Zhiyuan modified)
-    /**
-     * Removes the user's profile image from Firebase Storage and updates the profile image URL to null in Firestore.
-     */
-    public void removeProfileImage(User userObj, ProfileImageRemovalCallback callback) {
-        String imageUrl = userObj.getProfileImageUrl();
+        ref.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String downloadUrl = uri.toString();
+                    user.setProfileImageUrl(downloadUrl);
+                    firebaseAttendee.updateUser(user);  // Update user profile with the image URL
+                    callback.onProfileImageUploaded(downloadUrl);
+                }))
+                .addOnFailureListener(e -> callback.onError("Failed to upload image: " + e.getMessage()));
+    }
+
+    // Removes the profile image from Firebase Storage and updates the user profile
+    public void removeProfileImage(User user, ProfileImageRemovalCallback callback) {
+        String imageUrl = user.getProfileImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            StorageReference photoRef = storage.getReferenceFromUrl(imageUrl);
+            StorageReference photoRef = firebaseStorage.getReferenceFromUrl(imageUrl);
             photoRef.delete()
                     .addOnSuccessListener(aVoid -> {
-                        userObj.setProfileImageUrl(null);
-                        saveProfileToDatabase(userObj);
+                        user.setProfileImageUrl(null);
+                        firebaseAttendee.updateUser(user);  // Update user profile after removing image
                         callback.onProfileImageRemoved();
                     })
-                    .addOnFailureListener(e -> callback.onError("Failed to remove profile picture"));
+                    .addOnFailureListener(e -> callback.onError("Failed to remove image: " + e.getMessage()));
         } else {
-            callback.onError("No profile picture to remove");
+            callback.onError("No profile image to remove");
         }
     }
 
-    public void joinWaitingList(String eventId) {
-        currentUser.getWaitingListEventIds().add(eventId);
-        saveWaitingListToDatabase();
+    // Enables or disables notifications for the user
+    public void setNotificationsEnabled(User user, boolean enabled) {
+        user.setNotificationsEnabled(enabled);
+        firebaseAttendee.updateNotificationPreference(user);
     }
 
-    public void leaveWaitingList(String eventId) {
-        currentUser.getWaitingListEventIds().remove(eventId);
-        saveWaitingListToDatabase();
+    // Sets win notifications preference for the user
+    public void setWinNotificationsEnabled(User user, boolean enabled) {
+        user.setWinNotificationPref(enabled);
+        firebaseAttendee.updateWinNotificationPreference(user);
     }
 
-    public void acceptEventInvitation(String eventId) {
-        currentUser.getWaitingListEventIds().remove(eventId);
-        currentUser.getRegisteredEventIds().add(eventId);
-        saveRegisteredEventsToDatabase();
+    // Sets lose notifications preference for the user
+    public void setLoseNotificationsEnabled(User user, boolean enabled) {
+        user.setLoseNotificationPref(enabled);
+        firebaseAttendee.updateLoseNotificationPreference(user);
     }
 
-    public void declineEventInvitation(String eventId) {
-        currentUser.getWaitingListEventIds().remove(eventId);
-        saveWaitingListToDatabase();
-    }
-
-    // Aiden Teal method
-    public void setNotificationsEnabled(User userObj, boolean enabled) {
-        userObj.setNotificationsEnabled(enabled);
-        saveNotificationPreferenceToDatabaseTest(userObj);
-    }
-
-    // Manh Duong Hoang
-    public void setWinNotificationsEnabled(User userObj, boolean enabled) {
-        userObj.setWinNotificationPref(enabled);
-        saveWinNotificationPreferenceToDatabase(userObj);
-    }
-
-    public void setLoseNotificationsEnabled(User userObj, boolean enabled) {
-        userObj.setLoseNotificationPref(enabled);
-        saveLoseNotificationPreferenceToDatabase(userObj);
-    }
-
-    private void saveProfileToDatabase() {
-        firebaseAttendee.updateUser(currentUser);
-    }
-
-    // Aiden Teal method, Zhiyuan removed "Test"
-    private void saveProfileToDatabase(User userObj) {
-        firebaseAttendee.updateUser(userObj);
-    }
-
-    private void saveWaitingListToDatabase() {
-        firebaseAttendee.updateWaitingList(currentUser);
-    }
-
-    private void saveRegisteredEventsToDatabase() {
-        firebaseAttendee.updateRegisteredEvents(currentUser);
-    }
-
-    // Aiden Teal method
-    private void saveNotificationPreferenceToDatabaseTest(User userObj) {
-        firebaseAttendee.updateNotificationPreference(userObj);
-    }
-
-    // Manh Duong Hoang
-    private void saveWinNotificationPreferenceToDatabase(User userObj) {
-        firebaseAttendee.updateWinNotificationPreference(userObj);
-    }
-
-    private void saveLoseNotificationPreferenceToDatabase(User userObj) {
-        firebaseAttendee.updateLoseNotificationPreference(userObj);
-    }
-    //
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    // Aiden Teal
+    // Retrieves the current user profile
     public void getUserInformation(UserFetchCallback callback) {
-        firebaseAttendee.getUser(this.currentUserID, callback);
+        firebaseAttendee.getUser(currentUserID, callback);
     }
 
-    // Aiden Teal
-    public void addUser(User newUser) {
-        firebaseAttendee.updateUser(newUser);
-    }
-
-    //Zhiyuan Li
+    // Retrieves the user's location using FusedLocationProviderClient with explicit permission check
     public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, Context context, OnLocationReceivedCallback callback) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener((Activity) context, location -> {
-                if (location != null) {
-                    Double latitude = location.getLatitude();
-                    Double longitude = location.getLongitude();
-                    GeoPoint userLocation = new GeoPoint(latitude, longitude);
-                    if (callback != null) {
-                        callback.onLocationReceived(userLocation);
-                    }
-                }
-            });
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                            callback.onLocationReceived(userLocation);
+                        } else {
+                            callback.onError("Location unavailable");
+                        }
+                    })
+                    .addOnFailureListener(e -> callback.onError("Error retrieving location: " + e.getMessage()));
+
+        } else {
+            callback.onError("Location permissions not granted");
         }
     }
 
-    // Zhiyuan Li - Callback Interfaces
-    public interface UserFetchCallback {
-        void onUserFetched(User user);
-        void onError(String message);
-    }
-
-    public interface OnLocationReceivedCallback {
-        void onLocationReceived(GeoPoint location);
-    }
-
+    // Callback interfaces
     public interface ProfileImageUploadCallback {
         void onProfileImageUploaded(String imageUrl);
         void onError(String message);
@@ -241,6 +125,16 @@ public class UserController {
 
     public interface ProfileImageRemovalCallback {
         void onProfileImageRemoved();
+        void onError(String message);
+    }
+
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
+    }
+
+    public interface OnLocationReceivedCallback {
+        void onLocationReceived(GeoPoint location);
         void onError(String message);
     }
 }

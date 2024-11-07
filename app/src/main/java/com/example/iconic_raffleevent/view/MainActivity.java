@@ -32,33 +32,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-         Get Device ID and check if there is an existing user with that ID
-         */
+        // Retrieve Device ID
         String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (deviceID == null || deviceID.isEmpty()) {
+            System.out.println("Error: Device ID is null or empty");
+            return; // Exit early if deviceID is not valid
+        }
+
         System.out.println("Device ID: " + deviceID);
 
+        // Set up ViewModel
         userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(deviceID);
         userController = userControllerViewModel.getUserController();
 
+        // Fetch User Information
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
                 if (user == null) {
-                    // User null, redirect to create user page to make a user
+                    // No user found, navigate to create user screen
                     startActivity(new Intent(MainActivity.this, NewUserActivity.class));
-                }
-                else if (user.checkAdminRole() == Boolean.TRUE) {
+                } else if (user.checkAdminRole()) {
+                    // User is admin, navigate to role selection screen
                     startActivity(new Intent(MainActivity.this, RoleSelectionActivity.class));
-                }
-                else {
+                } else {
+                    // User is not admin, navigate to event list screen
                     startActivity(new Intent(MainActivity.this, EventListActivity.class));
                 }
             }
+
             @Override
             public void onError(String message) {
-                System.out.println("There was an error");
+                System.out.println("Error fetching user information: " + message);
             }
         });
     }

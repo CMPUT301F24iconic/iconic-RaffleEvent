@@ -114,13 +114,15 @@ public class EventController {
         void onError(String message);
     }
 
-    public void scanQRCode(String qrCodeData, String userId, GeoPoint userLocation, ScanQRCodeCallback callback) {
-        firebaseAttendee.scanQRCode(qrCodeData, userId, userLocation, callback);
-    }
     public interface ScanQRCodeCallback {
         void onEventFound(String eventId);
         void onError(String message);
     }
+
+    public void scanQRCode(String qrCodeData, String userId, GeoPoint location, ScanQRCodeCallback callback) {
+        firebaseAttendee.scanQRCode(qrCodeData, userId, location, callback);
+    }
+
     public void getUserWaitingListEvents(String userId, EventListCallback callback) {
         firebaseAttendee.getUserWaitingListEvents(userId, callback);
     }
