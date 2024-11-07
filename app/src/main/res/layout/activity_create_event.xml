@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor">
+
+        <!-- Include Top Navbar -->
+        <include
+            android:id="@+id/top_navbar"
+            layout="@layout/top_navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title: Create Event -->
+        <TextView
+            android:id="@+id/createEventTitle"
+            style="@style/TextHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_event"
+            android:textColor="@color/textColorPrimary"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginTop="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/top_navbar"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Event Title Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/eventTitleInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:boxBackgroundMode="filled"
+            app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+            app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+            app:boxBackgroundColor="@color/white"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/createEventTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/eventTitleEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/event_title_input_placeholder"
+                android:textColor="@color/textColorPrimary" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Geolocation Toggle Section -->
+        <LinearLayout
+            android:id="@+id/geolocationToggleLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/eventTitleInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/geolocationLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/geolocation_required"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/text_size_large"
+                android:layout_gravity="center_vertical" />
+
+            <Switch
+                android:id="@+id/geolocationSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/geolocation_toggle_description"
+                android:trackTint="@color/buttonPrimary"
+                android:thumbTint="@color/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </LinearLayout>
+
+        <!-- Start Time and End Time Section -->
+        <LinearLayout
+            android:id="@+id/startEndTimeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/geolocationToggleLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Start Time Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/small_margin">
+
+                <TextView
+                    android:id="@+id/startTimeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_time"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/small_margin" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/startDateInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:layout_marginEnd="@dimen/small_margin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/startDateEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/start_date_hint"
+                        android:inputType="date"
+                        android:textColor="@color/textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/startTimeInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/startTimeEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/start_time_hint"
+                        android:inputType="time"
+                        android:textColor="@color/textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- End Time Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/endTimeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/end_time"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="@dimen/text_size_large"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/small_margin" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/endDateInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    android:layout_marginEnd="@dimen/small_margin">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/endDateEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/end_date_hint"
+                        android:inputType="date"
+                        android:textColor="@color/textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/endTimeInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:boxBackgroundMode="filled"
+                    app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                    app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/endTimeEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/end_time_hint"
+                        android:inputType="time"
+                        android:textColor="@color/textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Max Attendees Section -->
+        <LinearLayout
+            android:id="@+id/maxAttendeesLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/startEndTimeLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/maxAttendeesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_attendees"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/text_size_large"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/small_margin" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/maxAttendeesInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:boxBackgroundMode="filled"
+                app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                app:boxBackgroundColor="@color/white"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/maxAttendeesEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/max_attendees_hint"
+                    android:inputType="number"
+                    android:textColor="@color/textColorPrimary" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Event Description Section -->
+        <LinearLayout
+            android:id="@+id/eventDescriptionLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/maxAttendeesLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/eventDescriptionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_description"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/text_size_large"
+                android:layout_marginBottom="@dimen/small_margin" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventDescriptionInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxBackgroundMode="filled"
+                app:boxCornerRadiusTopStart="@dimen/button_corner_radius"
+                app:boxCornerRadiusTopEnd="@dimen/button_corner_radius"
+                app:boxCornerRadiusBottomStart="@dimen/button_corner_radius"
+                app:boxCornerRadiusBottomEnd="@dimen/button_corner_radius"
+                app:boxBackgroundColor="@color/white"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventDescriptionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/event_description_hint"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"
+                    android:textColor="@color/textColorPrimary" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Add Facility Button -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/addFacilityButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:cardCornerRadius="@dimen/button_corner_radius"
+            app:cardBackgroundColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventDescriptionLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/small_margin"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/addFacilityIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/add_facilty_icon"
+                    app:tint="@color/buttonPrimary" />
+
+                <TextView
+                    android:id="@+id/addFacilityText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_facility"
+                    android:textColor="@color/buttonPrimary"
+                    android:textSize="@dimen/text_size_large"
+                    android:layout_marginStart="@dimen/small_margin" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Save and Upload Poster Buttons -->
+        <LinearLayout
+            android:id="@+id/saveAndUploadLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:layout_constraintTop_toBottomOf="@id/addFacilityButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Upload Poster Button -->
+            <Button
+                android:id="@+id/uploadPosterButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/upload_poster"
+                android:textColor="@color/buttonTextColor"
+                android:backgroundTint="@color/buttonPrimary"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/save"
+                android:textColor="@color/buttonTextColor"
+                android:backgroundTint="@color/buttonPrimary"
+                app:cornerRadius="@dimen/button_corner_radius"
+                android:layout_marginStart="@dimen/small_margin" />
+        </LinearLayout>
+
+        <!-- Include Bottom Navbar -->
+        <include
+            android:id="@+id/bottom_navbar"
+            layout="@layout/bottom_navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Navigation Drawer Menu -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/white"
+        app:menu="@menu/drawer_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,5 +1,12 @@
 package com.example.iconic_raffleevent.model;
 
+import android.graphics.Bitmap;
+
+import com.google.firebase.firestore.GeoPoint;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +24,22 @@ public class Event {
     private boolean geolocationRequired;
     private List<String> waitingList;
     private List<String> registeredAttendees;
+    private String qrCode;
+    private String organizerId;
+    private String facilityId;
+    private ArrayList<String> declinedList;
+    private ArrayList<String> invitedList;
+    private ArrayList<GeoPoint> entrantLocations;
+
+    // Qrcode Url
+    private String eventQrUrl;
 
     public Event() {
+        declinedList = new ArrayList<>();
+        invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
+        entrantLocations = new ArrayList<>();
     }
 
     // Getters and setters
@@ -47,6 +66,14 @@ public class Event {
 
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
+    }
+
+    public void setFacilityId(String facilityId) {
+        this.facilityId = facilityId;
+    }
+
+    public String getFacilityId() {
+        return facilityId;
     }
 
     public String getEventLocation() {
@@ -137,4 +164,76 @@ public class Event {
         this.registeredAttendees.add(registeredID);
     }
 
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+
+    public void setEventQrUrl(String qrUrl) {
+        this.eventQrUrl = qrUrl;
+    }
+
+    public String getEventQrUrl() {
+        return this.eventQrUrl;
+    }
+
+    public void setOrganizerID(String organizerID) {
+        this.organizerId = organizerID;
+    }
+
+    public String getOrganizerID() {
+        return this.organizerId;
+    }
+
+    public ArrayList<String> getDeclinedList() {
+        return this.declinedList;
+    }
+
+    public ArrayList<String> getInvitedList() {
+        return this.invitedList;
+    }
+
+    public void setInvitedList(ArrayList<String> invitedList) {
+        this.invitedList = invitedList;
+    }
+
+    public void setDeclinedList(ArrayList<String> declinedList) {
+        this.declinedList = declinedList;
+    }
+
+    public void addToInviteList(String userId) {
+        this.invitedList.add(userId);
+    }
+
+    public void addToDeclineList(String userId) {
+        this.declinedList.add(userId);
+    }
+
+    public void removeFromInviteList(String userId) {
+        this.invitedList.remove(userId);
+    }
+
+    public void removeFromDeclinedList(String userId) {
+        this.declinedList.remove(userId);
+    }
+
+    public ArrayList<GeoPoint> getEntrantLocations() {
+        return this.entrantLocations;
+    }
+
+    public void addEntrantLocation(GeoPoint entrantLocation) {
+        this.entrantLocations.add(entrantLocation);
+    }
+
+    public void deleteEntrantLocation(GeoPoint entrantLocation) {
+        this.entrantLocations.remove(entrantLocation);
+    }
+
+    public void setEntrantLocations(ArrayList<GeoPoint> entrantLocations) {
+        this.entrantLocations.clear();
+        this.entrantLocations.addAll(entrantLocations);
+    }
 }

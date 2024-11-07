@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "542602573766",
     "project_id": "iconic-raffleevent",
-    "storage_bucket": "iconic-raffleevent.appspot.com"
+    "storage_bucket": "iconic-raffleevent.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,12 @@
           "package_name": "com.example.iconic_raffleevent"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "542602573766-client.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAJ5QAo9MbjS1Xg1RRuMQsFEf4Jnl6wQUw"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "542602573766-client.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

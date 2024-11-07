@@ -6,12 +6,13 @@ plugins {
 
 android {
     namespace = "com.example.iconic_raffleevent"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.iconic_raffleevent"
         minSdk = 24
-        targetSdk = 34
+        //noinspection EditedTargetSdkVersion
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -27,9 +28,15 @@ android {
             )
         }
     }
+
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     // Added to dependencies to allow for unit testing
@@ -48,6 +55,7 @@ dependencies {
     implementation(libs.play.services.vision.common)
     implementation(libs.play.services.vision)
     implementation(libs.cronet.embedded)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.ext.junit)
@@ -61,11 +69,13 @@ dependencies {
     // The additional dependencies for Firebase Storage, ZXing core, and ZXing Android Embedded are added.
     implementation(libs.firebase.storage)
     implementation(libs.core)
+
+    //Zxing Android Embedded (https://github.com/journeyapps/zxing-android-embedded)
     implementation(libs.zxing.android.embedded)
 
 
     implementation(libs.constraintlayout)
-    implementation (libs.glide)
+
     implementation(libs.firebase.storage.v2030)
     implementation(libs.play.services.tasks)
     implementation(libs.play.services.maps)
@@ -82,4 +92,22 @@ dependencies {
     implementation (libs.play.services.mlkit.barcode.scanning)
     implementation (libs.firebase.messaging)
     implementation (libs.volley)
+
+    // avatar generation and image upload
+    implementation (libs.avatarview.coil)
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+    implementation (libs.activity.v170)
+
+
+    // Other AndroidX and Google Libraries
+    implementation(libs.appcompat)
+    implementation(libs.material.v180)
+    implementation(libs.activity.v161)
+    implementation(libs.constraintlayout.v220)
+    implementation(libs.play.services.vision.common.v1912)
+    implementation(libs.play.services.vision)
+    implementation(libs.play.services.location.v2101)
+    implementation(libs.core.ktx)  // Replacing libs.core.ktx
+
 }

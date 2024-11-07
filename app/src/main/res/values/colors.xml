@@ -16,6 +16,7 @@
     <color name="textColorPrimary">#212121</color> <!-- Primary text color -->
     <color name="textColorSecondary">#757575</color> <!-- Secondary text color for subtext -->
     <color name="textColorOnPrimary">#FFFFFF</color> <!-- Text color on primary color backgrounds -->
+    <color name="textColorOnSecondary">#D129ED</color> <!-- Text color on secondary color backgrounds -->
 
     <!-- Button Colors -->
     <color name="buttonTextColor">#FFFFFF</color> <!-- Text color for buttons with Dark theme background -->
@@ -28,7 +29,7 @@
     <!-- Transparent Colors -->
     <color name="transparent">#00000000</color> <!-- Fully transparent color -->
 
-    <color name="input_text_color"> #99a8bb </color>
-    <color name="purple_for_app"> #d129ed </color>
-    <color name="input_background"> #f0f0f0 </color>
+    <color name="input_text_color">#99a8bb</color>
+    <color name="purple_for_app">#d129ed</color>
+    <color name="input_background">#f0f0f0</color>
 </resources>

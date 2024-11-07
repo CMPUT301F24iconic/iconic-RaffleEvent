@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profile" />
+    <item
+        android:id="@+id/nav_events"
+        android:title="Events" />
+    <item
+        android:id="@+id/nav_notifications"
+        android:title="Notifications" />
+    <item
+        android:id="@+id/nav_scan_qr"
+        android:title="Scan QR Code" />
+    <item
+        android:id="@+id/nav_create_event"
+        android:title="Create Event" />
+    <item
+        android:id="@+id/nav_facility"
+        android:title="Access Facility" />
+</menu>
