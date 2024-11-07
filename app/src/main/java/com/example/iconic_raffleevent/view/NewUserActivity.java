@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,26 +25,68 @@ public class NewUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_user);
 
+        initializeViews();
+        initializeController();
+        setupListeners();
+    }
+
+    private void initializeViews() {
         usernameEditText = findViewById(R.id.edit_username_field);
         joinAppButton = findViewById(R.id.join_app_button);
+    }
 
-        joinAppButton.setOnClickListener(v -> {
-            String username = usernameEditText.getText().toString();
-            if (username.isEmpty()) {
-                usernameEditText.setError("This field cannot be empty");
-            } else {
-                User newUser = new User();
-                newUser.setUsername(username);
-                newUser.setUserId(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+    private void initializeController() {
+        String deviceId = getUserId();
+        userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(deviceId, getApplicationContext());
+        userController = userControllerViewModel.getUserController();
+    }
 
-                userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-                userControllerViewModel.setUserController(newUser.getUserId());
-                userController = userControllerViewModel.getUserController();
-                userController.addUser(newUser);
+    private void setupListeners() {
+        joinAppButton.setOnClickListener(v -> createNewUser());
+    }
 
-                // Just sending to profile activity for now to see if user is created
-                startActivity(new Intent(NewUserActivity.this, EventListActivity.class));}
-        });
+    private void createNewUser() {
+        String username = usernameEditText.getText().toString().trim();
 
+        if (username.isEmpty()) {
+            usernameEditText.setError("This field cannot be empty");
+            return;
+        }
+
+        try {
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setUserId(getUserId());
+
+            userController.addUser(newUser);
+
+            // Show success message
+            Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show();
+
+            // Navigate to event list
+            navigateToEventList();
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Error creating account: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getUserId() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private void navigateToEventList() {
+        Intent intent = new Intent(NewUserActivity.this, EventListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up any resources if needed
     }
 }

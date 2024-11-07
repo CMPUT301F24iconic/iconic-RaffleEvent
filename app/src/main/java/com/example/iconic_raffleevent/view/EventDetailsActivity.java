@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
+
 public class EventDetailsActivity extends AppCompatActivity {
 
     // Navigation UI
@@ -66,180 +67,191 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
+        initializeViews();
+        initializeControllers();
+        setupListeners();
+        loadData();
+    }
+
+    private void initializeViews() {
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
 
-        // Link UI to views
+        // Initialize main views
         eventImageView = findViewById(R.id.eventImage);
         eventTitleTextView = findViewById(R.id.eventTitle);
         eventDescriptionTextView = findViewById(R.id.eventDescription);
         eventLocationTextView = findViewById(R.id.eventLocation);
         eventDateTextView = findViewById(R.id.eventDate);
-
-        // Link map button
         mapButton = findViewById(R.id.map_button);
 
-        eventController = new EventController();
-        userController = getUserController();
-        loadUserProfile();
-        eventId = getIntent().getStringExtra("eventId");
-
-        fetchEventDetails();
-
-        // Link to button views
+        // Initialize buttons
         joinWaitingListButton = findViewById(R.id.joinWaitingListButton);
         leaveWaitingListButton = findViewById(R.id.leaveWaitingListButton);
-
-        //Aiden Teal
-        joinWaitingListButton.setEnabled(false);
-        leaveWaitingListButton.setEnabled(false);
-
-        joinWaitingListButton.setOnClickListener(v -> {
-            joinWaitingList();
-        });
-        leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
-
-        // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+        // Initially disable waiting list buttons
+        joinWaitingListButton.setEnabled(false);
+        leaveWaitingListButton.setEnabled(false);
+    }
 
-        /*
-            Setup geolocation services to obtain location when joining waitlist
-         */
+    private void initializeControllers() {
+        eventController = new EventController();
+        userController = getUserController();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+    }
 
-        // Footer buttons logic
-        homeButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventDetailsActivity.this, EventListActivity.class));
-        });
+    private void setupListeners() {
+        // Setup waiting list buttons
+        joinWaitingListButton.setOnClickListener(v -> joinWaitingList());
+        leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
 
-        qrButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventDetailsActivity.this, QRScannerActivity.class));
-        });
-
-        profileButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
-        });
-
+        // Setup navigation buttons
+        homeButton.setOnClickListener(v -> startActivity(new Intent(this, EventListActivity.class)));
+        qrButton.setOnClickListener(v -> startActivity(new Intent(this, QRScannerActivity.class)));
+        profileButton.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
-        // Redirect user when clicking on mapButton
+        // Setup map button
         mapButton.setOnClickListener(v -> {
-            // Create an intent to start the EventDetailsActivity
-            Intent intent = new Intent(EventDetailsActivity.this, MapActivity.class);
-            intent.putExtra("eventId", eventId);
-            intent.putExtra("eventTitle", eventObj.getEventTitle());
-            startActivity(intent);
+            if (eventObj != null) {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("eventTitle", eventObj.getEventTitle());
+                startActivity(intent);
+            }
         });
+    }
+
+    private void loadData() {
+        eventId = getIntent().getStringExtra("eventId");
+        loadUserProfile();
+        fetchEventDetails();
     }
 
     private void fetchEventDetails() {
         eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
-                updateUI(event);
-                eventObj = event;
+                runOnUiThread(() -> {
+                    updateUI(event);
+                    eventObj = event;
+                });
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
     private void updateUI(Event event) {
-        System.out.println(event);
         if (event != null) {
             Glide.with(this)
                     .load(event.getEventImageUrl())
                     .into(eventImageView);
-        }
 
-        eventTitleTextView.setText(event.getEventTitle());
-        eventDescriptionTextView.setText(event.getEventDescription());
-        eventLocationTextView.setText(event.getEventLocation());
-        eventDateTextView.setText(event.getEventStartDate());
+            eventTitleTextView.setText(event.getEventTitle());
+            eventDescriptionTextView.setText(event.getEventDescription());
+            eventLocationTextView.setText(event.getEventLocation());
+            eventDateTextView.setText(event.getEventStartDate());
 
-        if (event.isGeolocationRequired()) {
-            showGeolocationWarning();
+            if (event.isGeolocationRequired()) {
+                showGeolocationWarning();
+            }
         }
     }
 
     private void joinWaitingList() {
-        // Check if event requires geolocation
+        if (eventObj == null || userObj == null) {
+            Toast.makeText(this, "Unable to join waitlist: Event or user data not loaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (eventObj.isGeolocationRequired()) {
-            // Bring up geolocation popup
             showGeolocationDialog();
         } else {
-            // Add user to waiting list
-            eventController.joinWaitingListWithoutLocation(eventId, userObj.getUserId(), new EventController.JoinWaitingListCallback() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
+            joinWaitingListWithoutLocation();
         }
     }
 
-    // Need to implement functionality to remove geolocation from entrantLocations if they leave event
-    private void leaveWaitingList() {
-        eventController.leaveWaitingList(eventId, userObj.getUserId(), new EventController.LeaveWaitingListCallback() {
+    private void joinWaitingListWithoutLocation() {
+        eventController.joinWaitingListWithoutLocation(eventId, userObj.getUserId(), new EventController.JoinWaitingListCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show()
+                );
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show()
+                );
+            }
+        });
+    }
+
+    private void leaveWaitingList() {
+        if (userObj == null) {
+            Toast.makeText(this, "Unable to leave waitlist: User data not loaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        eventController.leaveWaitingList(eventId, userObj.getUserId(), new EventController.LeaveWaitingListCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
     private void showGeolocationDialog() {
-        Dialog dialog = new Dialog(EventDetailsActivity.this);
+        Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.activity_warning_geolocation);
-        dialog.show();
 
         Button allowGeolocation = dialog.findViewById(R.id.allowAccessButton);
         Button declineGeolocation = dialog.findViewById(R.id.declineButton);
 
         allowGeolocation.setOnClickListener(v -> {
-            // Implement logic to change user settings to allow location grabbing
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // request the permission
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // request the permission
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
-            }
-            // Permissions accepted, get user location
-            // Add entrant to waitlist if location is valid
+            requestLocationPermissions();
             getUserLocation();
-            // close dialog
             dialog.dismiss();
         });
 
-        declineGeolocation.setOnClickListener(v -> {
-            // Don't allow user to join event
-            dialog.dismiss();
-        });
+        declineGeolocation.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void requestLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        }
     }
 
     private void showGeolocationWarning() {
-        // Show a dialog or toast message to warn the user about geolocation requirement
         Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
     }
 
@@ -248,62 +260,75 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onLocationReceived(GeoPoint location) {
                 userLocation = location;
-                joinWaitlist();
+                joinWaitlistWithLocation();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error retrieving location: " + message, Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error getting location: " + message, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
-    private void joinWaitlist() {
+    private void joinWaitlistWithLocation() {
+        if (userLocation == null) {
+            Toast.makeText(this, "Unable to join: Location not available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show()
+                );
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
     private void loadUserProfile() {
-        /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-                    joinWaitingListButton.setEnabled(true);
-                    leaveWaitingListButton.setEnabled(true);
+                    runOnUiThread(() -> {
+                        joinWaitingListButton.setEnabled(true);
+                        leaveWaitingListButton.setEnabled(true);
+                    });
                 } else {
-                    System.out.println("User information is null");
+                    runOnUiThread(() ->
+                            Toast.makeText(EventDetailsActivity.this, "Unable to load user profile", Toast.LENGTH_SHORT).show()
+                    );
                 }
             }
 
             @Override
             public void onError(String message) {
-                System.out.println("Cannot fetch user information");
+                runOnUiThread(() ->
+                        Toast.makeText(EventDetailsActivity.this, "Error loading profile: " + message, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
-    /*
-    Aiden Teal function to get userID
-     */
-    private String getUserID() {
-        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-    }
-
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID());
+        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
         return userController;
+    }
+
+    private String getUserID() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }

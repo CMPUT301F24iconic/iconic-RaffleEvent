@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -17,52 +18,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Upload Photo" />
+        android:text="Upload Photo"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/remove_photo_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Remove Photo" />
+        android:text="Remove Photo"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/phone_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Phone Number"
-        android:inputType="phone" />
+        android:inputType="phone"
+        tools:ignore="HardcodedText" />
 
     <Switch
         android:id="@+id/notifications_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enable Notifications" />
+        android:text="Enable Notifications"
+        tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
     <Button
         android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:text="Save"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/back_to_hub_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back" />
+        android:text="Back"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
