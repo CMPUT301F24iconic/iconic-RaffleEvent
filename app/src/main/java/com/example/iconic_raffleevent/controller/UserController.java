@@ -1,6 +1,7 @@
 package com.example.iconic_raffleevent.controller;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -11,7 +12,6 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.example.iconic_raffleevent.model.User;
@@ -24,27 +24,24 @@ import com.google.firebase.storage.UploadTask;
 
 public class UserController {
     private static final String TAG = "UserController";
-    private final FirebaseAttendee firebaseAttendee;
-    private final FirebaseStorage firebaseStorage;
-    private final StorageReference storageReference;
-    private final String currentUserID;
-    private final Context context;
+    private FirebaseAttendee firebaseAttendee;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
+    private String currentUserID;
+    private Context context;
 
-    public UserController(String userID, Context context) {
+    // Constructor with just userID
+    public UserController(String userID) {
         this.currentUserID = userID;
-        this.context = context;
         this.firebaseAttendee = new FirebaseAttendee();
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.storageReference = firebaseStorage.getReference();
-
-        // Initialize Firebase Storage settings
-        firebaseStorage.setMaxUploadRetryTimeMillis(30000); // 30 seconds
-        firebaseStorage.setMaxOperationRetryTimeMillis(30000);
     }
 
-    // Basic constructor without context (for backward compatibility)
-    public UserController(String userID) {
-        this(userID, null);
+    // Constructor with both userID and context
+    public UserController(String userID, Context context) {
+        this(userID);
+        this.context = context;
     }
 
     // Adds a new user to the database
@@ -74,18 +71,18 @@ public class UserController {
 
         try {
             // Log the initial upload attempt
-            Log.d(TAG, "Starting image upload for user: " + user.getUserId());
-            Log.d(TAG, "Image URI: " + imageUri.toString());
+            Log.d("UserController", "Starting image upload for user: " + user.getUserId());
+            Log.d("UserController", "Image URI: " + imageUri.toString());
 
             // Generate unique filename
-            String timestamp = String.valueOf(System.currentTimeMillis());
-            String filename = "profile_" + timestamp + ".jpg";
+            String timeStamp = String.valueOf(System.currentTimeMillis());
+            String filename = "profile_" + timeStamp + ".jpg";
 
             // Create the full storage path
             String storagePath = String.format("profile_images/%s/%s", user.getUserId(), filename);
-            StorageReference imageRef = storageReference.child(storagePath);
+            StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(storagePath);
 
-            Log.d(TAG, "Storage path: " + storagePath);
+            Log.d("UserController", "Storage path: " + storagePath);
 
             // Create file metadata
             StorageMetadata metadata = new StorageMetadata.Builder()
@@ -97,58 +94,48 @@ public class UserController {
 
             // Add progress listener
             uploadTask.addOnProgressListener(taskSnapshot -> {
-                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                        Log.d(TAG, "Upload progress: " + progress + "%");
-                    })
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Get download URL after successful upload
-                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String downloadUrl = uri.toString();
-                            Log.d(TAG, "Upload successful. URL: " + downloadUrl);
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                Log.d("UserController", "Upload progress: " + progress + "%");
+            }).addOnSuccessListener(taskSnapshot -> {
+                // Get download URL after successful upload
+                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String downloadUrl = uri.toString();
+                    Log.d("UserController", "Upload successful. URL: " + downloadUrl);
 
-                            // Update user profile with new image URL
-                            user.setProfileImageUrl(downloadUrl);
-                            firebaseAttendee.updateUser(user);
+                    // Update user profile with new image URL
+                    user.setProfileImageUrl(downloadUrl);
+                    firebaseAttendee.updateUser(user);
 
-                            callback.onProfileImageUploaded(downloadUrl);
-                        }).addOnFailureListener(e -> {
-                            Log.e(TAG, "Failed to get download URL: " + e.getMessage());
-                            callback.onError("Failed to get download URL: " + e.getMessage());
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Upload failed: " + e.getMessage());
-                        callback.onError("Upload failed: " + e.getMessage());
-                    });
+                    callback.onProfileImageUploaded(downloadUrl);
+                }).addOnFailureListener(e -> {
+                    Log.e("UserController", "Failed to get download URL: " + e.getMessage());
+                    callback.onError("Failed to get download URL: " + e.getMessage());
+                });
+            }).addOnFailureListener(e -> {
+                Log.e("UserController", "Upload failed: " + e.getMessage());
+                callback.onError("Upload failed: " + e.getMessage());
+            });
 
         } catch (Exception e) {
-            Log.e(TAG, "Exception during upload: " + e.getMessage(), e);
+            Log.e("UserController", "Exception during upload: " + e.getMessage(), e);
             callback.onError("Error during upload: " + e.getMessage());
         }
     }
 
     // Removes profile image from Firebase Storage
     public void removeProfileImage(User user, ProfileImageRemovalCallback callback) {
-        if (user == null || user.getProfileImageUrl() == null || user.getProfileImageUrl().isEmpty()) {
-            callback.onError("No profile image to remove");
-            return;
-        }
-
-        try {
-            StorageReference photoRef = firebaseStorage.getReferenceFromUrl(user.getProfileImageUrl());
+        String imageUrl = user.getProfileImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            StorageReference photoRef = firebaseStorage.getReferenceFromUrl(imageUrl);
             photoRef.delete()
                     .addOnSuccessListener(aVoid -> {
                         user.setProfileImageUrl(null);
                         firebaseAttendee.updateUser(user);
                         callback.onProfileImageRemoved();
                     })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to remove image: " + e.getMessage());
-                        callback.onError("Failed to remove image: " + e.getMessage());
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Error removing profile image: " + e.getMessage());
-            callback.onError("Error removing profile image: " + e.getMessage());
+                    .addOnFailureListener(e -> callback.onError("Failed to remove image: " + e.getMessage()));
+        } else {
+            callback.onError("No profile image to remove");
         }
     }
 
@@ -176,26 +163,33 @@ public class UserController {
     }
 
     // Retrieves the user's location using FusedLocationProviderClient
-    public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, Context context,
-                                     OnLocationReceivedCallback callback) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            callback.onError("Location permissions not granted");
-            return;
-        }
+    public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, Context context, OnLocationReceivedCallback callback) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                        callback.onLocationReceived(userLocation);
-                    } else {
-                        callback.onError("Location unavailable");
-                    }
-                })
-                .addOnFailureListener(e -> callback.onError("Error retrieving location: " + e.getMessage()));
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            GeoPoint userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                            callback.onLocationReceived(userLocation);
+                        } else {
+                            callback.onError("Location unavailable");
+                        }
+                    })
+                    .addOnFailureListener(e -> callback.onError("Error retrieving location: " + e.getMessage()));
+        } else {
+            callback.onError("Location permissions not granted");
+        }
+    }
+
+    // Helper method to get MIME type from URI
+    private String getMimeType(Uri uri) {
+        if (context == null) return "image/jpeg";
+
+        ContentResolver resolver = context.getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String type = resolver.getType(uri);
+        return type != null ? type : "image/jpeg";
     }
 
     // Callback interfaces

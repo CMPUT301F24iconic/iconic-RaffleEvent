@@ -1,12 +1,13 @@
 package com.example.iconic_raffleevent.view;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
+import android.database.Cursor;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,11 +15,8 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -26,14 +24,10 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 public class ProfileActivity extends AppCompatActivity {
-    private static final String TAG = "ProfileActivity";
-    private static final int PERMISSION_REQUEST_CODE = 100;
+
+    private static final int PICK_IMAGE_REQUEST = 71;
+    private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
     private ImageView profileImageView;
     private EditText nameEditText;
@@ -48,23 +42,6 @@ public class ProfileActivity extends AppCompatActivity {
     private Uri currentImageUri;
     private User currentUser;
     private UserController userController;
-
-    // Activity Result Launcher for image picking
-    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Uri imageUri = result.getData().getData();
-                    handleSelectedImage(imageUri);
-                }
-            }
-    );
-
-    // Activity Result Launcher for permissions
-    private final ActivityResultLauncher<String[]> requestPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestMultiplePermissions(),
-            this::handlePermissionResult
-    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        uploadPhotoButton.setOnClickListener(v -> checkAndRequestPermissions());
+        uploadPhotoButton.setOnClickListener(v -> chooseImage());
         removePhotoButton.setOnClickListener(v -> removeProfileImage());
         saveButton.setOnClickListener(v -> saveProfile());
         backButton.setOnClickListener(v -> {
@@ -105,60 +82,60 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // For Android 13 and above
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_MEDIA_IMAGES});
-            } else {
-                openImagePicker();
-            }
-        } else {
-            // For Android 12 and below
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
-            } else {
-                openImagePicker();
-            }
-        }
-    }
-
-    private void handlePermissionResult(Map<String, Boolean> results) {
-        boolean allGranted = true;
-        for (Boolean result : results.values()) {
-            if (!result) {
-                allGranted = false;
-                break;
-            }
-        }
-
-        if (allGranted) {
-            openImagePicker();
-        } else {
-            Toast.makeText(this, "Permission required to select image", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+    private void chooseImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        pickImage.launch(intent);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        } else {
+            Toast.makeText(this, "No app available to select images", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void handleSelectedImage(Uri imageUri) {
-        if (imageUri != null) {
-            currentImageUri = imageUri;
-            // Display the selected image
-            Glide.with(this)
-                    .load(imageUri)
-                    .error(R.drawable.default_profile)
-                    .into(profileImageView);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            // Upload the image
-            uploadImage(imageUri);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            currentImageUri = data.getData();
+
+            try {
+                // Check file size
+                long fileSize = getFileSize(currentImageUri);
+                if (fileSize > MAX_IMAGE_SIZE) {
+                    Toast.makeText(this, "Image size too large. Please select an image under 5MB.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                // Display the selected image
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), currentImageUri);
+                profileImageView.setImageBitmap(bitmap);
+
+                // Upload the image
+                uploadImage(currentImageUri);
+
+            } catch (Exception e) {
+                Log.e("ProfileActivity", "Error processing image: " + e.getMessage(), e);
+                Toast.makeText(this, "Error processing image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private long getFileSize(Uri fileUri) {
+        try {
+            Cursor cursor = getContentResolver().query(fileUri, null, null, null, null);
+            if (cursor != null) {
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                cursor.moveToFirst();
+                long size = cursor.getLong(sizeIndex);
+                cursor.close();
+                return size;
+            }
+        } catch (Exception e) {
+            Log.e("ProfileActivity", "Error getting file size: " + e.getMessage(), e);
+        }
+        return 0;
     }
 
     private void uploadImage(Uri imageUri) {
@@ -167,14 +144,16 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        Toast.makeText(this, "Uploading image...", Toast.LENGTH_SHORT).show();
+        // Show progress
+        Toast.makeText(this, "Starting upload...", Toast.LENGTH_SHORT).show();
 
         userController.uploadProfileImage(currentUser, imageUri, new UserController.ProfileImageUploadCallback() {
             @Override
             public void onProfileImageUploaded(String imageUrl) {
                 runOnUiThread(() -> {
-                    Toast.makeText(ProfileActivity.this, "Profile picture updated",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
+
+                    // Load the new image
                     Glide.with(ProfileActivity.this)
                             .load(imageUrl)
                             .error(R.drawable.default_profile)
@@ -185,9 +164,8 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 runOnUiThread(() -> {
-                    Log.e(TAG, "Upload error: " + message);
-                    Toast.makeText(ProfileActivity.this, "Upload failed: " + message,
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, "Upload failed: " + message, Toast.LENGTH_LONG).show();
+                    Log.e("ProfileActivity", "Upload error: " + message);
                 });
             }
         });
@@ -204,8 +182,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onProfileImageRemoved() {
                 runOnUiThread(() -> {
                     profileImageView.setImageResource(R.drawable.default_profile);
-                    Toast.makeText(ProfileActivity.this, "Profile picture removed",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, "Profile picture removed", Toast.LENGTH_SHORT).show();
                 });
             }
 
@@ -220,8 +197,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveProfile() {
         if (currentUser == null) {
-            Toast.makeText(this, "Unable to save profile: User data not loaded",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to save profile: User data not loaded", Toast.LENGTH_SHORT).show();
             return;
         }
 
