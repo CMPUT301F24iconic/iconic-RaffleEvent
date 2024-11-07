@@ -188,10 +188,15 @@ public class FirebaseAttendee {
                             callback.onError("Event not found");
                         }
                     } else {
-                        callback.onError("Failed to scan QR code");
+                        if (task.getException() != null) {
+                            callback.onError(task.getException().getMessage());
+                        } else {
+                            callback.onError("Failed to scan QR code");
+                        }
                     }
                 });
     }
+
 
     // Notification-related methods
     public void getNotifications(String userId, NotificationController.GetNotificationsCallback callback) {
