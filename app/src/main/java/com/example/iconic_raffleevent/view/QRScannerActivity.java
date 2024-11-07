@@ -3,17 +3,19 @@ package com.example.iconic_raffleevent.view;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.SparseArray;
-import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
@@ -22,6 +24,7 @@ import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -42,6 +45,7 @@ public class QRScannerActivity extends AppCompatActivity {
     private UserController userController;
     private EventController eventController;
     private User currentUser;
+    private User userObj;
     private GeoPoint userLocation;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -53,14 +57,18 @@ public class QRScannerActivity extends AppCompatActivity {
         cameraPreview = findViewById(R.id.camera_preview);
         qrCodeTextView = findViewById(R.id.qr_code_text);
 
+        // Aiden Teal
         userController = getUserController();
         eventController = new EventController();
+
+        getCurrentUser();
+
+        /*
+            Setup geolocation services to obtain location when joining waitlist
+         */
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        initializeBarcodeScanner();
-    }
 
-    private void initializeBarcodeScanner() {
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
@@ -77,7 +85,8 @@ public class QRScannerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) { }
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
@@ -87,25 +96,31 @@ public class QRScannerActivity extends AppCompatActivity {
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
-            public void release() { }
+            public void release() {
+            }
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0) {
-                    qrCodeTextView.post(() -> {
-                        String qrCodeData = barcodes.valueAt(0).displayValue;
-                        qrCodeTextView.setText(qrCodeData);
-                        getUserLocation();
-                        processQRCodeData(qrCodeData);
+                    qrCodeTextView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            String qrCodeData = barcodes.valueAt(0).displayValue;
+                            qrCodeTextView.setText(qrCodeData);
+                            getUserLocation(qrCodeData);
+                            //processQRCodeData(qrCodeData);
+                        }
                     });
                 }
             }
         });
+
+
     }
 
     private void startCamera() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             try {
                 cameraSource.start(cameraPreview.getHolder());
             } catch (IOException e) {
@@ -117,9 +132,10 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     private void processQRCodeData(String qrCodeData) {
-        eventController.scanQRCode(qrCodeData, currentUser.getUserId(), userLocation, new EventController.ScanQRCodeCallback() {
+        eventController.scanQRCode(qrCodeData, userObj.getUserId(), userLocation, new EventController.ScanQRCodeCallback() {
             @Override
             public void onEventFound(String eventId) {
+                // Navigate to the event details screen
                 Intent intent = new Intent(QRScannerActivity.this, EventDetailsActivity.class);
                 intent.putExtra("eventId", eventId);
                 startActivity(intent);
@@ -127,45 +143,77 @@ public class QRScannerActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
+                // Handle the error
                 Toast.makeText(QRScannerActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void getUserLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                if (location != null) {
-                    userLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                }
-            });
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, CAMERA_PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    private UserController getUserController() {
-        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID());
-        return userControllerViewModel.getUserController();
-    }
-
-    private String getUserID() {
-        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (permissions[0].equals(Manifest.permission.CAMERA) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
-            } else if (permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getUserLocation();
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+
+    private String getUserID() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private UserController getUserController() {
+        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(getUserID());
+        userController = userControllerViewModel.getUserController();
+        return userController;
+    }
+
+    private void getCurrentUser() {
+        /* Aiden Teal code with user info from database */
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+                } else {
+                    System.out.println("User information is null");
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Cannot fetch user information");
+            }
+        });
+    }
+
+    private void getUserLocation(String qRCodeData) {
+        // Implement logic to change user settings to allow location grabbing
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request the permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request the permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        }
+        userController.retrieveUserLocation(fusedLocationClient, this, new UserController.OnLocationReceivedCallback() {
+            @Override
+            public void onLocationReceived(GeoPoint location) {
+                userLocation = location;
+                //processQRCodeData("event_event1");
+                processQRCodeData(qRCodeData);
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("There was an error");
+            }
+        });
+    }
 }
