@@ -57,6 +57,10 @@ public class UserController {
         firebaseAttendee.updateUser(user);
     }
 
+    public void updateUser(User user) {
+        firebaseAttendee.updateUser(user);
+    }
+
     // Uploads profile image to Firebase Storage
     public void uploadProfileImage(User user, Uri imageUri, ProfileImageUploadCallback callback) {
         if (imageUri == null) {

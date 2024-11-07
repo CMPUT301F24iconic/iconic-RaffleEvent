@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
@@ -21,6 +24,7 @@ import com.example.iconic_raffleevent.controller.FacilityController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -55,6 +59,14 @@ public class CreateEventActivity extends AppCompatActivity {
     EventController eventController;
     FacilityController facilityController;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton menuButton;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
     // Linked Facility
     String userFacilityId;
 
@@ -72,6 +84,33 @@ public class CreateEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        // Initialize DrawerLayout and NavigationView
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+
+        // Navigation Bars
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        menuButton = findViewById(R.id.menu_button);
+
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, ProfileActivity.class));
+        });
+
+        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         // Initialize Views
         initializeViews();
@@ -92,12 +131,16 @@ public class CreateEventActivity extends AppCompatActivity {
                 @Override
                 public void onFacilityExists(String facilityId) {
                     userFacilityId = facilityId;
+                    Toast.makeText(CreateEventActivity.this, "Successfully attached facility", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onFacilityNotExists() {
+                    Toast.makeText(CreateEventActivity.this, "You do not own a facility", Toast.LENGTH_SHORT).show();
                     // If user does not have facility, redirect to create facility page
-                    startActivity(new Intent(CreateEventActivity.this, CreateFacilityActivity.class));
+                    Intent intent = new Intent(CreateEventActivity.this, CreateFacilityActivity.class);
+                    intent.putExtra("userId", userObj.getUserId());
+                    startActivity(intent);
                 }
 
                 @Override
@@ -117,11 +160,15 @@ public class CreateEventActivity extends AppCompatActivity {
         saveEventButton.setOnClickListener(v -> {
             // Check to ensure all inputs are valid
             validateInputFields();
+            Integer maxAttendees = null;
 
             if (!inputError) {
                 // Check to ensure facility is linked
                 if (userFacilityId.isEmpty()) {
                     return;
+                }
+                if (maxAttendeesText.getText().toString() != null) {
+                    maxAttendees = Integer.valueOf(maxAttendeesText.getText().toString());
                 }
 
                 // Create a new event and save it to firebase
@@ -135,6 +182,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 eventObj.setEventEndDate(endDateText.getText().toString());
                 eventObj.setGeolocationRequired(geolocationRequriedSwitch.isChecked());
                 String hashed_qr_data = "event_" + eventObj.getEventId();
+                eventObj.setMaxAttendees(maxAttendees);
                 eventObj.setQrCode(hashed_qr_data);
                 eventObj.setFacilityId(userFacilityId);
 
@@ -171,7 +219,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
         // Set up ViewModel
         userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(deviceID);
+        userControllerViewModel.setUserController(deviceID, getApplicationContext());
         userController = userControllerViewModel.getUserController();
 
         // Fetch User Information

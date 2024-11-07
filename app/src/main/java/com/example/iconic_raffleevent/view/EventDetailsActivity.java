@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -58,6 +59,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private GeoPoint userLocation;
     private Event eventObj;
 
+    private Boolean isUserLoaded;
+    private Boolean isEventLoaded;
+
     // Geolocation
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -65,6 +69,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+
+        // set async checks
+        isUserLoaded = false;
+        isEventLoaded = false;
 
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -142,8 +150,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
-                updateUI(event);
                 eventObj = event;
+                isEventLoaded = true;
+                checkUIUpdate();
             }
 
             @Override
@@ -166,22 +175,39 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventLocationTextView.setText(event.getEventLocation());
         eventDateTextView.setText(event.getEventStartDate());
 
+        if (event.getWaitingList().contains(userObj.getUserId())) {
+            joinWaitingListButton.setVisibility(View.INVISIBLE);
+            leaveWaitingListButton.setVisibility(View.VISIBLE);
+        } else {
+            joinWaitingListButton.setVisibility(View.VISIBLE);
+            leaveWaitingListButton.setVisibility(View.INVISIBLE);
+        }
+
         if (event.isGeolocationRequired()) {
             showGeolocationWarning();
         }
     }
 
     private void joinWaitingList() {
+        // Ensure user has valid email and phone number
+        if (userObj.getEmail().isEmpty() || userObj.getPhoneNo().isEmpty()) {
+            Toast.makeText(EventDetailsActivity.this, "You must have a valid email and phone number to join", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
+        }
         // Check if event requires geolocation
-        if (eventObj.isGeolocationRequired()) {
+        else if (eventObj.isGeolocationRequired()) {
             // Bring up geolocation popup
             showGeolocationDialog();
-        } else {
+        }
+        else {
             // Add user to waiting list
             eventController.joinWaitingListWithoutLocation(eventId, userObj.getUserId(), new EventController.JoinWaitingListCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
+                    // Update Button UI
+                    joinWaitingListButton.setVisibility(View.INVISIBLE);
+                    leaveWaitingListButton.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -198,6 +224,10 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show();
+
+                // Update Button UI
+                joinWaitingListButton.setVisibility(View.VISIBLE);
+                leaveWaitingListButton.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -263,6 +293,9 @@ public class EventDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
+                // Update Button UI
+                joinWaitingListButton.setVisibility(View.INVISIBLE);
+                leaveWaitingListButton.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -281,6 +314,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                     userObj = user;
                     joinWaitingListButton.setEnabled(true);
                     leaveWaitingListButton.setEnabled(true);
+                    isUserLoaded = true;
+                    checkUIUpdate();
                 } else {
                     System.out.println("User information is null");
                 }
@@ -291,6 +326,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                 System.out.println("Cannot fetch user information");
             }
         });
+    }
+
+    private void checkUIUpdate() {
+        if (isEventLoaded && isUserLoaded) {
+            updateUI(eventObj);
+        }
     }
 
     /*
