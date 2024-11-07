@@ -9,6 +9,7 @@ import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.database.Cursor;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,6 +28,8 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
+
+import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator class
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -234,6 +237,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+
     private void saveProfile() {
         if (currentUser == null) {
             Toast.makeText(this, "Unable to save profile: User data not loaded", Toast.LENGTH_SHORT).show();
@@ -251,10 +255,21 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        // Validate email format
+        if (!isValidEmail(email)) {
+            emailEditText.setError("Please enter a valid email address");
+            emailEditText.requestFocus();
+            return;
+        }
+
         userController.updateProfile(currentUser, name, email, phoneNo);
         userController.setNotificationsEnabled(currentUser, notificationsEnabled);
 
         Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isValidEmail(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void loadUserProfile() {
@@ -285,16 +300,24 @@ public class ProfileActivity extends AppCompatActivity {
         notificationsSwitch.setChecked(user.isNotificationsEnabled());
 
         String profileImageUrl = user.getProfileImageUrl();
+
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            // Load profile image from URL if available
             Glide.with(this)
                     .load(profileImageUrl)
                     .error(R.drawable.default_profile)
                     .into(profileImageView);
         } else {
-            profileImageView.setImageResource(R.drawable.default_profile);
+            // Generate avatar if no profile image is available
+            generateAndSetAvatar(user.getName());
         }
     }
 
+    private void generateAndSetAvatar(String name) {
+        // Generate an avatar bitmap using the user's name initials
+        Bitmap avatar = AvatarGenerator.generateAvatar(name, 120); // Size 120 is used for demonstration
+        profileImageView.setImageBitmap(avatar); // Set the generated avatar as profile image
+    }
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
