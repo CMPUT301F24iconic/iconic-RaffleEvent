@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.SparseArray;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +23,11 @@ import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -55,10 +60,15 @@ public class QRScannerActivity extends AppCompatActivity {
         // Aiden Teal
         userController = getUserController();
         eventController = new EventController();
+
         getCurrentUser();
-        //currentUser = getCurrentUser();
 
         /*
+            Setup geolocation services to obtain location when joining waitlist
+         */
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
@@ -98,15 +108,15 @@ public class QRScannerActivity extends AppCompatActivity {
                         public void run() {
                             String qrCodeData = barcodes.valueAt(0).displayValue;
                             qrCodeTextView.setText(qrCodeData);
-                            getUserLocation();
-                            processQRCodeData(qrCodeData);
+                            getUserLocation(qrCodeData);
+                            //processQRCodeData(qrCodeData);
                         }
                     });
                 }
             }
         });
 
-         */
+
     }
 
     private void startCamera() {
@@ -170,9 +180,6 @@ public class QRScannerActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-
-                    // "Scan" QR code and see if it works
-                    processQRCodeData("event_event1");
                 } else {
                     System.out.println("User information is null");
                 }
@@ -185,13 +192,22 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
-    private void getUserLocation() {
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+    private void getUserLocation(String qRCodeData) {
+        // Implement logic to change user settings to allow location grabbing
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request the permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // request the permission
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        }
+        userController.retrieveUserLocation(fusedLocationClient, this, new UserController.OnLocationReceivedCallback() {
             @Override
-            public void onSuccess(Location location) {
-                Double latitude = location.getLatitude();
-                Double longitude = location.getLongitude();
-                userLocation = new GeoPoint(latitude, longitude);
+            public void onLocationReceived(GeoPoint location) {
+                userLocation = location;
+                //processQRCodeData("event_event1");
+                processQRCodeData(qRCodeData);
             }
         });
     }
