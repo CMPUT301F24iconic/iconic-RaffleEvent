@@ -97,6 +97,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".view.CreateEventActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".view.DisplayQRCodeActivity"
             android:exported="false" />
 

@@ -26,12 +26,13 @@ public class Event {
     private List<String> registeredAttendees;
     private String qrCode;
     private String organizerId;
+    private String facilityId;
     private ArrayList<String> declinedList;
     private ArrayList<String> invitedList;
     private ArrayList<GeoPoint> entrantLocations;
 
-    // Qrcode Bitmap
-    private Bitmap eventQRImage;
+    // Qrcode Url
+    private String eventQrUrl;
 
     public Event() {
         declinedList = new ArrayList<>();
@@ -65,6 +66,14 @@ public class Event {
 
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
+    }
+
+    public void setFacilityId(String facilityId) {
+        this.facilityId = facilityId;
+    }
+
+    public String getFacilityId() {
+        return facilityId;
     }
 
     public String getEventLocation() {
@@ -163,17 +172,12 @@ public class Event {
         this.qrCode = qrCode;
     }
 
-    public void setBitmap() {
-        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-        try {
-            this.eventQRImage = barcodeEncoder.encodeBitmap(this.qrCode, BarcodeFormat.QR_CODE, 400, 400);
-        } catch (WriterException e) {
-            throw new RuntimeException(e);
-        }
+    public void setEventQrUrl(String qrUrl) {
+        this.eventQrUrl = qrUrl;
     }
 
-    public Bitmap getEventQR() {
-        return eventQRImage;
+    public String getEventQrUrl() {
+        return this.eventQrUrl;
     }
 
     public void setOrganizerID(String organizerID) {
