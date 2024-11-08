@@ -75,7 +75,23 @@ public class FirebaseAttendee {
             }
         });
     }
+    // Retrieve all users
+    public void getAllUsers(UserController.UserListCallback callback) {
+        // Fetch all users from Firebase and pass to callback
+    }
 
+    // Zhiyuan - Delete a user profile
+    // Method to delete a user by userId
+    public void deleteUser(String userId, DeleteUserCallback callback) {
+        db.collection("users").document(userId).delete()
+                .addOnSuccessListener(aVoid -> callback.onUserDeleted(true))
+                .addOnFailureListener(e -> callback.onUserDeleted(false));
+    }
+
+    // Callback for deletion success or failure
+    public interface DeleteUserCallback {
+        void onUserDeleted(boolean success);
+    }
     public void updateWaitingList(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("waitingListEventIds", user.getWaitingListEventIds());
@@ -149,6 +165,24 @@ public class FirebaseAttendee {
         });
     }
 
+    /**
+     * Deletes an event with the specified event ID from Firestore.
+     *
+     * @param eventId  The ID of the event to delete.
+     * @param callback Callback interface to notify the success or failure of the deletion.
+     */
+    public void deleteEvent(String eventId, DeleteEventCallback callback) {
+        db.collection("events").document(eventId)
+                .delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
+    public interface DeleteEventCallback {
+        void onSuccess();
+
+        void onError(String message);
+    }
     public void updateEventDetails(Event event) {
         DocumentReference eventRef = eventsCollection.document(event.getEventId());
         eventRef.set(event);

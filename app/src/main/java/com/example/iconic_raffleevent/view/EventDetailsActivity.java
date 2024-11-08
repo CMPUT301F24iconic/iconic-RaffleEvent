@@ -99,7 +99,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         joinWaitingListButton = findViewById(R.id.joinWaitingListButton);
         leaveWaitingListButton = findViewById(R.id.leaveWaitingListButton);
 
-        //Aiden Teal
         joinWaitingListButton.setEnabled(false);
         leaveWaitingListButton.setEnabled(false);
 
@@ -163,7 +162,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void updateUI(Event event) {
-        System.out.println(event);
         if (event != null) {
             Glide.with(this)
                     .load(event.getEventImageUrl())
@@ -274,7 +272,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void getUserLocation() {
-        userController.retrieveUserLocation(fusedLocationClient, this, new UserController.OnLocationReceivedCallback() {
+        userController.retrieveUserLocation(fusedLocationClient, new UserController.OnLocationReceivedCallback() {
             @Override
             public void onLocationReceived(GeoPoint location) {
                 userLocation = location;
@@ -306,7 +304,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void loadUserProfile() {
-        /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
@@ -334,17 +331,13 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    Aiden Teal function to get userID
-     */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    // Zhiyuan Li
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID(),getApplicationContext());
+        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
         return userController;
     }

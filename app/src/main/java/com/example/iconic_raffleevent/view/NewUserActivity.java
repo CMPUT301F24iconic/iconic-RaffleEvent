@@ -54,23 +54,22 @@ public class NewUserActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-            User newUser = new User();
-            newUser.setUsername(username);
-            newUser.setUserId(getUserId());
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setUserId(getUserId());
 
-            userController.addUser(newUser);
+        userController.addUser(newUser, new UserController.AddUserCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(NewUserActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                navigateToEventList();
+            }
 
-            // Show success message
-            Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show();
-
-            // Navigate to event list
-            navigateToEventList();
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Error creating account: " + e.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onError(String message) {
+                Toast.makeText(NewUserActivity.this, "Error creating account: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String getUserId() {

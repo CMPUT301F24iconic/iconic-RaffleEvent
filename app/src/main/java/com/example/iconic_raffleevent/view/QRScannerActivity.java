@@ -207,7 +207,7 @@ public class QRScannerActivity extends AppCompatActivity {
             return;
         }
 
-        userController.retrieveUserLocation(fusedLocationClient, this,
+        userController.retrieveUserLocation(fusedLocationClient,
                 new UserController.OnLocationReceivedCallback() {
                     @Override
                     public void onLocationReceived(GeoPoint location) {
