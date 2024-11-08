@@ -140,8 +140,8 @@ public class EventController {
         firebaseAttendee.scanQRCode(qrCodeData, userId, location, callback);
     }
 
-    public void getUserWaitingListEvents(String userId, EventListCallback callback) {
-        firebaseAttendee.getUserWaitingListEvents(userId, callback);
+    public void getUserEvents(String userId, EventListCallback callback) {
+        firebaseAttendee.getUserEvents(userId, callback);
     }
 
     public interface UploadEventPosterCallback {

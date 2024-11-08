@@ -20,11 +20,13 @@ public class EventAdapter extends ArrayAdapter<Event> {
 
     private Context context;
     private List<Event> eventList;
+    private String currentUserId;
 
-    public EventAdapter(Context context, List<Event> eventList) {
+    public EventAdapter(Context context, List<Event> eventList, String currentUserId) {
         super(context, 0, eventList);
         this.context = context;
         this.eventList = eventList;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
@@ -34,20 +36,31 @@ public class EventAdapter extends ArrayAdapter<Event> {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_event, parent, false);
         }
 
-        ImageView eventImageView = convertView.findViewById(R.id.event_image); // Changed ID
-        TextView eventTitleTextView = convertView.findViewById(R.id.event_title); // Changed ID
-        TextView eventDateTextView = convertView.findViewById(R.id.event_date);  // Changed ID
+        ImageView eventImageView = convertView.findViewById(R.id.event_image);
+        TextView eventTitleTextView = convertView.findViewById(R.id.event_title);
+        TextView eventDateTextView = convertView.findViewById(R.id.event_date);
+        ImageView manageEventIcon = convertView.findViewById(R.id.manage_event_icon); // Add the icon reference
 
         Event event = eventList.get(position);
 
+        // Load event image
         Glide.with(context)
                 .load(event.getEventImageUrl())
                 .placeholder(R.drawable.placeholder_image)
                 .into(eventImageView);
 
+        // Set event title and date
         eventTitleTextView.setText(event.getEventTitle());
         eventDateTextView.setText(event.getEventStartDate());
 
+        // Show the manage event icon only if the current user is the organizer
+        if (event.getOrganizerID().equals(currentUserId)) {
+            manageEventIcon.setVisibility(View.VISIBLE);
+        } else {
+            manageEventIcon.setVisibility(View.GONE);
+        }
+
         return convertView;
     }
+
 }

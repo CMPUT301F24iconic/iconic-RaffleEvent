@@ -2,6 +2,7 @@
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -136,18 +137,56 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/leaveWaitingListButton" />
 
-        <Button
-            android:id="@+id/create_event_button"
-            android:layout_width="175dp"
+        <!-- Organizer-specific Buttons -->
+        <LinearLayout
+            android:id="@+id/organizer_buttons_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/large_margin"
-            android:backgroundTint="@color/buttonPrimary"
-            android:text="Create Event"
-            android:textColor="@color/textColorOnPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_button" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navbar">
+
+            <!-- Edit Button -->
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="Edit"
+                android:textColor="@color/textColorOnPrimary"
+                android:visibility="gone"/>
+
+            <!-- Manage Button -->
+            <Button
+                android:id="@+id/manage_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="Manage"
+                android:textColor="@color/textColorOnPrimary"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+
+        <!--        <Button-->
+<!--            android:id="@+id/create_event_button"-->
+<!--            android:layout_width="175dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/large_margin"-->
+<!--            android:backgroundTint="@color/buttonPrimary"-->
+<!--            android:text="Create Event"-->
+<!--            android:textColor="@color/textColorOnPrimary"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/map_button" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

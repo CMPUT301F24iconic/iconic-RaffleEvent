@@ -5,7 +5,7 @@
     android:padding="8dp"
     android:background="@color/white">
 
-    <!-- Back Button -->
+    <!-- Menu Button -->
     <ImageButton
         android:id="@+id/menu_button"
         android:layout_width="wrap_content"
