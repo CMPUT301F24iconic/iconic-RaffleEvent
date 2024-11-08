@@ -1,7 +1,9 @@
 package com.example.iconic_raffleevent.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +30,19 @@ public class WaitingListActivity extends AppCompatActivity {
     private Event eventObj;
     private Button sampleAttendeesButton;
 
+    // Navigation UI
+//    private DrawerLayout drawerLayout;
+//    private NavigationView navigationView;
+
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+//    private ImageButton menuButton;
+
+    // Top Nav bar
+    private ImageButton notificationButton;
+
     /**
      * Called when the activity is starting. Sets up the layout, initializes components, and
      * begins loading event details and the waiting list of users.
@@ -38,6 +53,19 @@ public class WaitingListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_list);
+
+        // Initialize DrawerLayout and NavigationView
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
+
+        // in onCreate
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        notificationButton = findViewById(R.id.notification_icon);
+//        menuButton = findViewById(R.id.menu_button);
+
+//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Initialize UI elements
         userRecyclerView = findViewById(R.id.userRecyclerView);
@@ -62,6 +90,25 @@ public class WaitingListActivity extends AppCompatActivity {
 
         // Set listener for sampling attendees
         sampleAttendeesButton.setOnClickListener(v -> sampleAttendees());
+
+        // Top nav bar
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(WaitingListActivity.this, NotificationsActivity.class))
+        );
+//        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(WaitingListActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(WaitingListActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(WaitingListActivity.this, ProfileActivity.class));
+        });
     }
 
     /**
