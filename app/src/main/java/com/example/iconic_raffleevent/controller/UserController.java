@@ -1,14 +1,10 @@
 package com.example.iconic_raffleevent.controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -17,51 +13,59 @@ import androidx.core.app.ActivityCompat;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 public class UserController {
     private static final String TAG = "UserController";
-    private FirebaseAttendee firebaseAttendee;
-    private FirebaseStorage firebaseStorage;
-    private StorageReference storageReference;
-    private String currentUserID;
-    private Context context;
+    private final FirebaseFirestore firestore;
+    private final FirebaseStorage firebaseStorage;
+    private final StorageReference storageReference;
+    private final String currentUserID;
+    private final Context context;
 
-    // Constructor with just userID
-    public UserController(String userID) {
+    public UserController(String userID, Context context) {
         this.currentUserID = userID;
-        this.firebaseAttendee = new FirebaseAttendee();
+        this.context = context;
+        this.firestore = FirebaseFirestore.getInstance();
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.storageReference = firebaseStorage.getReference();
     }
 
-    // Constructor with both userID and context
-    public UserController(String userID, Context context) {
-        this(userID);
-        this.context = context;
+    // Regex pattern for validating phone numbers (US/international format)
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?[1-9]\\d{1,14}$");
+
+    public void addUser(User user, AddUserCallback callback) {
+        firestore.collection("User").document(user.getUserId())
+                .set(user)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to add user: " + e.getMessage()));
     }
 
-    // Adds a new user to the database
-    public void addUser(User user) {
-        firebaseAttendee.updateUser(user);
-    }
-
-    // Updates the profile with new details
+    // Method to validate and update the user profile with a valid phone number
     public void updateProfile(User user, String name, String email, String phoneNo) {
+        if (!isValidPhoneNumber(phoneNo)) {
+            Log.e(TAG, "Invalid phone number format");
+            return;
+        }
+
         user.setName(name);
         user.setEmail(email);
         user.setPhoneNo(phoneNo);
-        firebaseAttendee.updateUser(user);
+        updateUser(user); // Call the simplified version without callback
     }
 
-    public void updateUser(User user) {
-        firebaseAttendee.updateUser(user);
+    // Helper method to validate phone number format
+    private boolean isValidPhoneNumber(String phoneNo) {
+        return phoneNo != null && PHONE_PATTERN.matcher(phoneNo).matches();
     }
 
-    // Uploads profile image to Firebase Storage
     public void uploadProfileImage(User user, Uri imageUri, ProfileImageUploadCallback callback) {
         if (imageUri == null) {
             callback.onError("Image URI is null");
@@ -74,59 +78,40 @@ public class UserController {
         }
 
         try {
-            // Log the initial upload attempt
-            Log.d("UserController", "Starting image upload for user: " + user.getUserId());
-            Log.d("UserController", "Image URI: " + imageUri.toString());
-
-            // Generate unique filename
-            String timeStamp = String.valueOf(System.currentTimeMillis());
-            String filename = "profile_" + timeStamp + ".jpg";
-
-            // Create the full storage path
+            Log.d(TAG, "Starting image upload for user: " + user.getUserId());
+            String filename = "profile_" + System.currentTimeMillis() + ".jpg";
             String storagePath = String.format("profile_images/%s/%s", user.getUserId(), filename);
-            StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(storagePath);
+            StorageReference imageRef = storageReference.child(storagePath);
 
-            Log.d("UserController", "Storage path: " + storagePath);
-
-            // Create file metadata
             StorageMetadata metadata = new StorageMetadata.Builder()
                     .setContentType("image/jpeg")
                     .build();
 
-            // Start upload task
             UploadTask uploadTask = imageRef.putFile(imageUri, metadata);
+            uploadTask.addOnSuccessListener(taskSnapshot ->
+                            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                String downloadUrl = uri.toString();
+                                Log.d(TAG, "Upload successful. URL: " + downloadUrl);
 
-            // Add progress listener
-            uploadTask.addOnProgressListener(taskSnapshot -> {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                Log.d("UserController", "Upload progress: " + progress + "%");
-            }).addOnSuccessListener(taskSnapshot -> {
-                // Get download URL after successful upload
-                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String downloadUrl = uri.toString();
-                    Log.d("UserController", "Upload successful. URL: " + downloadUrl);
+                                user.setProfileImageUrl(downloadUrl);
+                                updateUser(user, new UpdateUserCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        callback.onProfileImageUploaded(downloadUrl);
+                                    }
 
-                    // Update user profile with new image URL
-                    user.setProfileImageUrl(downloadUrl);
-                    firebaseAttendee.updateUser(user);
-
-                    callback.onProfileImageUploaded(downloadUrl);
-                }).addOnFailureListener(e -> {
-                    Log.e("UserController", "Failed to get download URL: " + e.getMessage());
-                    callback.onError("Failed to get download URL: " + e.getMessage());
-                });
-            }).addOnFailureListener(e -> {
-                Log.e("UserController", "Upload failed: " + e.getMessage());
-                callback.onError("Upload failed: " + e.getMessage());
-            });
-
+                                    @Override
+                                    public void onError(String message) {
+                                        callback.onError("Failed to update user profile with image URL: " + message);
+                                    }
+                                });
+                            }).addOnFailureListener(e -> callback.onError("Failed to get download URL: " + e.getMessage())))
+                    .addOnFailureListener(e -> callback.onError("Upload failed: " + e.getMessage()));
         } catch (Exception e) {
-            Log.e("UserController", "Exception during upload: " + e.getMessage(), e);
             callback.onError("Error during upload: " + e.getMessage());
         }
     }
 
-    // Removes profile image from Firebase Storage
     public void removeProfileImage(User user, ProfileImageRemovalCallback callback) {
         String imageUrl = user.getProfileImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -134,8 +119,17 @@ public class UserController {
             photoRef.delete()
                     .addOnSuccessListener(aVoid -> {
                         user.setProfileImageUrl(null);
-                        firebaseAttendee.updateUser(user);
-                        callback.onProfileImageRemoved();
+                        updateUser(user, new UpdateUserCallback() {
+                            @Override
+                            public void onSuccess() {
+                                callback.onProfileImageRemoved();
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                callback.onError("Failed to update user profile after image removal: " + message);
+                            }
+                        });
                     })
                     .addOnFailureListener(e -> callback.onError("Failed to remove image: " + e.getMessage()));
         } else {
@@ -143,31 +137,44 @@ public class UserController {
         }
     }
 
-    // Enables or disables notifications for the user
     public void setNotificationsEnabled(User user, boolean enabled) {
         user.setNotificationsEnabled(enabled);
-        firebaseAttendee.updateNotificationPreference(user);
+        updateUser(user);
     }
 
-    // Sets win notifications preference for the user
     public void setWinNotificationsEnabled(User user, boolean enabled) {
         user.setWinNotificationPref(enabled);
-        firebaseAttendee.updateWinNotificationPreference(user);
+        updateUser(user);
     }
 
-    // Sets lose notifications preference for the user
     public void setLoseNotificationsEnabled(User user, boolean enabled) {
         user.setLoseNotificationPref(enabled);
-        firebaseAttendee.updateLoseNotificationPreference(user);
+        updateUser(user);
     }
 
-    // Retrieves the current user profile
     public void getUserInformation(UserFetchCallback callback) {
-        firebaseAttendee.getUser(currentUserID, callback);
+        if (currentUserID == null || currentUserID.isEmpty()) {
+            callback.onError("User ID is missing");
+            return;
+        }
+        firestore.collection("User").document(currentUserID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        User user = documentSnapshot.toObject(User.class);
+                        if (user != null) {
+                            callback.onUserFetched(user);
+                        } else {
+                            callback.onError("Failed to parse user data.");
+                        }
+                    } else {
+                        callback.onError("User not found");
+                    }
+                })
+                .addOnFailureListener(e -> callback.onError("Error fetching user: " + e.getMessage()));
     }
 
-    // Retrieves the user's location using FusedLocationProviderClient
-    public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, Context context, OnLocationReceivedCallback callback) {
+    public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, OnLocationReceivedCallback callback) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
@@ -186,17 +193,41 @@ public class UserController {
         }
     }
 
-    // Helper method to get MIME type from URI
-    private String getMimeType(Uri uri) {
-        if (context == null) return "image/jpeg";
+    public void getAllUsers(UserListCallback callback) {
+        firestore.collection("User").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                ArrayList<User> users = new ArrayList<>();
+                task.getResult().forEach(document -> users.add(document.toObject(User.class)));
+                callback.onUsersFetched(users);
+            } else {
+                callback.onError("Failed to fetch user list");
+            }
+        });
+    }
 
-        ContentResolver resolver = context.getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        String type = resolver.getType(uri);
-        return type != null ? type : "image/jpeg";
+    public void deleteUser(String userId, DeleteUserCallback callback) {
+        firestore.collection("User").document(userId).delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to delete user: " + e.getMessage()));
+    }
+
+    private void updateUser(User user) {
+        firestore.collection("User").document(user.getUserId()).set(user)
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to update user: " + e.getMessage()));
+    }
+
+    private void updateUser(User user, UpdateUserCallback callback) {
+        firestore.collection("User").document(user.getUserId()).set(user)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to update user: " + e.getMessage()));
     }
 
     // Callback interfaces
+    public interface UserListCallback {
+        void onUsersFetched(ArrayList<User> users);
+        void onError(String message);
+    }
+
     public interface ProfileImageUploadCallback {
         void onProfileImageUploaded(String imageUrl);
         void onError(String message);
@@ -215,5 +246,28 @@ public class UserController {
     public interface OnLocationReceivedCallback {
         void onLocationReceived(GeoPoint location);
         void onError(String message);
+    }
+
+    public interface DeleteUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface AddUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface UpdateUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    private String getMimeType(Uri uri) {
+        if (context == null) return "image/jpeg";
+        ContentResolver resolver = context.getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String type = resolver.getType(uri);
+        return type != null ? type : "image/jpeg";
     }
 }

@@ -6,10 +6,10 @@ import java.util.List;
 
 /**
  * Represents a user in the system.
- * Each user is associated with their device using the Android ID, and they can optionally provide
- * their email and phone number when signing up for events. Users can have multiple roles.
- **/
-
+ * Each user is associated with their device using a unique user ID.
+ * Users can provide optional details like email, phone, and a profile image.
+ * Users can also have multiple roles, such as "entrant" or "organizer."
+ */
 public class User {
 
     private String userId;
@@ -24,30 +24,29 @@ public class User {
     private boolean notificationsEnabled;
     private boolean winNotificationPref;
     private boolean loseNotificationPref;
-    // private Facility facility;
     private String facilityId;
-
-    // Needed for testing role selection page
     private List<String> roles;
 
+    // Constructor
     public User() {
-        waitingListEventIds = new ArrayList<>();
-        registeredEventIds = new ArrayList<>();
-        notificationsEnabled = true;
-        winNotificationPref = true;
-        loseNotificationPref = true;
-        locationPermission = false;
-        userId = "";
-        username = "";
-        name = "";
-        email = "";
-        phoneNo = "";
-        profileImageUrl = "";
+        this.waitingListEventIds = new ArrayList<>();
+        this.registeredEventIds = new ArrayList<>();
+        this.notificationsEnabled = true;
+        this.winNotificationPref = true;
+        this.loseNotificationPref = true;
+        this.locationPermission = false;
+        this.userId = "";
+        this.username = "";
+        this.name = "";
+        this.email = "";
+        this.phoneNo = "";
+        this.profileImageUrl = "";
+        this.facilityId = "";
         this.roles = new ArrayList<>();
         this.roles.add("entrant");
     }
 
-    // Getters and setters
+    // Getters and Setters
 
     public String getUserId() {
         return userId;
@@ -113,8 +112,8 @@ public class User {
         this.waitingListEventIds = waitingListEventIds;
     }
 
-    public void addWaitingListEvent(String waitlistID) {
-        this.waitingListEventIds.add(waitlistID);
+    public void addWaitingListEvent(String eventId) {
+        this.waitingListEventIds.add(eventId);
     }
 
     public List<String> getRegisteredEventIds() {
@@ -125,8 +124,8 @@ public class User {
         this.registeredEventIds = registeredEventIds;
     }
 
-    public void addRegisteredEvent(String registeredEventID) {
-        this.registeredEventIds.add(registeredEventID);
+    public void addRegisteredEvent(String eventId) {
+        this.registeredEventIds.add(eventId);
     }
 
     public boolean isNotificationsEnabled() {
@@ -137,15 +136,6 @@ public class User {
         this.notificationsEnabled = notificationsEnabled;
     }
 
-    // Duong Hoang
-    public boolean isLoseNotificationPref() {
-        return loseNotificationPref;
-    }
-
-    public void setLoseNotificationPref(boolean loseNotificationPref) {
-        this.loseNotificationPref = loseNotificationPref;
-    }
-
     public boolean isWinNotificationPref() {
         return winNotificationPref;
     }
@@ -153,22 +143,13 @@ public class User {
     public void setWinNotificationPref(boolean winNotificationPref) {
         this.winNotificationPref = winNotificationPref;
     }
-    //
 
-    public List<String> getRoles() {
-        return this.roles;
+    public boolean isLoseNotificationPref() {
+        return loseNotificationPref;
     }
 
-    public void addOrganizerRole() {
-        this.roles.add("organizer");
-    }
-
-    public void removeRole(String role) {
-        this.roles.remove(role);
-    }
-
-    public boolean checkAdminRole() {
-        return this.roles.contains("admin");
+    public void setLoseNotificationPref(boolean loseNotificationPref) {
+        this.loseNotificationPref = loseNotificationPref;
     }
 
     public String getFacilityId() {
@@ -179,21 +160,34 @@ public class User {
         this.facilityId = facilityId;
     }
 
-    //public Facility getFacility() {
-        //return facility;
-    //}
+    public List<String> getRoles() {
+        return roles;
+    }
 
-    //public void setFacility(Facility facility) {
-        //this.facility = facility;
-    //}
+    public void addRole(String role) {
+        if (!roles.contains(role)) {
+            this.roles.add(role);
+        }
+    }
+
+    public void removeRole(String role) {
+        this.roles.remove(role);
+    }
+
+    public boolean checkAdminRole() {
+        return this.roles.contains("admin");
+    }
+
+    // Utility methods
 
     /**
-    * Prompts the user to provide their email and phone number when signing up for an event.
-    * This can be called from the event sign-up process.
-    *
-    * @param email The email provided by the user.
-    * @param phoneNo The phone number provided by the user.
-    */
+     * Updates user information with provided name, email, and phone number.
+     * Typically called during event sign-up.
+     *
+     * @param name    User's name.
+     * @param email   User's email address.
+     * @param phoneNo User's phone number.
+     */
     public void signUpForEvent(String name, String email, String phoneNo) {
         this.name = name;
         this.email = email;

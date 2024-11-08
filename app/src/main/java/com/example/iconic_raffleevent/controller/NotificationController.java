@@ -17,7 +17,7 @@ public class NotificationController {
 
     public NotificationController() {
         db = FirebaseFirestore.getInstance();
-        notificationsCollection = db.collection("notifications");
+        notificationsCollection = db.collection("Notification");
         firebaseAttendee = new FirebaseAttendee();
     }
 
