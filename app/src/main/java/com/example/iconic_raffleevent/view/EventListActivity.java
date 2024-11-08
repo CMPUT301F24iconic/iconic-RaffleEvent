@@ -37,6 +37,7 @@ public class EventListActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton menuButton;
+    private ImageButton notificationButton;
 
     private User userObj;
     private UserController userController;
@@ -68,6 +69,7 @@ public class EventListActivity extends AppCompatActivity {
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
+        notificationButton = findViewById(R.id.notification_icon);
     }
 
     private void initializeControllers() {
@@ -98,6 +100,10 @@ public class EventListActivity extends AppCompatActivity {
         );
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(EventListActivity.this, NotificationsActivity.class))
+        );
     }
 
     private void loadData() {

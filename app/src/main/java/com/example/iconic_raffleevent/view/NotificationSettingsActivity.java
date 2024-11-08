@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -63,6 +64,26 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private void setupListeners() {
         saveButton.setOnClickListener(v -> saveNotificationSettings());
         backButton.setOnClickListener(v -> navigateToNotifications());
+
+        // Enable notifications switch logic
+        enableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    // Turn win and lose preference switches off
+                    winSwitch.setChecked(false);
+                    loseSwitch.setChecked(false);
+                    // Disable the two switches
+                    winSwitch.setEnabled(false);
+                    loseSwitch.setEnabled(false);
+                } else {
+                    // Enable the two switches
+                    winSwitch.setEnabled(true);
+                    loseSwitch.setEnabled(true);
+                }
+
+            }
+        });
 
         // Footer buttons logic with lambda expressions
         homeButton.setOnClickListener(v -> startActivity(new Intent(this, EventListActivity.class)));

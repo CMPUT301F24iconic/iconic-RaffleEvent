@@ -35,22 +35,23 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_toStartOf="@+id/profile_icon"
+        android:layout_alignParentEnd="true"
         android:background="@null"
         android:contentDescription="Notifications"
         android:src="@drawable/notifications_icon" />
 
     <!-- Profile Icon -->
-    <ImageButton
-        android:id="@+id/profile_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@null"
-        android:contentDescription="Profile"
-        android:src="@drawable/profile_icon" />
+<!--    Remove redundant profile button-->
+<!--    <ImageButton-->
+<!--        android:id="@+id/profile_icon"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:background="@null"-->
+<!--        android:contentDescription="Profile"-->
+<!--        android:src="@drawable/profile_icon" />-->
 
 </RelativeLayout>

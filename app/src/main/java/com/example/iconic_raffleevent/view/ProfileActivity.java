@@ -54,6 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton menuButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private ImageButton notificationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,12 @@ public class ProfileActivity extends AppCompatActivity {
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(ProfileActivity.this, NotificationsActivity.class))
+        );
 
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 

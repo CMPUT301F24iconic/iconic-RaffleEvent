@@ -4,16 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.example.iconic_raffleevent.R;
-import com.example.iconic_raffleevent.controller.FirebaseAttendee;
 import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +29,25 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationController notificationController;
     private User currentUser;
 
-    private Button settingsButton;
+    private ImageButton settingsButton;
 
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
+
+     private ImageButton menuButton;
+     private DrawerLayout drawerLayout;
+     private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-        notificationListView = findViewById(R.id.notification_list);
+        initializeViews();
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+        setupListeners();
+
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
@@ -46,17 +55,33 @@ public class NotificationsActivity extends AppCompatActivity {
 
         currentUser = getCurrentUser();
 
-        settingsButton = findViewById(R.id.notification_settings);
+        fetchNotifications();
+
+    }
+
+    private void initializeViews() {
+        // Initialize list view
+        notificationListView = findViewById(R.id.notification_list);
+
+        // Initialize buttons
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        settingsButton = findViewById(R.id.settings_icon);
+
+        // Setting up hamburger button
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        menuButton = findViewById(R.id.menu_button);
+    }
+
+    private void setupListeners() {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(NotificationsActivity.this, NotificationSettingsActivity.class));
             }
         });
-
-        homeButton = findViewById(R.id.home_button);
-        qrButton = findViewById(R.id.qr_button);
-        profileButton = findViewById(R.id.profile_button);
 
         // Footer buttons logic
         homeButton.setOnClickListener(new View.OnClickListener() {
@@ -80,8 +105,7 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         });
 
-        fetchNotifications();
-
+        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
     }
 
     private void fetchNotifications() {
