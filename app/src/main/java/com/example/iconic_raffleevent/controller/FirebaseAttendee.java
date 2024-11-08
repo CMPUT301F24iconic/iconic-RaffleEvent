@@ -94,6 +94,7 @@ public class FirebaseAttendee {
     public interface DeleteUserCallback {
         void onUserDeleted(boolean success);
     }
+
     public void updateWaitingList(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("waitingListEventIds", user.getWaitingListEventIds());
@@ -282,15 +283,30 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to mark notification as read"));
     }
 
-    public void getUserWaitingListEvents(String userId, EventController.EventListCallback callback) {
-        eventsCollection.whereArrayContains("waitingList", userId)
+    public void getUserEvents(String userId, EventController.EventListCallback callback) {
+        // Query for events where the user is in the waiting list or the organizer
+        eventsCollection
+                .whereArrayContains("waitingList", userId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        List<Event> events = task.getResult().toObjects(Event.class);
-                        callback.onEventsFetched(new ArrayList<>(events));
+                        List<Event> events = new ArrayList<>(task.getResult().toObjects(Event.class));
+
+                        // Now fetch events where the user is the organizer and combine the results
+                        eventsCollection
+                                .whereEqualTo("organizerID", userId)
+                                .get()
+                                .addOnCompleteListener(task2 -> {
+                                    if (task2.isSuccessful()) {
+                                        List<Event> organizerEvents = task2.getResult().toObjects(Event.class);
+                                        events.addAll(organizerEvents); // Combine the lists
+                                        callback.onEventsFetched(new ArrayList<>(events));
+                                    } else {
+                                        callback.onError("Failed to fetch organizer events.");
+                                    }
+                                });
                     } else {
-                        callback.onError("Failed to fetch events for user waiting list.");
+                        callback.onError("Failed to fetch events for user.");
                     }
                 });
     }
@@ -338,7 +354,6 @@ public class FirebaseAttendee {
         }
     }
 
-
     // EventDetailsCallback to fetch event details
     public interface EventDetailsCallback {
         void onEventDetailsFetched(Event event);
@@ -366,5 +381,4 @@ public class FirebaseAttendee {
         void onSuccess();
         void onError(String message);
     }
-
 }
