@@ -13,11 +13,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
@@ -71,6 +73,7 @@ public class FirebaseAttendee {
         if (user == null || user.getUserId() == null) {
             return;
         }
+        System.out.println("Here 3");
         //Zhiyuan - ensure that updateUser(User user) actually updates the profileImageUrl in Firestore.
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.set(user)  // This will update the user document with all current fields
@@ -433,6 +436,42 @@ public class FirebaseAttendee {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<Event> events = task.getResult().toObjects(Event.class);
+                        callback.onEventsFetched(new ArrayList<>(events));
+                    } else {
+                        callback.onError("Failed to fetch events for user waiting list.");
+                    }
+                });
+    }
+
+    /**
+     * Retrieves the list of events a user is in a waiting list for or owns
+     * The method queries Firestore for all events where the user is present in the waiting list or owns.
+     *
+     * @param userId   The ID of the user whose waiting list events/owned events are to be retrieved.
+     * @param callback The callback interface to notify the success or failure of the operation.
+     */
+    public void getAllUserEvents(String userId, EventController.EventListCallback callback) {
+        Task<QuerySnapshot> waitingListQuery = eventsCollection.whereArrayContains("waitingList", userId).get();
+        Task<QuerySnapshot> ownerQuery = eventsCollection.whereEqualTo("organizerID", userId).get();
+
+        Tasks.whenAllSuccess(waitingListQuery, ownerQuery)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Get results from the waiting list query
+                        List<Event> waitingListEvents = waitingListQuery.getResult().toObjects(Event.class);
+
+                        // Add them to event list we're returning
+                        List<Event> events = new ArrayList<>(waitingListEvents);
+
+                        // Get results from the organizer query
+                        List<Event> organizerEvents = ownerQuery.getResult().toObjects(Event.class);
+
+                        // Add organizer events, avoiding duplicates
+                        for (Event event : organizerEvents) {
+                            if (!events.contains(event)) {
+                                events.add(event);
+                            }
+                        }
                         callback.onEventsFetched(new ArrayList<>(events));
                     } else {
                         callback.onError("Failed to fetch events for user waiting list.");

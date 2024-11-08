@@ -142,7 +142,7 @@ public class EventListActivity extends AppCompatActivity {
      */
     private void fetchEvents() {
         String userId = getUserID();
-        eventController.getUserEvents(userId, new EventController.EventListCallback() {
+        eventController.getAllUserEvents(userId, new EventController.EventListCallback() {
             @Override
             public void onEventsFetched(ArrayList<Event> events) {
                 runOnUiThread(() -> {
@@ -151,7 +151,6 @@ public class EventListActivity extends AppCompatActivity {
                     eventAdapter.notifyDataSetChanged();
                 });
             }
-
             @Override
             public void onError(String message) {
                 runOnUiThread(() -> {

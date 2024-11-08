@@ -34,6 +34,7 @@ public class UserController {
     private final StorageReference storageReference;
     private final String currentUserID;
     private final Context context;
+    private FirebaseAttendee firebaseAttendee;
 
     /**
      * Constructor for UserController.
@@ -47,10 +48,12 @@ public class UserController {
         this.firestore = FirebaseFirestore.getInstance();
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.storageReference = firebaseStorage.getReference();
+        this.firebaseAttendee = new FirebaseAttendee();
     }
 
     // Regex pattern for validating phone numbers (US/international format)
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?[1-9]\\d{1,14}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
+
 
     /**
      * Adds a new user to the Firebase Firestore database.
@@ -78,6 +81,8 @@ public class UserController {
             Log.e(TAG, "Invalid phone number format");
             return;
         }
+
+        System.out.println("Here");
 
         user.setName(name);
         user.setEmail(email);
@@ -228,6 +233,7 @@ public class UserController {
                     if (documentSnapshot.exists()) {
                         User user = documentSnapshot.toObject(User.class);
                         if (user != null) {
+                            System.out.println("User" + user.getUsername());
                             callback.onUserFetched(user);
                         } else {
                             callback.onError("Failed to parse user data.");
@@ -301,22 +307,22 @@ public class UserController {
      * Updates the user's data in Firebase Firestore.
      *
      * @param user The user whose data is being updated.
-     */
-    private void updateUser(User user) {
-        firestore.collection("User").document(user.getUserId()).set(user)
-                .addOnFailureListener(e -> Log.e(TAG, "Failed to update user: " + e.getMessage()));
-    }
-
-    /**
-     * Updates the user's data in Firebase Firestore.
-     *
-     * @param user The user whose data is being updated.
      * @param callback callback passed back to UI to indicate if user update was successful or a failure
      */
     private void updateUser(User user, UpdateUserCallback callback) {
         firestore.collection("User").document(user.getUserId()).set(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to update user: " + e.getMessage()));
+    }
+
+    /**
+     * Updates the user's data through firebase attendee without needed context or callback
+     *
+     * @param user The user whose data is being updated.
+     */
+    private void updateUser(User user) {
+        System.out.println("Here 2");
+        firebaseAttendee.updateUser(user);
     }
 
     /**
