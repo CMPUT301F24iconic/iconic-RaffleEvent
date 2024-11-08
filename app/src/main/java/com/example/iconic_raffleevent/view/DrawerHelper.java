@@ -7,8 +7,25 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.iconic_raffleevent.R;
 import com.google.android.material.navigation.NavigationView;
 
+/**
+ * Helper class for setting up and managing a navigation drawer in the application.
+ * This class provides a method to initialize the drawer with menu items that
+ * navigate to different activities within the app.
+ */
 public class DrawerHelper {
-
+    /**
+     * Sets up the navigation drawer with menu item selections, allowing users to
+     * navigate to different activities within the app based on the item they select.
+     *
+     * Each menu item in the NavigationView is assigned an action
+     * to start a specific activity. The drawer will close after an item is selected.</p>
+     *
+     * @param context The context in which the drawer is being set up, typically an
+     *                Activity context.
+     * @param drawerLayout The DrawerLayout containing the navigation view
+     *                     and other content.
+     * @param navigationView The NavigationView containing menu items for navigation.
+     */
     public static void setupDrawer(Context context, DrawerLayout drawerLayout, NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();

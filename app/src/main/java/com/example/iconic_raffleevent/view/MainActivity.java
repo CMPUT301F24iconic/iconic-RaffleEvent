@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
                     navigateToActivity(EventListActivity.class);
                 }
             }
-
             @Override
             public void onError(String message) {
                 Log.e(TAG, "Error fetching user information: " + message);

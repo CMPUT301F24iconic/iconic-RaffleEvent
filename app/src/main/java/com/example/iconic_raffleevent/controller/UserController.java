@@ -38,7 +38,7 @@ public class UserController {
     }
 
     public void addUser(User user, AddUserCallback callback) {
-        firestore.collection("users").document(user.getUserId())
+        firestore.collection("User").document(user.getUserId())
                 .set(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to add user: " + e.getMessage()));
@@ -142,8 +142,7 @@ public class UserController {
             callback.onError("User ID is missing");
             return;
         }
-
-        firestore.collection("users").document(currentUserID)
+        firestore.collection("User").document(currentUserID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -180,7 +179,7 @@ public class UserController {
     }
 
     public void getAllUsers(UserListCallback callback) {
-        firestore.collection("users").get().addOnCompleteListener(task -> {
+        firestore.collection("User").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 ArrayList<User> users = new ArrayList<>();
                 task.getResult().forEach(document -> users.add(document.toObject(User.class)));
@@ -192,18 +191,18 @@ public class UserController {
     }
 
     public void deleteUser(String userId, DeleteUserCallback callback) {
-        firestore.collection("users").document(userId).delete()
+        firestore.collection("User").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete user: " + e.getMessage()));
     }
 
     private void updateUser(User user) {
-        firestore.collection("users").document(user.getUserId()).set(user)
+        firestore.collection("User").document(user.getUserId()).set(user)
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to update user: " + e.getMessage()));
     }
 
     private void updateUser(User user, UpdateUserCallback callback) {
-        firestore.collection("users").document(user.getUserId()).set(user)
+        firestore.collection("User").document(user.getUserId()).set(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to update user: " + e.getMessage()));
     }

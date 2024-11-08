@@ -20,14 +20,14 @@ public class FirebaseOrganizer {
 
     // Method to create a new facility
     public void createFacility(Facility facility, FacilityCreationCallback callback) {
-        db.collection("facilities").add(facility)
+        db.collection("Facility").add(facility)
                 .addOnSuccessListener(documentReference -> callback.onFacilityCreated(documentReference.getId()))
                 .addOnFailureListener(e -> callback.onError("Failed to create facility: " + e.getMessage()));
     }
 
     // Method to check if a user already has a facility
     public void checkUserFacility(String userId, FacilityCheckCallback callback) {
-        db.collection("facilities")
+        db.collection("Facility")
                 .whereEqualTo("creator.userId", userId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -71,7 +71,7 @@ public class FirebaseOrganizer {
 
     // Method to retrieve all facilities
     public void getAllFacilities(GetFacilitiesCallback callback) {
-        db.collection("facilities").get()
+        db.collection("Facility").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Facility> facilities = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -86,7 +86,7 @@ public class FirebaseOrganizer {
 
     // Method to delete a facility by ID
     public void deleteFacility(String facilityId, DeleteFacilityCallback callback) {
-        db.collection("facilities").document(facilityId).delete()
+        db.collection("Facility").document(facilityId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete facility: " + e.getMessage()));
     }
