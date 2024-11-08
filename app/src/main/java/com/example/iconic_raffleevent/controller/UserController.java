@@ -20,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class UserController {
     private static final String TAG = "UserController";
@@ -37,6 +38,9 @@ public class UserController {
         this.storageReference = firebaseStorage.getReference();
     }
 
+    // Regex pattern for validating phone numbers (US/international format)
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?[1-9]\\d{1,14}$");
+
     public void addUser(User user, AddUserCallback callback) {
         firestore.collection("User").document(user.getUserId())
                 .set(user)
@@ -44,11 +48,22 @@ public class UserController {
                 .addOnFailureListener(e -> callback.onError("Failed to add user: " + e.getMessage()));
     }
 
+    // Method to validate and update the user profile with a valid phone number
     public void updateProfile(User user, String name, String email, String phoneNo) {
+        if (!isValidPhoneNumber(phoneNo)) {
+            Log.e(TAG, "Invalid phone number format");
+            return;
+        }
+
         user.setName(name);
         user.setEmail(email);
         user.setPhoneNo(phoneNo);
-        updateUser(user); // Calling the simplified version without callback
+        updateUser(user); // Call the simplified version without callback
+    }
+
+    // Helper method to validate phone number format
+    private boolean isValidPhoneNumber(String phoneNo) {
+        return phoneNo != null && PHONE_PATTERN.matcher(phoneNo).matches();
     }
 
     public void uploadProfileImage(User user, Uri imageUri, ProfileImageUploadCallback callback) {
@@ -79,7 +94,7 @@ public class UserController {
                                 Log.d(TAG, "Upload successful. URL: " + downloadUrl);
 
                                 user.setProfileImageUrl(downloadUrl);
-                                updateUser(user, new UpdateUserCallback() {  // Calling version with callback
+                                updateUser(user, new UpdateUserCallback() {
                                     @Override
                                     public void onSuccess() {
                                         callback.onProfileImageUploaded(downloadUrl);
@@ -104,7 +119,7 @@ public class UserController {
             photoRef.delete()
                     .addOnSuccessListener(aVoid -> {
                         user.setProfileImageUrl(null);
-                        updateUser(user, new UpdateUserCallback() {  // Calling version with callback
+                        updateUser(user, new UpdateUserCallback() {
                             @Override
                             public void onSuccess() {
                                 callback.onProfileImageRemoved();
@@ -124,17 +139,17 @@ public class UserController {
 
     public void setNotificationsEnabled(User user, boolean enabled) {
         user.setNotificationsEnabled(enabled);
-        updateUser(user); // Calling the simplified version without callback
+        updateUser(user);
     }
 
     public void setWinNotificationsEnabled(User user, boolean enabled) {
         user.setWinNotificationPref(enabled);
-        updateUser(user); // Calling the simplified version without callback
+        updateUser(user);
     }
 
     public void setLoseNotificationsEnabled(User user, boolean enabled) {
         user.setLoseNotificationPref(enabled);
-        updateUser(user); // Calling the simplified version without callback
+        updateUser(user);
     }
 
     public void getUserInformation(UserFetchCallback callback) {
