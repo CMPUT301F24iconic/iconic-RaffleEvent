@@ -60,7 +60,8 @@ public class EventListActivity extends AppCompatActivity {
         // Initialize ListView and Adapter
         eventListView = findViewById(R.id.eventListView);
         eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(this, eventList);
+        String currentUserId = getUserID();
+        eventAdapter = new EventAdapter(this, eventList, currentUserId);
         eventListView.setAdapter(eventAdapter);
 
         // Initialize buttons
@@ -107,7 +108,7 @@ public class EventListActivity extends AppCompatActivity {
 
     private void fetchEvents() {
         String userId = getUserID();
-        eventController.getUserWaitingListEvents(userId, new EventController.EventListCallback() {
+        eventController.getUserEvents(userId, new EventController.EventListCallback() {
             @Override
             public void onEventsFetched(ArrayList<Event> events) {
                 runOnUiThread(() -> {
