@@ -2,36 +2,44 @@ name: Android CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adopt'
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
-        with:
-          api-level: 34
-          build-tools: "34.0.0"
-          ndk: "23.1.7779620"
+    - name: Download and set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 33
+        build-tools: "33.0.0"
+        target: android-33
 
-      - name: Create local.properties file
-        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+    - name: Build without tests
+      run: ./gradlew assembleDebug
 
-      - name: Build with Gradle
-        run: ./gradlew build
+    - name: Build APK (Release version without tests)
+      run: ./gradlew assembleRelease
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-apk
+        path: app/build/outputs/apk/release/app-release.apk
