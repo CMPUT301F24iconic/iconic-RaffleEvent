@@ -31,6 +31,11 @@ import com.google.android.material.navigation.NavigationView;
 
 import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator class
 
+/**
+ * ProfileActivity manages the user's profile, allowing for viewing, editing,
+ * and uploading profile information, as well as handling profile image management.
+ * The activity also provides navigation options to other parts of the application.
+ */
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 71;
@@ -59,6 +64,12 @@ public class ProfileActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private ImageButton notificationButton;
 
+    /**
+     * Initializes the ProfileActivity. Sets up the layout, navigation buttons,
+     * controllers, and loads user profile information.
+     *
+     * @param savedInstanceState Bundle with saved state, if available
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +114,9 @@ public class ProfileActivity extends AppCompatActivity {
         loadUserProfile();
     }
 
+    /**
+     * Initializes UI elements in the profile layout for viewing and editing.
+     */
     private void initializeViews() {
         profileImageView = findViewById(R.id.profile_image);
         nameEditText = findViewById(R.id.name_edit_text);
@@ -115,12 +129,19 @@ public class ProfileActivity extends AppCompatActivity {
         backButton = findViewById(R.id.back_to_hub_button);
     }
 
+    /**
+     * Initializes the UserController using ViewModel to manage user data.
+     */
     private void initializeControllers() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
     }
 
+    /**
+     * Sets up click listeners for interactive elements, such as uploading photos
+     * and saving the profile.
+     */
     private void setupClickListeners() {
         uploadPhotoButton.setOnClickListener(v -> chooseImage());
         removePhotoButton.setOnClickListener(v -> removeProfileImage());
@@ -131,6 +152,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Launches an intent to select an image from the gallery.
+     */
     private void chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
@@ -142,6 +166,13 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles the result of an activity, such as image selection from gallery.
+     *
+     * @param requestCode The integer request code supplied to startActivityForResult()
+     * @param resultCode  The integer result code returned by the child activity
+     * @param data        An Intent, which can return result data to the caller
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -171,6 +202,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the file size of an image from its URI.
+     *
+     * @param fileUri The URI of the file to check
+     * @return The size of the file in bytes, or 0 if an error occurs
+     */
     private long getFileSize(Uri fileUri) {
         try {
             Cursor cursor = getContentResolver().query(fileUri, null, null, null, null);
@@ -187,6 +224,11 @@ public class ProfileActivity extends AppCompatActivity {
         return 0;
     }
 
+    /**
+     * Uploads the selected profile image to the database.
+     *
+     * @param imageUri The URI of the image to upload
+     */
     private void uploadImage(Uri imageUri) {
         if (currentUser == null) {
             Toast.makeText(this, "User profile not loaded", Toast.LENGTH_SHORT).show();
@@ -220,6 +262,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Removes the current profile image from the user’s profile and database.
+     */
     private void removeProfileImage() {
         if (currentUser == null || currentUser.getProfileImageUrl() == null || currentUser.getProfileImageUrl().isEmpty()) {
             Toast.makeText(this, "No profile picture to remove", Toast.LENGTH_SHORT).show();
@@ -244,7 +289,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Saves the user's profile data, including name, email, phone number, and
+     * notification preferences.
+     */
     private void saveProfile() {
         if (currentUser == null) {
             Toast.makeText(this, "Unable to save profile: User data not loaded", Toast.LENGTH_SHORT).show();
@@ -275,10 +323,19 @@ public class ProfileActivity extends AppCompatActivity {
         Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Validates if the provided email has a valid format.
+     *
+     * @param email The email string to validate
+     * @return true if the email is valid, false otherwise
+     */
     private boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    /**
+     * Loads the user's profile information from the controller and updates the UI.
+     */
     private void loadUserProfile() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -300,6 +357,13 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the UI with user data, including name, email, phone number, and
+     * notification settings. Also loads the profile image or generates an avatar if
+     * no image is available.
+     *
+     * @param user The User object containing the profile data
+     */
     private void updateUIWithUserData(User user) {
         nameEditText.setText(user.getName());
         emailEditText.setText(user.getEmail());
@@ -320,6 +384,11 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Generates an avatar based on the user's name and sets it as the profile image.
+     *
+     * @param name The name used to generate initials for the avatar
+     */
     private void generateAndSetAvatar(String name) {
         // Generate an avatar bitmap using the user's name initials
         Bitmap avatar = AvatarGenerator.generateAvatar(name, 120); // Size 120 is used for demonstration
@@ -329,6 +398,11 @@ public class ProfileActivity extends AppCompatActivity {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Retrieves the unique user ID for the device.
+     *
+     * @return A string representing the unique device ID
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

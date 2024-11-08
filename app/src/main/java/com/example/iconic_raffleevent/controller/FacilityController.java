@@ -2,6 +2,7 @@ package com.example.iconic_raffleevent.controller;
 
 import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.User;
+import java.util.ArrayList;
 
 public class FacilityController {
 
@@ -46,12 +47,12 @@ public class FacilityController {
         });
     }
 
-    // Retrieve facility details based on facility ID
-    public void getFacilityDetails(String facilityId, FacilityFetchCallback callback) {
-        firebaseOrganizer.getFacilityDetails(facilityId, new FirebaseOrganizer.FacilityFetchCallback() {
+    // Retrieve all facilities
+    public void getAllFacilities(FacilityListCallback callback) {
+        firebaseOrganizer.getAllFacilities(new FirebaseOrganizer.GetFacilitiesCallback() {
             @Override
-            public void onFacilityFetched(Facility facility) {
-                callback.onFacilityFetched(facility);
+            public void onFacilitiesFetched(ArrayList<Facility> facilities) {
+                callback.onFacilitiesFetched(facilities);
             }
 
             @Override
@@ -61,7 +62,32 @@ public class FacilityController {
         });
     }
 
-    // Callbacks for facility operations
+    // Delete facility by facility ID
+    public void deleteFacility(String facilityId, DeleteFacilityCallback callback) {
+        firebaseOrganizer.deleteFacility(facilityId, new FirebaseOrganizer.DeleteFacilityCallback() {
+            @Override
+            public void onSuccess() {
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
+    // Callback interfaces for facility operations
+    public interface FacilityListCallback {
+        void onFacilitiesFetched(ArrayList<Facility> facilities);
+        void onError(String message);
+    }
+
+    public interface DeleteFacilityCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
     public interface FacilityCreationCallback {
         void onFacilityCreated(String facilityId);
         void onError(String message);

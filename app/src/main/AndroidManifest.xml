@@ -36,60 +36,31 @@
 
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.IconicRaffleEvent"
-        tools:targetApi="31">
+        android:theme="@style/Theme.IconicRaffleEvent">
 
+        <!-- MainActivity: Entry point for role selection -->
         <activity
             android:name=".view.MainActivity"
-            android:exported="true"
-            tools:ignore="Instantiatable">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".view.ProfileActivity"
-            android:exported="false" />
 
-        <activity
-            android:name=".view.EventListActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".view.EventDetailsActivity"
-            android:exported="false" />
-
-        <activity android:name=".view.NewUserActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".view.QRScannerActivity"
-            android:screenOrientation="fullSensor"
-            android:stateNotNeeded="true"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            tools:ignore="DiscouragedApi" />
-
-        <activity
-            android:name=".view.NotificationsActivity"
-            android:exported="false" />
-
+        <!-- Role Selection Activity -->
         <activity
             android:name=".view.RoleSelectionActivity"
-            android:exported="false" />
+            android:exported="true" />
 
+        <!-- Entrant Role Activities -->
+        <activity android:name=".view.ProfileActivity" android:exported="false" />
+        <activity android:name=".view.EventListActivity" android:exported="false" />
+        <activity android:name=".view.EventDetailsActivity" android:exported="false" />
         <activity
-            android:name=".view.HubActivity"
-            android:exported="false" />
 
-        <activity
             android:name=".view.NotificationSettingsActivity"
             android:exported="false" />
 
@@ -123,11 +94,46 @@
         <activity
             android:name=".view.DisplayQRCodeActivity"
             android:exported="false" />
+            android:name=".view.QRScannerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".view.NotificationsActivity" android:exported="false" />
+        <activity android:name=".view.NewUserActivity" android:exported="false" />
 
-        <!-- api for google maps -->
+        <!-- Organizer Role Activities -->
+        <activity android:name=".view.CreateEventActivity" android:exported="false" />
+        <activity android:name=".view.CreateFacilityActivity" android:exported="false" />
+        <activity android:name=".view.DisplayQRCodeActivity" android:exported="false" />
+        <activity android:name=".view.ManageEventActivity" android:exported="false" />
+        <activity android:name=".view.WaitingListActivity" android:exported="false" />
+
+        <!-- Admin Role Activities -->
+        <activity android:name=".view.AdminHubActivity" android:exported="false" />
+        <activity android:name=".view.UserListActivity" android:exported="false" />
+        <activity android:name=".view.ImageManagementActivity" android:exported="false" />
+        <activity android:name=".view.QRCodeManagementActivity" android:exported="false" />
+        <activity android:name=".view.AdminEventActivity" android:exported="false" />
+        <activity android:name=".view.AdminProfileActivity" android:exported="false" />
+        <activity android:name=".view.AdminImageActivity" android:exported="false" />
+        <activity android:name=".view.AdminQRCodeActivity" android:exported="false" />
+        <activity android:name=".view.AdminFacilityActivity" android:exported="false" />
+        <activity android:name=".view.EventListForAdminActivity" android:exported="false" />
+        <activity android:name=".view.ProfileManagementActivity" android:exported="false" />
+
+        <!-- Firebase and Notification Configuration (uncomment when adding Firebase setup) -->
+        <!--
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/notifications_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+        -->
+
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDLFHkJy-mM8fpvxMXgVd3Fz8VXEnav0iM" />
+            android:value="YOUR_GOOGLE_MAPS_API_KEY_HERE" />
 
     </application>
 
