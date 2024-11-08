@@ -50,10 +50,10 @@ public class WaitingListActivity extends AppCompatActivity {
 
         // Fetch and display waiting list
         loadWaitingList();
+    }
 
         // Set listener for sampling attendees
         sampleAttendeesButton.setOnClickListener(v -> sampleAttendees());
-    }
 
     public void loadWaitingList() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
@@ -90,21 +90,17 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
+
     private void loadEventDetails() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
                 eventObj = event;
                 // Now we have the event object with waiting list and max attendees
-            }
-
             @Override
             public void onError(String message) {
-                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
         });
     }
-
     private void sampleAttendees() {
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
