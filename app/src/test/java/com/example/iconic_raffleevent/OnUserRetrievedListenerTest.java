@@ -31,7 +31,7 @@ public class OnUserRetrievedListenerTest {
 
     /**
      * Test case for when a user is successfully retrieved.
-     * It verifies that the onUserRetrieved method is called with the correct user data.
+     * It verifies that the onUserRetrieved method is called with the correct user data. 
      */
     @Test
     public void testOnUserRetrieved_Success() {
