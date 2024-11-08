@@ -1,6 +1,7 @@
 package com.example.iconic_raffleevent.view;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -33,6 +34,11 @@ import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 
+/**
+ * QRScannerActivity is responsible for scanning QR codes using the device's camera,
+ * retrieving user information, fetching the user's location, and processing the QR code data.
+ * It interacts with the EventController and UserController to handle event-related and user-related actions.
+ */
 public class QRScannerActivity extends AppCompatActivity {
     private static final String TAG = "QRScannerActivity";
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
@@ -49,6 +55,11 @@ public class QRScannerActivity extends AppCompatActivity {
     private GeoPoint userLocation;
     private FusedLocationProviderClient fusedLocationClient;
 
+    /**
+     * Initializes the activity, sets up views, controllers, barcode scanner, and user data.
+     *
+     * @param savedInstanceState the saved instance state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +71,17 @@ public class QRScannerActivity extends AppCompatActivity {
         getCurrentUser();
     }
 
+    /**
+     * Initializes the views for the QR scanner activity.
+     */
     private void initializeViews() {
         cameraPreview = findViewById(R.id.camera_preview);
         qrCodeTextView = findViewById(R.id.qr_code_text);
     }
 
+    /**
+     * Initializes controllers for handling user and event-related actions.
+     */
     private void initializeControllers() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
@@ -73,6 +90,9 @@ public class QRScannerActivity extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
+    /**
+     * Initializes the barcode scanner with a QR code detector and camera source.
+     */
     private void initializeBarcodeScanner() {
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
@@ -87,6 +107,9 @@ public class QRScannerActivity extends AppCompatActivity {
         setupBarcodeProcessor();
     }
 
+    /**
+     * Sets up the camera preview for the QR code scanning.
+     */
     private void setupCameraPreview() {
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -107,6 +130,9 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets up the barcode processor for detecting and processing QR codes.
+     */
     private void setupBarcodeProcessor() {
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             private boolean isProcessing = false;
@@ -130,6 +156,9 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts the camera for QR code scanning if the camera permission is granted.
+     */
     private void startCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -144,12 +173,20 @@ public class QRScannerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Requests permission to access the camera.
+     */
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.CAMERA},
                 CAMERA_PERMISSION_REQUEST_CODE);
     }
 
+    /**
+     * Processes the QR code data by scanning the event using the EventController.
+     *
+     * @param qrCodeData the data from the scanned QR code.
+     */
     private void processQRCodeData(String qrCodeData) {
         if (userObj == null || userLocation == null) {
             Toast.makeText(this, "User data or location not available", Toast.LENGTH_SHORT).show();
@@ -174,9 +211,12 @@ public class QRScannerActivity extends AppCompatActivity {
                                         "Error: " + message, Toast.LENGTH_SHORT).show()
                         );
                     }
-                });
+        });
     }
 
+    /**
+     * Fetches the current user's information from the UserController.
+     */
     private void getCurrentUser() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -201,6 +241,11 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Retrieves the user's current location.
+     *
+     * @param qrCodeData the QR code data to process after the location is retrieved.
+     */
     private void getUserLocation(String qrCodeData) {
         if (!checkLocationPermissions()) {
             requestLocationPermissions();
@@ -225,6 +270,11 @@ public class QRScannerActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Checks if the app has permission to access the user's location.
+     *
+     * @return true if location permissions are granted, false otherwise.
+     */
     private boolean checkLocationPermissions() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED &&
@@ -232,6 +282,9 @@ public class QRScannerActivity extends AppCompatActivity {
                         == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Requests permission to access the user's location.
+     */
     private void requestLocationPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -239,6 +292,13 @@ public class QRScannerActivity extends AppCompatActivity {
         }, LOCATION_PERMISSION_REQUEST_CODE);
     }
 
+    /**
+     * Handles the result of permission requests for camera and location permissions.
+     *
+     * @param requestCode  the request code.
+     * @param permissions  the requested permissions.
+     * @param grantResults the results of the permissions request.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -263,10 +323,20 @@ public class QRScannerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Retrieves the unique user ID based on the device's Android ID.
+     *
+     * @return a string representing the unique Android ID of the device.
+     */
+    @SuppressLint("HardwareIds")
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Releases resources associated with the camera source and barcode detector
+     * when the activity is destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

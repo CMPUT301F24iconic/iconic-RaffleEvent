@@ -6,14 +6,24 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.iconic_raffleevent.R;
 
+/**
+ * Activity for managing various lists associated with an event, such as the waiting list,
+ * attendee list, cancelled attendee list, and final attendee list.
+ */
 public class ManageEventActivity extends AppCompatActivity {
-
     private Button waitingListButton;
     private Button attendeeListButton;
     private Button cancelledAttendeeListButton;
     private Button finalAttendeeListButton;
     private String eventId;
 
+    /**
+     * Called when the activity is first created. Sets the layout, retrieves the event ID,
+     * links UI elements, and sets click listeners for each button to navigate to the
+     * appropriate list activity.
+     *
+     * @param savedInstanceState The previously saved instance state, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -15,13 +15,23 @@ import com.example.iconic_raffleevent.model.Event;
 
 import java.util.ArrayList;
 
+/**
+ * AdminEventActivity provides an interface for administrators to view and manage events.
+ * This activity displays a list of events and allows the admin to delete events through
+ * Firebase.
+ */
 public class AdminEventActivity extends AppCompatActivity {
-
     private ListView eventListView;
     private ArrayAdapter<String> eventAdapter;
     private ArrayList<Event> eventList;
     private FirebaseOrganizer firebaseOrganizer;
 
+    /**
+     * Called when the activity is first created. Initializes views and loads the list of events.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +42,10 @@ public class AdminEventActivity extends AppCompatActivity {
         loadEventList();
     }
 
+    /**
+     * Loads the list of events from Firebase and displays them in the ListView.
+     * Sets an item click listener on each event to allow the admin to delete events.
+     */
     private void loadEventList() {
         firebaseOrganizer.getAllEvents(new FirebaseOrganizer.GetEventsCallback() {
             @Override
@@ -53,6 +67,11 @@ public class AdminEventActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a confirmation dialog to delete an event.
+     *
+     * @param event The Event object to be deleted.
+     */
     private void showDeleteDialog(Event event) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event")
@@ -62,6 +81,11 @@ public class AdminEventActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Deletes the specified event from Firebase and refreshes the event list upon success.
+     *
+     * @param event The Event object to be deleted.
+     */
     private void deleteEvent(Event event) {
         firebaseOrganizer.deleteEvent(event.getEventId(), new FirebaseOrganizer.DeleteEventCallback() {
             @Override

@@ -14,13 +14,23 @@ import com.example.iconic_raffleevent.model.ImageData;
 
 import java.util.ArrayList;
 
+/**
+ * AdminImageActivity provides an interface for managing images within the application.
+ * This activity displays a list of images fetched from Firebase and allows administrators
+ * to delete selected images.
+ */
 public class AdminImageActivity extends AppCompatActivity {
-
     private ListView imageListView;
     private ArrayAdapter<String> imageAdapter;
     private ArrayList<ImageData> imageList;
     private FirebaseOrganizer firebaseOrganizer;
 
+    /**
+     * Called when the activity is created. Sets up the layout and initializes the image list.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +41,10 @@ public class AdminImageActivity extends AppCompatActivity {
         loadImageList();
     }
 
+    /**
+     * Loads the list of images from Firebase and populates the ListView with image titles.
+     * Sets up a click listener for each item in the list to allow for image deletion.
+     */
     private void loadImageList() {
         firebaseOrganizer.getAllImages(new FirebaseOrganizer.GetImagesCallback() {
             @Override
@@ -52,6 +66,11 @@ public class AdminImageActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a confirmation dialog for deleting a selected image.
+     *
+     * @param imageData The ImageData object representing the image to be deleted.
+     */
     private void showDeleteDialog(ImageData imageData) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Image")
@@ -61,6 +80,11 @@ public class AdminImageActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Deletes the specified image from Firebase and refreshes the image list on success.
+     *
+     * @param imageData The ImageData object representing the image to delete.
+     */
     private void deleteImage(ImageData imageData) {
         firebaseOrganizer.deleteImage(imageData.getImageId(), new FirebaseOrganizer.DeleteImageCallback() {
             @Override

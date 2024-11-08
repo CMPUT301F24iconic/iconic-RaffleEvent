@@ -20,14 +20,17 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity class to display the list of notifications for the user.
+ * This activity handles displaying notifications, as well as setting up the navigation drawer
+ * and other buttons for navigating to different parts of the app.
+ */
 public class NotificationsActivity extends AppCompatActivity {
-
     private ListView notificationListView;
     private NotificationAdapter notificationAdapter;
     private List<Notification> notificationList;
 
     private NotificationController notificationController;
-    private User currentUser;
 
     private ImageButton settingsButton;
 
@@ -39,6 +42,12 @@ public class NotificationsActivity extends AppCompatActivity {
      private DrawerLayout drawerLayout;
      private NavigationView navigationView;
 
+    /**
+     * Initializes the activity, sets the content view, and initializes the views and listeners.
+     * Also sets up the drawer and fetches notifications from the NotificationController.
+     *
+     * @param savedInstanceState If the activity is being reinitialized, this contains the previously saved state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,12 +62,13 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationListView.setAdapter(notificationAdapter);
         notificationController = new NotificationController();
 
-        currentUser = getCurrentUser();
-
         fetchNotifications();
 
     }
 
+    /**
+     * Initializes all the views, including buttons, ListView, and the navigation drawer components.
+     */
     private void initializeViews() {
         // Initialize list view
         notificationListView = findViewById(R.id.notification_list);
@@ -75,6 +85,10 @@ public class NotificationsActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_button);
     }
 
+    /**
+     * Sets up the listeners for various buttons (settings, home, QR, profile, and menu).
+     * These listeners trigger navigation or actions when the respective buttons are clicked.
+     */
     private void setupListeners() {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +122,10 @@ public class NotificationsActivity extends AppCompatActivity {
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
     }
 
+    /**
+     * Fetches the notifications for the user using the NotificationController.
+     * The notifications are then updated in the notification list and displayed using the adapter.
+     */
     private void fetchNotifications() {
         notificationController.getNotifications(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID),
                 new NotificationController.GetNotificationsCallback() {
@@ -126,18 +144,5 @@ public class NotificationsActivity extends AppCompatActivity {
                 Toast.makeText(NotificationsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-
-
-    private User getCurrentUser() {
-        // Placeholder implementation. Replace with actual logic to get the current user.
-        User user = new User();
-        user.setUserId("user123");
-        user.setUsername("johndoe");
-        user.setName("John Doe");
-        user.setEmail("john.doe@example.com");
-        return user;
     }
 }

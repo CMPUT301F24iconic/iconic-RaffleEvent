@@ -11,11 +11,22 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 
+/**
+ * The main activity for the Iconic Raffle Event application.
+ * This activity initializes the user controller, checks user information,
+ * and navigates to the appropriate screen based on the user's role.
+ */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private UserControllerViewModel userControllerViewModel;
     private UserController userController;
 
+    /**
+     * Called when the activity is first created. Sets the layout, initializes
+     * the user controller, and checks the user's status to navigate accordingly.
+     *
+     * @param savedInstanceState The previously saved instance state, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         checkUserAndNavigate();
     }
 
+    /**
+     * Initializes the user controller using the device's unique ID.
+     *
+     * @return True if the user controller was successfully initialized, false otherwise.
+     */
     private boolean initializeUserController() {
         try {
             String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -50,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks the user's information and navigates to the appropriate activity.
+     * New users are redirected to registration, while existing users are directed
+     * to their respective roles.
+     */
     private void checkUserAndNavigate() {
         if (userController == null) {
             Log.e(TAG, "UserController is not initialized.");
@@ -78,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Navigates to the specified activity class and closes the current activity.
+     *
+     * @param activityClass The class of the activity to navigate to.
+     */
     private void navigateToActivity(Class<?> activityClass) {
         runOnUiThread(() -> {
             Intent intent = new Intent(MainActivity.this, activityClass);
@@ -86,10 +112,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a toast message on the UI thread.
+     *
+     * @param message The message to display in the toast.
+     */
     private void showToast(String message) {
         runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
     }
 
+    /**
+     * Cleans up resources when the activity is destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

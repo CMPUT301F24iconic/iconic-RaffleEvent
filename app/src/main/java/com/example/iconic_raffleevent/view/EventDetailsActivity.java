@@ -29,8 +29,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
+/**
+ * This Activity displays the details of a specific event. It allows users to view event information,
+ * join or leave the waiting list, and access event location via a map. It also provides functionality
+ * for event organizers to manage their events.
+ *
+ * The activity manages user interactions, navigation, geolocation services, and UI updates based on
+ * event and user data. It handles dynamic UI changes based on whether the user is the event organizer
+ * or a participant.
+ */
 public class EventDetailsActivity extends AppCompatActivity {
-
     // Navigation UI
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -70,6 +78,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     // Geolocation
     private FusedLocationProviderClient fusedLocationClient;
 
+    /**
+     * Called when the activity is created. Initializes UI components,
+     * sets up navigation, fetches event details, and handles user actions.
+     *
+     * @param savedInstanceState The saved instance state, if available.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +180,10 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetches the event details from the server.
+     * Updates the UI with event information once the event details are successfully fetched.
+     */
     private void fetchEventDetails() {
         eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
@@ -182,6 +200,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the UI with the provided event details.
+     * Adjusts button visibility based on the user's role (organizer or participant).
+     *
+     * @param event The event whose details will be displayed.
+     */
     private void updateUI(Event event) {
         if (event != null) {
             Glide.with(this)
@@ -219,6 +243,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Joins the user to the event's waiting list.
+     * Checks for valid email and phone number, and handles geolocation if required.
+     */
     private void joinWaitingList() {
         // Ensure user has valid email and phone number
         if (userObj.getEmail().isEmpty() || userObj.getPhoneNo().isEmpty()) {
@@ -249,8 +277,11 @@ public class EventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    // Need to implement functionality to remove geolocation from entrantLocations if they leave event
+    /**
+     * Leaves the user's name from the waiting list for the event.
+     */
     private void leaveWaitingList() {
+        // Need to implement functionality to remove geolocation from entrantLocations if they leave event
         eventController.leaveWaitingList(eventId, userObj.getUserId(), new EventController.LeaveWaitingListCallback() {
             @Override
             public void onSuccess() {
@@ -268,6 +299,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog requesting the user to allow access to their geolocation in order to join the waiting list.
+     */
     private void showGeolocationDialog() {
         Dialog dialog = new Dialog(EventDetailsActivity.this);
         dialog.setContentView(R.layout.activity_warning_geolocation);
@@ -299,11 +333,17 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a warning message if the event requires geolocation.
+     */
     private void showGeolocationWarning() {
         // Show a dialog or toast message to warn the user about geolocation requirement
         Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Retrieves the user's current location and proceeds to join the waiting list if successful.
+     */
     private void getUserLocation() {
         userController.retrieveUserLocation(fusedLocationClient, new UserController.OnLocationReceivedCallback() {
             @Override
@@ -319,6 +359,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Adds the user to the waiting list using their location data.
+     */
     private void joinWaitlist() {
         eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
             @Override
@@ -336,6 +379,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the user's profile information by fetching it from the UserController.
+     * Enables the waiting list buttons and updates the UI once the user information is loaded.
+     */
     private void loadUserProfile() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -358,16 +405,30 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if both the event and user data have been loaded. If so, updates the UI with the event details.
+     */
     private void checkUIUpdate() {
         if (isEventLoaded && isUserLoaded) {
             updateUI(eventObj);
         }
     }
 
+    /**
+     * Retrieves the unique user ID for the device. This ID is based on the device's Android Secure Settings.
+     *
+     * @return A unique string identifier for the device.
+     */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Initializes and retrieves the UserController instance for managing user-related actions.
+     * This controller is obtained from the UserControllerViewModel.
+     *
+     * @return The UserController instance configured for the current user.
+     */
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());

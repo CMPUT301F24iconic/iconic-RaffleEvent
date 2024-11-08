@@ -23,8 +23,11 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Displays a list of events available to the user and allows navigation to other sections
+ * of the app such as QR scanner, profile, and notifications.
+ */
 public class EventListActivity extends AppCompatActivity {
-
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ListView eventListView;
@@ -42,6 +45,12 @@ public class EventListActivity extends AppCompatActivity {
     private User userObj;
     private UserController userController;
 
+    /**
+     * Initializes the activity and sets up views, controllers, listeners, and loads initial data.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     *                           shut down, this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +62,10 @@ public class EventListActivity extends AppCompatActivity {
         loadData();
     }
 
+    /**
+     * Initializes the views for the activity, including navigation drawer, event list view,
+     * and navigation buttons.
+     */
     private void initializeViews() {
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -73,12 +86,20 @@ public class EventListActivity extends AppCompatActivity {
         notificationButton = findViewById(R.id.notification_icon);
     }
 
+    /**
+     * Initializes the necessary controllers, including the EventController and UserController.
+     * Sets up the navigation drawer with helper methods.
+     */
     private void initializeControllers() {
         eventController = new EventController();
         userController = getUserController();
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
     }
 
+    /**
+     * Sets up listeners for various user interactions, including event list item clicks
+     * and navigation button clicks.
+     */
     private void setupListeners() {
         eventListView.setOnItemClickListener((parent, view, position, id) -> {
             Event selectedEvent = eventList.get(position);
@@ -107,11 +128,18 @@ public class EventListActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * Loads the user's profile and fetches the list of events.
+     */
     private void loadData() {
         loadUserProfile();
         fetchEvents();
     }
 
+    /**
+     * Fetches the list of events associated with the current user. Updates the event list
+     * and notifies the adapter to refresh the UI.
+     */
     private void fetchEvents() {
         String userId = getUserID();
         eventController.getUserEvents(userId, new EventController.EventListCallback() {
@@ -134,16 +162,30 @@ public class EventListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Retrieves the unique identifier for the user based on the device's secure settings.
+     *
+     * @return A unique string identifier for the device.
+     */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Retrieves and initializes the UserController for managing user information and actions.
+     *
+     * @return The UserController instance configured for the current user.
+     */
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         return userControllerViewModel.getUserController();
     }
 
+    /**
+     * Loads the user's profile information using the UserController and stores it in the user object.
+     * Displays an error message if the user profile cannot be loaded.
+     */
     private void loadUserProfile() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -168,6 +210,9 @@ public class EventListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Cleans up resources and performs any necessary cleanup actions when the activity is destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

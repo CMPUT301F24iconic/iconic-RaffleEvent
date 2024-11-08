@@ -14,14 +14,23 @@ import com.example.iconic_raffleevent.model.Event;
 
 import java.util.ArrayList;
 
+/**
+ * Activity that provides an interface for administrators to manage events.
+ * Allows loading, viewing, and removing events.
+ */
 public class EventManagementActivity extends AppCompatActivity {
-
     private ListView eventListView;
     private EventController eventController;
     private ArrayList<Event> eventList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> eventTitles;
 
+    /**
+     * Initializes the activity, sets up the layout, and starts loading the event list.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in {@link #onSaveInstanceState}.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +42,10 @@ public class EventManagementActivity extends AppCompatActivity {
         loadEventList();
     }
 
+    /**
+     * Loads the list of events from the EventController and sets up the ListView with event titles.
+     * On successful loading, sets up a click listener for each item to show management options.
+     */
     private void loadEventList() {
         eventController.getAllEvents(new EventController.EventListCallback() {
             @Override
@@ -57,6 +70,11 @@ public class EventManagementActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog for managing an event, allowing the user to confirm removal of the selected event.
+     *
+     * @param event The event selected for management.
+     */
     private void showEventOptionsDialog(Event event) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Manage Event")
@@ -66,6 +84,11 @@ public class EventManagementActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Removes the specified event using the EventController and reloads the event list upon successful deletion.
+     *
+     * @param event The event to be removed.
+     */
     private void removeEvent(Event event) {
         eventController.deleteEvent(event.getEventId(), new EventController.DeleteEventCallback() {
             @Override
