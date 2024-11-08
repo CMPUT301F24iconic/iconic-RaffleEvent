@@ -206,7 +206,7 @@ public class EventController {
      * @param callback The callback to handle the fetched events or error.
      */
     public void getUserEvents(String userId, EventListCallback callback) {
-        firebaseAttendee.getUserWaitingListEvents(userId, callback);
+        firebaseAttendee.getUserEvents(userId, callback);
     }
 
     /**
