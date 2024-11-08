@@ -10,22 +10,39 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * FirebaseOrganizer is a controller class responsible for handling operations related to the firebase database,
+ * such as creating, deleting, and fetching data related to users, facilities, events, images, and QR codes.
+ */
 public class FirebaseOrganizer {
 
     private FirebaseFirestore db;
 
+    /**
+     * Initializes the FirebaseFirestore instance for database operations.
+     */
     public FirebaseOrganizer() {
         db = FirebaseFirestore.getInstance();
     }
 
-    // Method to create a new facility
+    /**
+     * Creates a new facility in the Firestore database.
+     *
+     * @param facility The Facility object containing the details of the facility to be created.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void createFacility(Facility facility, FacilityCreationCallback callback) {
         db.collection("Facility").add(facility)
                 .addOnSuccessListener(documentReference -> callback.onFacilityCreated(documentReference.getId()))
                 .addOnFailureListener(e -> callback.onError("Failed to create facility: " + e.getMessage()));
     }
 
-    // Method to check if a user already has a facility
+    /**
+     * Checks if a user already has a facility.
+     *
+     * @param userId  The user ID to be checked.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void checkUserFacility(String userId, FacilityCheckCallback callback) {
         db.collection("Facility")
                 .whereEqualTo("creator.userId", userId)
@@ -41,6 +58,11 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Error checking facility: " + e.getMessage()));
     }
 
+    /**
+     * Retrieves all users from the Firestore database.
+     *
+     * @param callback The callback interface for handling fetched users or errors.
+     */
     public void getAllUsers(GetUsersCallback callback) {
         db.collection("User").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -54,7 +76,12 @@ public class FirebaseOrganizer {
                 })
                 .addOnFailureListener(e -> callback.onError("Error fetching users: " + e.getMessage()));
     }
-    // Method to retrieve all QR codes
+
+    /**
+     * Retrieves all QR codes from the Firestore database.
+     *
+     * @param callback The callback interface for handling fetched QR codes or errors.
+     */
     public void getAllQRCodes(GetQRCodesCallback callback) {
         db.collection("qrcodes").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -69,7 +96,11 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Error fetching QR codes: " + e.getMessage()));
     }
 
-    // Method to retrieve all facilities
+    /**
+     * Retrieves all facilities from the Firestore database.
+     *
+     * @param callback The callback interface for handling fetched facilities or errors.
+     */
     public void getAllFacilities(GetFacilitiesCallback callback) {
         db.collection("Facility").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -84,14 +115,23 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Error fetching facilities: " + e.getMessage()));
     }
 
-    // Method to delete a facility by ID
+    /**
+     * Deletes a facility by its ID from the Firestore database.
+     *
+     * @param facilityId The ID of the facility to be deleted.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void deleteFacility(String facilityId, DeleteFacilityCallback callback) {
         db.collection("Facility").document(facilityId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete facility: " + e.getMessage()));
     }
 
-    // Method to retrieve all events
+    /**
+     * Retrieves all events from the Firestore database.
+     *
+     * @param callback The callback interface for handling fetched events or errors.
+     */
     public void getAllEvents(GetEventsCallback callback) {
         db.collection("Event").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -106,21 +146,35 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Error fetching events: " + e.getMessage()));
     }
 
-    // Method to delete a user by ID
+    /**
+     * Deletes a user by its ID from the Firestore database.
+     *
+     * @param userId The ID of the user to be deleted.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void deleteUser(String userId, DeleteUserCallback callback) {
         db.collection("User").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete user: " + e.getMessage()));
     }
 
-    // Method to delete an event by ID
+    /**
+     * Deletes an event by its ID from the Firestore database.
+     *
+     * @param eventId The ID of the event to be deleted.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void deleteEvent(String eventId, DeleteEventCallback callback) {
         db.collection("Event").document(eventId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete event: " + e.getMessage()));
     }
 
-    // Method to retrieve all images
+    /**
+     * Retrieves all images from the Firestore database.
+     *
+     * @param callback The callback interface for handling fetched images or errors.
+     */
     public void getAllImages(GetImagesCallback callback) {
         db.collection("images").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -135,14 +189,24 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Error fetching images: " + e.getMessage()));
     }
 
-    // Method to delete an image by ID
+    /**
+     * Deletes an image by its ID from the Firestore database.
+     *
+     * @param imageId The ID of the image to be deleted.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void deleteImage(String imageId, DeleteImageCallback callback) {
         db.collection("images").document(imageId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete image: " + e.getMessage()));
     }
 
-    // Method to delete a QR code by ID
+    /**
+     * Deletes a QR code by its ID from the Firestore database.
+     *
+     * @param qrCodeId The ID of the QR code to be deleted.
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void deleteQRCode(String qrCodeId, DeleteQRCodeCallback callback) {
         db.collection("qrcodes").document(qrCodeId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
@@ -193,6 +257,16 @@ public class FirebaseOrganizer {
         void onError(String message);
     }
 
+    // Callback interfaces for QR code operations
+    public interface GetQRCodesCallback {
+        void onQRCodesFetched(ArrayList<QRCodeData> qrCodes);
+        void onError(String message);
+    }
+
+    public interface DeleteQRCodeCallback {
+        void onSuccess();
+        void onError(String message);
+    }
 
     // Callback interfaces for user operations
     public interface GetUsersCallback {
@@ -201,17 +275,6 @@ public class FirebaseOrganizer {
     }
 
     public interface DeleteUserCallback {
-        void onSuccess();
-        void onError(String message);
-    }
-
-    // Callback interfaces for QR code operations
-    public interface GetQRCodesCallback {
-        void onQRCodesFetched(ArrayList<QRCodeData> qrCodes);
-        void onError(String message);
-    }
-
-    public interface DeleteQRCodeCallback {
         void onSuccess();
         void onError(String message);
     }

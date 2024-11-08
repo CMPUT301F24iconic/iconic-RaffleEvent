@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
+import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class DeclinedListActivity extends AppCompatActivity {
     }
 
     private void loadDeclinedList() {
-        firebaseAttendee.getEventDetailsForWaitingList(eventId, new FirebaseAttendee.EventDetailsCallback() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
                 List<String> declinedListIds = event.getDeclinedList();
@@ -59,7 +61,7 @@ public class DeclinedListActivity extends AppCompatActivity {
 
     private void fetchUsersFromDeclinedList(List<String> userIds) {
         for (String userId : userIds) {
-            firebaseAttendee.getUserDetailsForWaitingList(userId, new FirebaseAttendee.UserFetchCallback() {
+            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
                 @Override
                 public void onUserFetched(User user) {
                     if (user != null) {
