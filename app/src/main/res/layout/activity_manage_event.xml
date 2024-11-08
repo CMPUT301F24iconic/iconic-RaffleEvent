@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor">
+
+    <!-- Include Top Navbar -->
+    <include
+        android:id="@+id/top_navbar"
+        layout="@layout/top_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title: Manage Event -->
+    <TextView
+        android:id="@+id/manageEventTitle"
+        style="@style/TextHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manage Event"
+        android:textColor="@color/textColorPrimary"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:layout_marginStart="@dimen/medium_margin"
+        app:layout_constraintTop_toBottomOf="@id/top_navbar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Button: Waiting List -->
+    <Button
+        android:id="@+id/waitingListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Waiting List"
+        android:textColor="@color/textColorOnPrimary"
+        android:backgroundTint="@color/buttonPrimary"
+        app:cornerRadius="@dimen/button_corner_radius"
+        android:layout_marginTop="@dimen/medium_margin"
+        app:layout_constraintTop_toBottomOf="@id/manageEventTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin" />
+
+    <!-- Additional Buttons (Placeholder) -->
+    <!-- These buttons will represent Attendee List, Cancelled List, and Final List -->
+    <Button
+        android:id="@+id/attendeeListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Attendee List"
+        android:textColor="@color/textColorOnPrimary"
+        android:backgroundTint="@color/buttonPrimary"
+        app:cornerRadius="@dimen/button_corner_radius"
+        android:layout_marginTop="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@id/waitingListButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin" />
+
+    <Button
+        android:id="@+id/cancelledAttendeeListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cancelled Attendee List"
+        android:textColor="@color/textColorOnPrimary"
+        android:backgroundTint="@color/buttonPrimary"
+        app:cornerRadius="@dimen/button_corner_radius"
+        android:layout_marginTop="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@id/attendeeListButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin" />
+
+    <Button
+        android:id="@+id/finalAttendeeListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Final Attendee List"
+        android:textColor="@color/textColorOnPrimary"
+        android:backgroundTint="@color/buttonPrimary"
+        app:cornerRadius="@dimen/button_corner_radius"
+        android:layout_marginTop="@dimen/small_margin"
+        app:layout_constraintTop_toBottomOf="@id/cancelledAttendeeListButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin" />
+
+    <!-- Include Bottom Navbar -->
+    <include
+        android:id="@+id/bottom_navbar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

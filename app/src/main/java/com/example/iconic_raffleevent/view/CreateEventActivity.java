@@ -66,6 +66,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private ImageButton menuButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private ImageButton notificationButton;
 
     // Linked Facility
     String userFacilityId;
@@ -96,6 +97,12 @@ public class CreateEventActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_button);
 
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(CreateEventActivity.this, NotificationsActivity.class))
+        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {

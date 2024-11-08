@@ -47,10 +47,9 @@
     app:cardElevation="@dimen/elevation_medium"
     android:background="@color/white">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="@dimen/small_padding">
 
         <!-- Event Poster Image -->
@@ -70,6 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
+            android:layout_below="@id/event_image"
             android:text="@string/sample_event_name" />
 
         <!-- Event Date -->
@@ -79,7 +79,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
+            android:layout_below="@id/event_title"
             android:text="@string/sample_event_date" />
 
-    </LinearLayout>
+        <!-- Manage Event Icon (Only for Organizers) -->
+        <ImageView
+            android:id="@+id/manage_event_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/event_title"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_marginTop="511dp"
+            android:contentDescription="Manage event"
+            android:src="@drawable/manage_event_icon"
+            android:visibility="gone"/> <!-- Hidden by default -->
+
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

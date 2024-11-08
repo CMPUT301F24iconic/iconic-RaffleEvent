@@ -7,6 +7,8 @@
     <string name="leave_waiting_list">Leave Waiting List</string>
 
     <!-- Sample Event Data (can be dynamically set later) -->
+    <string name="sample_user_name">Donald Trump</string>
+    <string name="sample_user_email">donaltrump@example.com</string>
     <string name="sample_event_name">Summer Music Fest 2023</string>
     <string name="sample_event_date">Date: July 15, 2023</string>
     <string name="sample_event_location">Location: Central Park, NYC</string>
@@ -44,6 +46,11 @@
     <string name="add_facility">Add Facility</string>
     <string name="upload_poster">Upload Poster</string>
     <string name="save">Save</string>
+
+    <!-- Waiting List Screen -->
+    <string name="waiting_list">Waiting List</string>
+    <string name="set_waiting_list_limit">Set Waiting List Limit</string>
+    <string name="map">Map</string>
 
     <!-- Create Facilty Screen -->
     <string name="create_facility">Create Facility</string>
