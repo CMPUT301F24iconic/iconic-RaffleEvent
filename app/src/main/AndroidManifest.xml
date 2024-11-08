@@ -111,6 +111,15 @@
         <activity android:name=".view.WaitingListActivity"
             android:exported="false" />
 
+        <activity android:name=".view.InvitedListActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.DeclinedListActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.ConfirmedListActivity"
+            android:exported="false" />
+
         <activity
             android:name=".view.DisplayQRCodeActivity"
             android:exported="false" />

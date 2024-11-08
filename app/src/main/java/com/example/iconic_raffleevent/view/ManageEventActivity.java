@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -35,16 +36,24 @@ public class ManageEventActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Placeholder for attendee list functionality
         attendeeListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ManageEventActivity.this, InvitedListActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
         });
 
         // Placeholder for cancelled attendee list functionality
         cancelledAttendeeListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ManageEventActivity.this, DeclinedListActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
         });
 
         // Placeholder for final attendee list functionality
         finalAttendeeListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ManageEventActivity.this, ConfirmedListActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
         });
     }
 }
