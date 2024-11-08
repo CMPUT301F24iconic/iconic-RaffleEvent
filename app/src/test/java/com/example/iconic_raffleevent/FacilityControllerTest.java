@@ -24,7 +24,7 @@ public class FacilityControllerTest {
         facilityController = new FacilityController();
         facilityController.firebaseOrganizer = firebaseOrganizerMock; // Inject mock FirebaseOrganizer
 
-        User creator = new User("user123", "John Doe");
+        User creator = new User();
         facility = new Facility("Event Hall", "123 Main St", creator);
     }
 
