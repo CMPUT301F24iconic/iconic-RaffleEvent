@@ -42,7 +42,7 @@ public class FirebaseOrganizer {
     }
 
     public void getAllUsers(GetUsersCallback callback) {
-        db.collection("users").get()
+        db.collection("User").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<User> users = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -93,7 +93,7 @@ public class FirebaseOrganizer {
 
     // Method to retrieve all events
     public void getAllEvents(GetEventsCallback callback) {
-        db.collection("events").get()
+        db.collection("Event").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Event> events = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
@@ -108,14 +108,14 @@ public class FirebaseOrganizer {
 
     // Method to delete a user by ID
     public void deleteUser(String userId, DeleteUserCallback callback) {
-        db.collection("users").document(userId).delete()
+        db.collection("User").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete user: " + e.getMessage()));
     }
 
     // Method to delete an event by ID
     public void deleteEvent(String eventId, DeleteEventCallback callback) {
-        db.collection("events").document(eventId).delete()
+        db.collection("Event").document(eventId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete event: " + e.getMessage()));
     }
