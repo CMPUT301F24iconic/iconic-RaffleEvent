@@ -76,6 +76,20 @@ public class FirebaseAttendee {
         });
     }
 
+    public void getUserDetailsForWaitingList(String userId, FirebaseAttendee.UserFetchCallback callback) {
+        getUser(userId, new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                callback.onUserFetched(user);
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
     public void updateWaitingList(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("waitingListEventIds", user.getWaitingListEventIds());
@@ -112,6 +126,20 @@ public class FirebaseAttendee {
                 callback.onEventDetailsFetched(event);
             } else {
                 callback.onError("Failed to fetch event details");
+            }
+        });
+    }
+
+    public void getEventDetailsForWaitingList(String eventId, FirebaseAttendee.EventDetailsCallback callback) {
+        getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                callback.onEventDetailsFetched(event);
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
             }
         });
     }
@@ -306,5 +334,17 @@ public class FirebaseAttendee {
         } catch (WriterException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // EventDetailsCallback to fetch event details
+    public interface EventDetailsCallback {
+        void onEventDetailsFetched(Event event);
+        void onError(String message);
+    }
+
+    // UserFetchCallback to fetch user details
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
     }
 }

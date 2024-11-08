@@ -105,6 +105,10 @@
             android:name=".view.CreateEventActivity"
             android:exported="false" />
 
+        <activity android:name=".view.ManageEventActivity" />
+        <activity android:name=".view.WaitingListActivity" />
+
+
         <activity
             android:name=".view.DisplayQRCodeActivity"
             android:exported="false" />
