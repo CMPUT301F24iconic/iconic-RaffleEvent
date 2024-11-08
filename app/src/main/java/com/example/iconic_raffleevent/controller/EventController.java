@@ -205,8 +205,18 @@ public class EventController {
      * @param userId   The ID of the user.
      * @param callback The callback to handle the fetched events or error.
      */
-    public void getUserEvents(String userId, EventListCallback callback) {
-        firebaseAttendee.getUserEvents(userId, callback);
+    public void getUserWaitingListEvents(String userId, EventListCallback callback) {
+        firebaseAttendee.getUserWaitingListEvents(userId, callback);
+    }
+
+    /**
+     * Fetches the events a user is in a waiting list for or an owner of
+     *
+     * @param userId The ID of the user
+     * @param callback The callback to handle the fetched events or error
+     */
+    public void getAllUserEvents(String userId, EventListCallback callback) {
+        firebaseAttendee.getAllUserEvents(userId, callback);
     }
 
     /**
@@ -252,7 +262,6 @@ public class EventController {
      */
     public interface EventListCallback {
         void onEventsFetched(ArrayList<Event> events);
-
         void onError(String message);
     }
 
