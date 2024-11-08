@@ -98,41 +98,49 @@ public class EventController {
 
     public interface EventMapCallback {
         void onEventMapFetched(ArrayList<GeoPoint> locations);
+
         void onError(String message);
     }
 
     public interface EventDetailsCallback {
         void onEventDetailsFetched(Event event);
+
         void onError(String message);
     }
 
     public interface EventListCallback {
         void onEventsFetched(ArrayList<Event> events);
+
         void onError(String message);
     }
 
     public interface JoinWaitingListCallback {
         void onSuccess();
+
         void onError(String message);
     }
 
     public interface LeaveWaitingListCallback {
         void onSuccess();
+
         void onError(String message);
     }
 
     public interface AcceptInvitationCallback {
         void onSuccess();
+
         void onError(String message);
     }
 
     public interface DeclineInvitationCallback {
         void onSuccess();
+
         void onError(String message);
     }
 
     public interface ScanQRCodeCallback {
         void onEventFound(String eventId);
+
         void onError(String message);
     }
 
@@ -146,11 +154,34 @@ public class EventController {
 
     public interface UploadEventPosterCallback {
         void onSuccessfulUpload(String posterUrl);
+
         void onError(String message);
     }
 
     public interface UploadEventQRCodeCallback {
         void onSuccessfulQRUpload(String qrUrl);
+
+        void onError(String message);
+    }
+
+    // Zhiyuan LI - Event management for Admin
+    public void deleteEvent(String eventId, DeleteEventCallback callback) {
+        firebaseAttendee.deleteEvent(eventId, new FirebaseAttendee.DeleteEventCallback() {
+            @Override
+            public void onSuccess() {
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
+    public interface DeleteEventCallback {
+        void onSuccess();
+
         void onError(String message);
     }
 }

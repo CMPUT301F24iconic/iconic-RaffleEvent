@@ -34,7 +34,8 @@ public class RoleSelectionActivity extends AppCompatActivity {
         });
 
         admin_button.setOnClickListener(v -> {
-            // Send user to admin UI when implemented
+            // Direct admin to AdminHubActivity
+            startActivity(new Intent(RoleSelectionActivity.this, AdminHubActivity.class));
         });
     }
 }

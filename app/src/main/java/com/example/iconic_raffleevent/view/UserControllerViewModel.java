@@ -7,19 +7,13 @@ import com.example.iconic_raffleevent.controller.UserController;
 public class UserControllerViewModel extends ViewModel {
     private UserController userController;
 
-    public void setUserController(String deviceID, Context context) {
+    public void setUserController(String userID, Context context) {
         if (userController == null) {
-            userController = new UserController(deviceID, context);
+            userController = new UserController(userID, context);
         }
     }
 
     public UserController getUserController() {
-        return this.userController;
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        userController = null;
+        return userController;
     }
 }
