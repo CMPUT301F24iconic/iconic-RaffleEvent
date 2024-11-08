@@ -70,6 +70,8 @@
         <activity android:name=".view.CreateEventActivity" android:exported="false" />
         <activity android:name=".view.CreateFacilityActivity" android:exported="false" />
         <activity android:name=".view.DisplayQRCodeActivity" android:exported="false" />
+        <activity android:name=".view.ManageEventActivity" android:exported="false" />
+        <activity android:name=".view.WaitingListActivity" android:exported="false" />
 
         <!-- Admin Role Activities -->
         <activity android:name=".view.AdminHubActivity" android:exported="false" />
@@ -81,6 +83,8 @@
         <activity android:name=".view.AdminImageActivity" android:exported="false" />
         <activity android:name=".view.AdminQRCodeActivity" android:exported="false" />
         <activity android:name=".view.AdminFacilityActivity" android:exported="false" />
+        <activity android:name=".view.EventListForAdminActivity" android:exported="false" />
+        <activity android:name=".view.ProfileManagementActivity" android:exported="false" />
 
         <!-- Firebase and Notification Configuration (uncomment when adding Firebase setup) -->
         <!--
