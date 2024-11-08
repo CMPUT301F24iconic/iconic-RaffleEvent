@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Main Content Layout -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
     <TextView
@@ -10,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Notification Settings"
+        android:textColor="@color/textColorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="16dp"
@@ -36,11 +39,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/textColorPrimary"
                 android:text="Win Notification"/>
             <TextView
                 android:id="@+id/win_notification_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColorSecondary"
                 android:text="Get notified when you win a lottery"/>
         </LinearLayout>
         <Switch
@@ -68,11 +73,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/textColorPrimary"
                 android:text="Lose Notification"/>
             <TextView
                 android:id="@+id/lose_notification_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColorSecondary"
                 android:text="Receive updates when you are not selected"/>
         </LinearLayout>
         <Switch
@@ -97,6 +104,7 @@
             android:text="Enable notifications"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/textColorPrimary"
             android:layout_weight="1"/>
         <Switch
             android:id="@+id/enable_notification_switch"

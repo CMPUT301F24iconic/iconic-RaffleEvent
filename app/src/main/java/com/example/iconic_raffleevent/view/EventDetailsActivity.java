@@ -53,6 +53,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageButton profileButton;
     private ImageButton menuButton;
 
+    // Top Nav bar
+    private ImageButton notificationButton;
+
     // Controllers and data related to objects
     private EventController eventController;
     private String eventId;
@@ -155,6 +158,13 @@ public class EventDetailsActivity extends AppCompatActivity {
             intent.putExtra("eventTitle", eventObj.getEventTitle());
             startActivity(intent);
         });
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(EventDetailsActivity.this, NotificationsActivity.class))
+        );
+
     }
 
     private void fetchEventDetails() {

@@ -38,6 +38,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton menuButton;
+    private ImageButton notificationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         eventHeader = findViewById(R.id.event_header);
         eventHeader.setText(eventTitle);
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(MapActivity.this, NotificationsActivity.class))
+        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {

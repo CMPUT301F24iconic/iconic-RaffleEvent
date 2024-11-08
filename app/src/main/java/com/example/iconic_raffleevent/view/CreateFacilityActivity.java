@@ -45,6 +45,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
     private ImageButton menuButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private ImageButton notificationButton;
 
     // Input Error
     Boolean inputError;
@@ -65,6 +66,12 @@ public class CreateFacilityActivity extends AppCompatActivity {
         menuButton = findViewById(R.id.menu_button);
 
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(CreateFacilityActivity.this, NotificationsActivity.class))
+        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
