@@ -30,6 +30,10 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
 
+/**
+ * Activity for creating an event within the Iconic Raffle Event application.
+ * Allows users to input event details, attach a facility, upload a poster, and save the event to the database.
+ */
 public class CreateEventActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 71;
 
@@ -81,6 +85,11 @@ public class CreateEventActivity extends AppCompatActivity {
     // Event poster
     Uri imageUri;
 
+    /**
+     * Initializes the activity, setting up views, navigation drawer, event and facility controllers, and user details.
+     *
+     * @param savedInstanceState The saved instance state bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,6 +208,9 @@ public class CreateEventActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes UI components for the event creation form.
+     */
     public void initializeViews() {
         eventTitleLayout = findViewById(R.id.eventTitleInputLayout);
         eventTitleText = findViewById(R.id.eventTitleEditText);
@@ -220,6 +232,9 @@ public class CreateEventActivity extends AppCompatActivity {
         saveEventButton = findViewById(R.id.saveButton);
     }
 
+    /**
+     * Initializes the UserController with the device ID and retrieves the user's information.
+     */
     public void initializeUserController() {
         // Retrieve Device ID
         String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -245,15 +260,13 @@ public class CreateEventActivity extends AppCompatActivity {
         });
     }
 
-    /*
-      Description: Sets an error message for the TextInputLayout xml tag
-
-      Arguments: TextInputLayout textLayout: Xml tag wrapping the edittable input
-                 TextInputEditText: An android text block containing the input a user enters
-                 String errorMessage: The error message that should be shown
-
-      Returns: Nothing
-    */
+    /**
+     * Sets an error message for a TextInputLayout when the input does not meet requirements.
+     *
+     * @param textLayout   The TextInputLayout containing the input field
+     * @param textString   The input field with user-entered text
+     * @param errorMessage The error message to display if input is invalid
+     */
     public void setErrorMessage(TextInputLayout textLayout, TextInputEditText textString, String errorMessage) {
         // If the input fails to pass the requirements, set an error message
         if (checkInput(textString)) {
@@ -263,13 +276,12 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
-    /*
-      Description: Checks input for null or empty values
-
-      Arguments: TextInputEditText text: An android text block containing the input a user enters
-
-      Returns: Boolean - True if input passes checks, False if input fails checks
-    */
+    /**
+     * Checks if a TextInputEditText field is empty or null.
+     *
+     * @param text The input field to check
+     * @return True if input is null or empty, false otherwise
+     */
     public Boolean checkInput(TextInputEditText text) {
         if (text.getText() == null) {
             return Boolean.TRUE;
@@ -281,6 +293,9 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validates required input fields and sets error messages for invalid inputs.
+     */
     public void validateInputFields() {
         inputError = Boolean.FALSE;
 
@@ -299,6 +314,9 @@ public class CreateEventActivity extends AppCompatActivity {
         setErrorMessage(eventDescriptionLayout, eventDescriptionText, "Event description cannot be empty");
     }
 
+    /**
+     * Opens a file chooser for the user to select an image for the event poster.
+     */
     private void selectPoster() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -306,6 +324,13 @@ public class CreateEventActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Event Picture"), PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Receives the result of an image selection and sets the chosen image as the event poster.
+     *
+     * @param requestCode The request code identifying the request
+     * @param resultCode  The result code indicating the outcome of the request
+     * @param data        The intent data containing the selected image
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -321,6 +346,12 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves the event to the database, including the event poster.
+     *
+     * @param imageUri The URI of the selected image
+     * @param eventObj The event object to be saved
+     */
     private void saveEvent(Uri imageUri, Event eventObj) {
         if (imageUri != null) {
             eventController.uploadEventPoster(imageUri, eventObj, new EventController.UploadEventPosterCallback() {
@@ -339,6 +370,11 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Generates a QR code for the event and uploads it to the database.
+     *
+     * @param eventObj The event object with QR code details to be saved
+     */
     private void saveEventQR(Event eventObj) {
         eventController.uploadEventQRCode(eventObj, new EventController.UploadEventQRCodeCallback() {
             @Override

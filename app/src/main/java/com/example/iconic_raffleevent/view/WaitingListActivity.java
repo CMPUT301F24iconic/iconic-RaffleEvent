@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Activity that displays a waiting list of users for a specified event and allows the organizer
+ * to randomly select attendees based on event capacity.
+ */
 public class WaitingListActivity extends AppCompatActivity {
-
     private RecyclerView userRecyclerView;
     private FirebaseAttendee firebaseAttendee;
     private UserAdapter userAdapter;
@@ -25,6 +28,12 @@ public class WaitingListActivity extends AppCompatActivity {
     private Event eventObj;
     private Button sampleAttendeesButton;
 
+    /**
+     * Called when the activity is starting. Sets up the layout, initializes components, and
+     * begins loading event details and the waiting list of users.
+     *
+     * @param savedInstanceState the saved state of the activity if it was previously terminated.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +64,10 @@ public class WaitingListActivity extends AppCompatActivity {
         sampleAttendeesButton.setOnClickListener(v -> sampleAttendees());
     }
 
+    /**
+     * Loads the waiting list for the event by fetching the event details.
+     * Retrieves the list of user IDs on the waiting list and starts the process of fetching each user's details.
+     */
     public void loadWaitingList() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
@@ -69,6 +82,12 @@ public class WaitingListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches user details for each user ID in the waiting list and updates the RecyclerView adapter.
+     * Displays a toast message if user data fails to load.
+     *
+     * @param userIds the list of user IDs on the event's waiting list.
+     */
     private void fetchUsersFromWaitingList(List<String> userIds) {
         for (String userId : userIds) {
             firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
@@ -90,6 +109,10 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the event details, including waiting list information and capacity.
+     * Stores the event object in the activity.
+     */
     private void loadEventDetails() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
@@ -105,6 +128,11 @@ public class WaitingListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Samples attendees from the waiting list based on event capacity, randomly selects users to invite,
+     * and updates the event's invited and declined lists accordingly.
+     * Provides feedback to the organizer on the number of invited and declined attendees.
+     */
     private void sampleAttendees() {
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
@@ -145,6 +173,13 @@ public class WaitingListActivity extends AppCompatActivity {
         Toast.makeText(this, "Invited " + invitedList.size() + " attendees. Declined " + declinedList.size() + " attendees.", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Updates the event lists (invited and declined) in Firestore for the current event.
+     * Provides a success or error message based on the update result.
+     *
+     * @param invitedList the list of invited user IDs.
+     * @param declinedList the list of declined user IDs.
+     */
     private void updateEventListsInFirestore(List<String> invitedList, List<String> declinedList) {
         firebaseAttendee.updateEventLists(eventObj.getEventId(), invitedList, declinedList, new FirebaseAttendee.UpdateCallback() {
             @Override

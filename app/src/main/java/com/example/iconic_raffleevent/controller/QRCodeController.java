@@ -5,14 +5,26 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Controller class responsible for managing QR code data and interacting with Firebase Firestore.
+ * Provides methods to fetch and delete QR code data.
+ */
 public class QRCodeController {
 
     private final FirebaseFirestore db;
 
+    /**
+     * Constructs a new QRCodeController and initializes the Firebase Firestore instance.
+     */
     public QRCodeController() {
         this.db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Retrieves all QR code data from the Firestore collection.
+     *
+     * @param callback The callback interface to handle the fetched QR code data or error.
+     */
     public void getAllQRCodeData(GetQRCodeDataCallback callback) {
         db.collection("qr_codes").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -31,6 +43,12 @@ public class QRCodeController {
         });
     }
 
+    /**
+     * Deletes QR code data from Firestore based on the provided QR code data.
+     *
+     * @param qrCodeData The QR code data to be deleted.
+     * @param callback   The callback interface to handle success or error responses.
+     */
     public void deleteQRCodeData(String qrCodeData, DeleteQRCodeDataCallback callback) {
         db.collection("qr_codes").whereEqualTo("data", qrCodeData).get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -52,13 +70,17 @@ public class QRCodeController {
                 .addOnFailureListener(e -> callback.onError("Error deleting QR code data: " + e.getMessage()));
     }
 
-
-    // Callback interface for fetching QR codes
+    /**
+     * Callback interface for fetching QR code data.
+     */
     public interface GetQRCodeDataCallback {
         void onQRCodeDataFetched(ArrayList<String> qrCodes);
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting QR code data.
+     */
     public interface DeleteQRCodeDataCallback {
         void onSuccess();
         void onError(String message);

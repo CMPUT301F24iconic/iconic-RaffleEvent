@@ -46,7 +46,6 @@ public class ConfirmedListActivity extends AppCompatActivity {
 
     private void loadConfirmedList() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
-
             @Override
             public void onEventDetailsFetched(Event event) {
                 List<String> confirmedListIds = event.getRegisteredAttendees();
@@ -63,7 +62,6 @@ public class ConfirmedListActivity extends AppCompatActivity {
     private void fetchUsersFromConfirmedList(List<String> userIds) {
         for (String userId : userIds) {
             firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-
                 @Override
                 public void onUserFetched(User user) {
                     if (user != null) {
@@ -81,4 +79,6 @@ public class ConfirmedListActivity extends AppCompatActivity {
             });
         }
     }
+
+
 }

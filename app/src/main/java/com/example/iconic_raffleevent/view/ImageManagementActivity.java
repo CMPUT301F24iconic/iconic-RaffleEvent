@@ -14,14 +14,22 @@ import com.example.iconic_raffleevent.model.ImageData;
 
 import java.util.ArrayList;
 
+/**
+ * Activity class for managing a list of images. Provides functionality to display,
+ * refresh, and delete images from the list.
+ */
 public class ImageManagementActivity extends AppCompatActivity {
-
     private ListView imageListView;
     private ImageController imageController;
     private ArrayList<ImageData> imageList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> imageTitles;
 
+    /**
+     * Initializes the activity, setting up the layout and loading the list of images.
+     *
+     * @param savedInstanceState The previously saved instance state, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +41,10 @@ public class ImageManagementActivity extends AppCompatActivity {
         loadImageList();
     }
 
+    /**
+     * Loads the list of images by fetching them from the {@link ImageController}.
+     * Sets up the ListView adapter and handles click events for managing individual images.
+     */
     private void loadImageList() {
         imageController.getAllImages(new ImageController.ImageListCallback() {
             @Override
@@ -57,6 +69,11 @@ public class ImageManagementActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog with options for managing a selected image.
+     *
+     * @param image The selected ImageData object to manage.
+     */
     private void showImageOptionsDialog(ImageData image) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Manage Image")
@@ -66,6 +83,12 @@ public class ImageManagementActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Removes the selected image from the database using the ImageController.
+     * Refreshes the image list upon successful deletion.
+     *
+     * @param image The ImageData object to be deleted.
+     */
     private void removeImage(ImageData image) {
         imageController.deleteImage(image.getImageId(), new ImageController.DeleteImageCallback() {
             @Override

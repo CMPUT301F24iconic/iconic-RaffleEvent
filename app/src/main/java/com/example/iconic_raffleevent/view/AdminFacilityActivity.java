@@ -16,13 +16,23 @@ import com.example.iconic_raffleevent.model.Facility;
 
 import java.util.ArrayList;
 
+/**
+ * AdminFacilityActivity provides an interface for administrators to view and manage facilities.
+ * This activity displays a list of facilities and allows the admin to delete facilities through
+ * Firebase.
+ */
 public class AdminFacilityActivity extends AppCompatActivity {
-
     private ListView facilityListView;
     private ArrayAdapter<String> facilityAdapter;
     private ArrayList<Facility> facilityList;
     private FirebaseOrganizer firebaseOrganizer;
 
+    /**
+     * Called when the activity is first created. Initializes views and loads the list of facilities.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +43,10 @@ public class AdminFacilityActivity extends AppCompatActivity {
         loadFacilityList();
     }
 
+    /**
+     * Loads the list of facilities from Firebase and displays them in the ListView.
+     * Sets an item click listener on each facility to allow the admin to delete facilities.
+     */
     private void loadFacilityList() {
         firebaseOrganizer.getAllFacilities(new FirebaseOrganizer.GetFacilitiesCallback() {
             @Override
@@ -54,6 +68,11 @@ public class AdminFacilityActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a confirmation dialog to delete a facility.
+     *
+     * @param facility The Facility object to be deleted.
+     */
     private void showDeleteDialog(Facility facility) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Facility")
@@ -63,6 +82,11 @@ public class AdminFacilityActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Deletes the specified facility from Firebase and refreshes the facility list upon success.
+     *
+     * @param facility The Facility object to be deleted.
+     */
     private void deleteFacility(Facility facility) {
         firebaseOrganizer.deleteFacility(facility.getId(), new FirebaseOrganizer.DeleteFacilityCallback() {
             @Override

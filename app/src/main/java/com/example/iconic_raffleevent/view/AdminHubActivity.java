@@ -12,6 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.iconic_raffleevent.R;
 
+/**
+ * AdminHubActivity serves as the main hub for administrative actions within the application.
+ * It provides access to various management functionalities, such as managing users, events,
+ * images, and QR codes. Access is restricted to users who provide the correct admin password.
+ */
 public class AdminHubActivity extends AppCompatActivity {
     private static final String ADMIN_PASSWORD = "adminPass123"; // Set your actual admin password here
 
@@ -21,6 +26,13 @@ public class AdminHubActivity extends AppCompatActivity {
     private Button manageQRCodeButton;
     private boolean isAdminAuthenticated = false;
 
+    /**
+     * Called when the activity is first created. Initializes buttons and prompts for admin
+     * authentication if not already authenticated.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +83,11 @@ public class AdminHubActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog prompting the user to enter the admin password.
+     * If the password is correct, the user gains access to administrative features.
+     * If the password is incorrect, the activity closes.
+     */
     private void showPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Admin Password");
@@ -93,6 +110,13 @@ public class AdminHubActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Verifies the entered password against the stored admin password.
+     * If the password is correct, sets the admin authentication flag to true.
+     * If the password is incorrect, displays a toast and closes the activity.
+     *
+     * @param password The password entered by the user.
+     */
     private void verifyPassword(String password) {
         if (password.equals(ADMIN_PASSWORD)) {
             isAdminAuthenticated = true;

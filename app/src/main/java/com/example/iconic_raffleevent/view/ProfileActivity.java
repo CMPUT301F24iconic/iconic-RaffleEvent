@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -394,14 +395,13 @@ public class ProfileActivity extends AppCompatActivity {
         Bitmap avatar = AvatarGenerator.generateAvatar(name, 120); // Size 120 is used for demonstration
         profileImageView.setImageBitmap(avatar); // Set the generated avatar as profile image
     }
+    @SuppressLint("HardwareIds")
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     /**
-     * Retrieves the unique user ID for the device.
-     *
-     * @return A string representing the unique device ID
+     * Cleans up any resources when the activity is destroyed.
      */
     @Override
     protected void onDestroy() {

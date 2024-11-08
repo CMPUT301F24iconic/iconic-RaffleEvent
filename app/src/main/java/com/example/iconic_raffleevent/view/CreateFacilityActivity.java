@@ -22,8 +22,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+/**
+ * Activity for creating a new facility in the application.
+ * Allows the user to input facility details and save them to the database.
+ */
 public class CreateFacilityActivity extends AppCompatActivity {
-
     private TextInputEditText facilityNameEditText;
     private TextInputEditText locationEditText;
     private TextInputEditText facilityDetailsEditText;
@@ -50,6 +53,14 @@ public class CreateFacilityActivity extends AppCompatActivity {
     // Input Error
     Boolean inputError;
 
+    /**
+     * Called when the activity is starting. Initializes views, navigation, controllers, and the current user profile.
+     * Sets up listeners for the navigation buttons and the save button.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the most recent data supplied in {@link #onSaveInstanceState(Bundle)}.
+     *                           Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +124,10 @@ public class CreateFacilityActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> saveFacility());
     }
 
+    /**
+     * Validates input fields and creates a facility if all inputs are valid.
+     * Displays a toast message indicating success or error.
+     */
     private void saveFacility() {
         validateInputFields();
         if (!inputError) {
@@ -138,15 +153,13 @@ public class CreateFacilityActivity extends AppCompatActivity {
 
     }
 
-    /*
-      Description: Sets an error message for the TextInputLayout xml tag
-
-      Arguments: TextInputLayout textLayout: Xml tag wrapping the edittable input
-                 TextInputEditText: An android text block containing the input a user enters
-                 String errorMessage: The error message that should be shown
-
-      Returns: Nothing
-    */
+    /**
+     * Sets an error message for a TextInputLayout if input validation fails.
+     *
+     * @param textLayout The TextInputLayout containing the editable input.
+     * @param textString The TextInputEditText holding the user input.
+     * @param errorMessage The error message to display if validation fails.
+     */
     public void setErrorMessage(TextInputLayout textLayout, TextInputEditText textString, String errorMessage) {
         // If the input fails to pass the requirements, set an error message
         if (checkInput(textString)) {
@@ -156,13 +169,12 @@ public class CreateFacilityActivity extends AppCompatActivity {
         }
     }
 
-    /*
-      Description: Checks input for null or empty values
-
-      Arguments: TextInputEditText text: An android text block containing the input a user enters
-
-      Returns: Boolean - True if input passes checks, False if input fails checks
-    */
+    /**
+     * Checks if the input field is empty or null.
+     *
+     * @param text The TextInputEditText containing user input.
+     * @return True if input is invalid (empty or null); false otherwise.
+     */
     public Boolean checkInput(TextInputEditText text) {
         if (text.getText() == null) {
             return Boolean.TRUE;
@@ -174,6 +186,10 @@ public class CreateFacilityActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validates all input fields and sets error messages if any are invalid.
+     * Updates inputError to true if any validation fails.
+     */
     public void validateInputFields() {
         inputError = Boolean.FALSE;
 
@@ -188,8 +204,9 @@ public class CreateFacilityActivity extends AppCompatActivity {
         setErrorMessage(locationInputLayout, locationEditText, "Location cannot be empty");
     }
 
-
-
+    /**
+     * Loads the current user's profile information from the database.
+     */
     private void loadUserProfile() {
         /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
@@ -209,7 +226,11 @@ public class CreateFacilityActivity extends AppCompatActivity {
         });
     }
 
-    // Zhiyuan Li
+    /**
+     * Initializes and retrieves the UserController for managing user data.
+     *
+     * @return The initialized UserController.
+     */
     private UserController getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(userId,getApplicationContext());

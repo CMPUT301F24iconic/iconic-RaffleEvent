@@ -45,9 +45,10 @@ public class FirebaseControllerTest {
 
      */
 
-    private UserController mockUserController(User user) {
-        return new UserController(user);
-    }
+
+    //private UserController mockUserController(User user) {
+        //return new UserController(user);
+    //}
 
     private EventController mockEventController() {
         return new EventController();
@@ -56,7 +57,7 @@ public class FirebaseControllerTest {
     @Test
     public void testAddUser() {
         User testUser = mockUser();
-        UserController controllerForUser = mockUserController(testUser);
+        //UserController controllerForUser = mockUserController(testUser);
         OnUserRetrievedListener mockListener = mock(OnUserRetrievedListener.class);
 
         // Add the user to the database

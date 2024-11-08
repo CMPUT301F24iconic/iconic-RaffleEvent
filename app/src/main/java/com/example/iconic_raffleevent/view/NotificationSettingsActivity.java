@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -17,8 +18,12 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 
+/**
+ * Activity that handles user notification settings.
+ * This activity allows the user to enable or disable notifications for win and lose events,
+ * as well as enable or disable all notifications.
+ */
 public class NotificationSettingsActivity extends AppCompatActivity {
-
     private UserController userController;
     private User userObj;
 
@@ -33,6 +38,12 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
 
+    /**
+     * Called when the activity is created.
+     * Initializes views, controller, and listeners, and loads the user's notification preferences.
+     *
+     * @param savedInstanceState The saved instance state if available.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +55,10 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         loadUserNotificationsPreferences();
     }
 
+    /**
+     * Initializes all views used in this activity.
+     * This includes switches, buttons, and image buttons for navigation.
+     */
     private void initializeViews() {
         winSwitch = findViewById(R.id.win_notification_switch);
         loseSwitch = findViewById(R.id.lose_notification_switch);
@@ -55,12 +70,19 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
     }
 
+    /**
+     * Initializes the UserController and sets it up using the user's ID.
+     */
     private void initializeController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
     }
 
+    /**
+     * Sets up the listeners for buttons and switches in this activity.
+     * This includes the save button, back button, and switches for enabling/disabling notifications.
+     */
     private void setupListeners() {
         saveButton.setOnClickListener(v -> saveNotificationSettings());
         backButton.setOnClickListener(v -> navigateToNotifications());
@@ -91,6 +113,10 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
     }
 
+    /**
+     * Saves the user's notification preferences by updating the UserController.
+     * Shows a toast with the result of the save operation.
+     */
     private void saveNotificationSettings() {
         if (userObj == null) {
             Toast.makeText(this, "Unable to save settings: User data not loaded", Toast.LENGTH_SHORT).show();
@@ -113,6 +139,10 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the user's notification preferences from the UserController.
+     * Once the data is loaded, it updates the switch states based on the user's preferences.
+     */
     private void loadUserNotificationsPreferences() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -138,21 +168,39 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the state of the notification switches based on the provided user's preferences.
+     *
+     * @param user The user object containing the notification preferences.
+     */
     private void updateSwitchStates(User user) {
         winSwitch.setChecked(user.isWinNotificationPref());
         loseSwitch.setChecked(user.isLoseNotificationPref());
         enableSwitch.setChecked(user.isNotificationsEnabled());
     }
 
+    /**
+     * Navigates to the NotificationsActivity.
+     * This method is called after successfully saving the notification settings.
+     */
     private void navigateToNotifications() {
         startActivity(new Intent(this, NotificationsActivity.class));
         finish();
     }
 
+    /**
+     * Gets the unique user ID (Android ID) for the current device.
+     *
+     * @return The Android ID as a String.
+     */
+    @SuppressLint("HardwareIds")
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Cleans up any resources when the activity is destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

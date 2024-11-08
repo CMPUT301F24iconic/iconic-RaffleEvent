@@ -11,13 +11,22 @@ import com.example.iconic_raffleevent.controller.QRCodeController;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for managing QR codes in the application. This activity loads a list of QR codes,
+ * allows the user to view and remove QR code data through a confirmation dialog.
+ */
 public class QRCodeManagementActivity extends AppCompatActivity {
-
     private ListView qrCodeListView;
     private QRCodeController qrCodeController;
     private ArrayList<String> qrCodeDataList;
     private ArrayAdapter<String> adapter;
 
+    /**
+     * Called when the activity is created. Sets the layout, initializes the QRCodeController,
+     * and loads the list of QR code data.
+     *
+     * @param savedInstanceState The saved state of the activity if it was previously destroyed.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +38,11 @@ public class QRCodeManagementActivity extends AppCompatActivity {
         loadQRCodeDataList();
     }
 
+    /**
+     * Loads the QR code data from the QRCodeController and displays it in the ListView.
+     * If QR codes are fetched successfully, they are displayed in the list. Otherwise, an error
+     * message is shown.
+     */
     private void loadQRCodeDataList() {
         qrCodeController.getAllQRCodeData(new QRCodeController.GetQRCodeDataCallback() {
             @Override
@@ -48,6 +62,11 @@ public class QRCodeManagementActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog with options to remove or cancel the removal of a QR code.
+     *
+     * @param qrCodeData The QR code data that is being managed.
+     */
     private void showQRCodeOptionsDialog(String qrCodeData) {
         new AlertDialog.Builder(this)
                 .setTitle("Manage QR Code")
@@ -57,6 +76,11 @@ public class QRCodeManagementActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Removes the selected QR code data by calling the QRCodeController to delete it.
+     *
+     * @param qrCodeData The QR code data that should be removed.
+     */
     private void removeQRCode(String qrCodeData) {
         qrCodeController.deleteQRCodeData(qrCodeData, new QRCodeController.DeleteQRCodeDataCallback() {
             @Override

@@ -22,6 +22,11 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+/**
+ * UserController is a controller class that manages user-related functionalities
+ * such as adding a user, updating user profiles, uploading/removing profile images,
+ * enabling/disabling notifications, and fetching user data from Firebase.
+ */
 public class UserController {
     private static final String TAG = "UserController";
     private final FirebaseFirestore firestore;
@@ -30,6 +35,12 @@ public class UserController {
     private final String currentUserID;
     private final Context context;
 
+    /**
+     * Constructor for UserController.
+     *
+     * @param userID The current user ID.
+     * @param context The context of the calling activity.
+     */
     public UserController(String userID, Context context) {
         this.currentUserID = userID;
         this.context = context;
@@ -41,6 +52,12 @@ public class UserController {
     // Regex pattern for validating phone numbers (US/international format)
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?[1-9]\\d{1,14}$");
 
+    /**
+     * Adds a new user to the Firebase Firestore database.
+     *
+     * @param user The User object containing user information.
+     * @param callback The callback to notify on success or failure.
+     */
     public void addUser(User user, AddUserCallback callback) {
         firestore.collection("User").document(user.getUserId())
                 .set(user)
@@ -48,7 +65,14 @@ public class UserController {
                 .addOnFailureListener(e -> callback.onError("Failed to add user: " + e.getMessage()));
     }
 
-    // Method to validate and update the user profile with a valid phone number
+    /**
+     * Updates the profile information of a user.
+     *
+     * @param user The User object to update.
+     * @param name The new name of the user.
+     * @param email The new email of the user.
+     * @param phoneNo The new phone number of the user.
+     */
     public void updateProfile(User user, String name, String email, String phoneNo) {
         if (!isValidPhoneNumber(phoneNo)) {
             Log.e(TAG, "Invalid phone number format");
@@ -61,11 +85,23 @@ public class UserController {
         updateUser(user); // Call the simplified version without callback
     }
 
-    // Helper method to validate phone number format
+    /**
+     * Validates the format of the phone number.
+     *
+     * @param phoneNo The phone number to validate.
+     * @return true if the phone number is valid, false otherwise.
+     */
     private boolean isValidPhoneNumber(String phoneNo) {
         return phoneNo != null && PHONE_PATTERN.matcher(phoneNo).matches();
     }
 
+    /**
+     * Uploads the user's profile image to Firebase Storage.
+     *
+     * @param user The user whose profile image is being uploaded.
+     * @param imageUri The URI of the image to upload.
+     * @param callback The callback to notify on success or failure.
+     */
     public void uploadProfileImage(User user, Uri imageUri, ProfileImageUploadCallback callback) {
         if (imageUri == null) {
             callback.onError("Image URI is null");
@@ -112,6 +148,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Removes the user's profile image from Firebase Storage.
+     *
+     * @param user The user whose profile image is being removed.
+     * @param callback The callback to notify on success or failure.
+     */
     public void removeProfileImage(User user, ProfileImageRemovalCallback callback) {
         String imageUrl = user.getProfileImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -137,21 +179,44 @@ public class UserController {
         }
     }
 
+    /**
+     * Sets the notification preference for the user.
+     *
+     * @param user The user whose notification preference is being updated.
+     * @param enabled True to enable notifications, false to disable.
+     */
     public void setNotificationsEnabled(User user, boolean enabled) {
         user.setNotificationsEnabled(enabled);
         updateUser(user);
     }
 
+    /**
+     * Sets the win notification preference for the user.
+     *
+     * @param user The user whose win notification preference is being updated.
+     * @param enabled True to enable win notifications, false to disable.
+     */
     public void setWinNotificationsEnabled(User user, boolean enabled) {
         user.setWinNotificationPref(enabled);
         updateUser(user);
     }
 
+    /**
+     * Sets the lose notification preference for the user.
+     *
+     * @param user The user whose lose notification preference is being updated.
+     * @param enabled True to enable lose notifications, false to disable.
+     */
     public void setLoseNotificationsEnabled(User user, boolean enabled) {
         user.setLoseNotificationPref(enabled);
         updateUser(user);
     }
 
+    /**
+     * Fetches the user data from Firebase Firestore.
+     *
+     * @param callback The callback to notify with the fetched user or an error message.
+     */
     public void getUserInformation(UserFetchCallback callback) {
         if (currentUserID == null || currentUserID.isEmpty()) {
             callback.onError("User ID is missing");
@@ -174,6 +239,12 @@ public class UserController {
                 .addOnFailureListener(e -> callback.onError("Error fetching user: " + e.getMessage()));
     }
 
+    /**
+     * Retrieves the user's current location using the FusedLocationProviderClient.
+     *
+     * @param fusedLocationClient The location client to fetch the user's location.
+     * @param callback The callback to notify with the retrieved location or an error message.
+     */
     public void retrieveUserLocation(FusedLocationProviderClient fusedLocationClient, OnLocationReceivedCallback callback) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -193,6 +264,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Fetches the list of all users from the Firestore database.
+     * This method retrieves all documents from the "User" collection in Firestore.
+     * @param callback The callback to notify on the result of the fetch operation.
+     *                 The callback will be invoked with either the list of users
+     *                 or an error message.
+     */
     public void getAllUsers(UserListCallback callback) {
         firestore.collection("User").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -205,69 +283,134 @@ public class UserController {
         });
     }
 
+    /**
+     * Deletes a user from the Firestore database.
+     * This method deletes the user document from the "User" collection in Firestore.
+     * @param userId The unique identifier of the user to be deleted.
+     * @param callback The callback to notify on the result of the delete operation.
+     *                 The callback will be invoked with either a success message
+     *                 or an error message.
+     */
     public void deleteUser(String userId, DeleteUserCallback callback) {
         firestore.collection("User").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete user: " + e.getMessage()));
     }
 
+    /**
+     * Updates the user's data in Firebase Firestore.
+     *
+     * @param user The user whose data is being updated.
+     */
     private void updateUser(User user) {
         firestore.collection("User").document(user.getUserId()).set(user)
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to update user: " + e.getMessage()));
     }
 
+    /**
+     * Updates the user's data in Firebase Firestore.
+     *
+     * @param user The user whose data is being updated.
+     * @param callback callback passed back to UI to indicate if user update was successful or a failure
+     */
     private void updateUser(User user, UpdateUserCallback callback) {
         firestore.collection("User").document(user.getUserId()).set(user)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to update user: " + e.getMessage()));
     }
 
-    // Callback interfaces
-    public interface UserListCallback {
-        void onUsersFetched(ArrayList<User> users);
-        void onError(String message);
-    }
-
-    public interface ProfileImageUploadCallback {
-        void onProfileImageUploaded(String imageUrl);
-        void onError(String message);
-    }
-
-    public interface ProfileImageRemovalCallback {
-        void onProfileImageRemoved();
-        void onError(String message);
-    }
-
-    public interface UserFetchCallback {
-        void onUserFetched(User user);
-        void onError(String message);
-    }
-
-    public interface OnLocationReceivedCallback {
-        void onLocationReceived(GeoPoint location);
-        void onError(String message);
-    }
-
-    public interface DeleteUserCallback {
-        void onSuccess();
-        void onError(String message);
-    }
-
-    public interface AddUserCallback {
-        void onSuccess();
-        void onError(String message);
-    }
-
-    public interface UpdateUserCallback {
-        void onSuccess();
-        void onError(String message);
-    }
-
+    /**
+     * Retrieves the MIME type of a file based on its URI.
+     * This method determines the MIME type of the file referenced by the provided URI.
+     * @param uri The URI of the file whose MIME type is to be determined.
+     * @return The MIME type of the file, or "image/jpeg" if the MIME type cannot be determined.
+     */
     private String getMimeType(Uri uri) {
         if (context == null) return "image/jpeg";
         ContentResolver resolver = context.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         String type = resolver.getType(uri);
         return type != null ? type : "image/jpeg";
+    }
+
+    /**
+     * Callback interface for fetching a list of users from the Firestore database.
+     */
+    public interface UserListCallback {
+        void onUsersFetched(ArrayList<User> users);
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for profile image upload success or failure.
+     */
+    public interface ProfileImageUploadCallback {
+        void onProfileImageUploaded(String imageUrl);
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for profile image removal success or failure.
+     */
+    public interface ProfileImageRemovalCallback {
+        void onProfileImageRemoved();
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for fetching user information.
+     */
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for receiving location data.
+     */
+    public interface OnLocationReceivedCallback {
+        void onLocationReceived(GeoPoint location);
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for deleting a user from the Firestore database.
+     */
+    public interface DeleteUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for adding a user.
+     */
+    public interface AddUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for updating a user.
+     */
+    public interface UpdateUserCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    /**
+     * Interface for listening to user retrieval callbacks.
+     * This interface should be implemented by any class that wants to receive
+     * notifications when a user has been retrieved from a data source.
+     * Implementing classes must define the behavior of the
+     * onUserRetrieved method to handle the retrieved user.
+     */
+    public interface OnUserRetrievedListener {
+        /**
+         * Called when a user has been successfully retrieved.
+         *
+         * @param user The retrieved User object. If no user is found,
+         *             this parameter will be null
+         */
+        void onUserRetrieved(User user);
     }
 }

@@ -36,8 +36,11 @@ import java.util.Map;
 // Zhiyuan Li - upload image error checking
 import android.util.Log;
 
+/**
+ * FirebaseAttendee class interacts with Firebase Firestore and Firebase Storage to manage user profiles, events, and notifications.
+ * This class provides methods for managing users, events, event registration, waiting lists, notifications, and event media.
+ */
 public class FirebaseAttendee {
-
     private FirebaseFirestore db;
     private CollectionReference usersCollection;
     private CollectionReference eventsCollection;
@@ -45,6 +48,9 @@ public class FirebaseAttendee {
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
 
+    /**
+     * Constructs a FirebaseAttendee instance and initializes references to Firebase Firestore and Firebase Storage.
+     */
     public FirebaseAttendee() {
         this.db = FirebaseFirestore.getInstance();
         this.usersCollection = db.collection("User");
@@ -55,17 +61,29 @@ public class FirebaseAttendee {
     }
 
     // User-related methods
+
+    /**
+     * Updates a user's profile in Firebase Firestore.
+     *
+     * @param user The user whose profile is to be updated.
+     */
     public void updateUser(User user) {
         if (user == null || user.getUserId() == null) {
             return;
         }
-    //Zhiyuan - ensure that updateUser(User user) actually updates the profileImageUrl in Firestore.
+        //Zhiyuan - ensure that updateUser(User user) actually updates the profileImageUrl in Firestore.
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.set(user)  // This will update the user document with all current fields
                 .addOnSuccessListener(aVoid -> Log.d("FirebaseAttendee", "User profile updated."))
                 .addOnFailureListener(e -> Log.e("FirebaseAttendee", "Error updating profile", e));
     }
 
+    /**
+     * Retrieves a user from Firebase Firestore.
+     *
+     * @param userID   The ID of the user to retrieve.
+     * @param callback The callback to handle the result of the operation.
+     */
     public void getUser(String userID, UserController.UserFetchCallback callback) {
         DocumentReference userRef = usersCollection.document(userID);
         userRef.get().addOnCompleteListener(task -> {
@@ -77,52 +95,89 @@ public class FirebaseAttendee {
             }
         });
     }
-    // Retrieve all users
+
+    /**
+     * Retrieves all users from the Firebase database.
+     * This method fetches the list of all users and passes it to the provided callback.
+     *
+     * @param callback The callback to handle the response with the list of users.
+     */
     public void getAllUsers(UserController.UserListCallback callback) {
         // Fetch all users from Firebase and pass to callback
     }
 
-    // Zhiyuan - Delete a user profile
-    // Method to delete a user by userId
+    /**
+     * Deletes a user profile from Firebase Firestore.
+     *
+     * @param userId  The ID of the user to delete.
+     * @param callback Callback to handle the result of the operation.
+     */
     public void deleteUser(String userId, DeleteUserCallback callback) {
         db.collection("users").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onUserDeleted(true))
                 .addOnFailureListener(e -> callback.onUserDeleted(false));
     }
 
-    // Callback for deletion success or failure
-    public interface DeleteUserCallback {
-        void onUserDeleted(boolean success);
-    }
-
+    /**
+     * Updates the waiting list for a user in Firebase Firestore.
+     *
+     * @param user The user whose waiting list is to be updated.
+     */
     public void updateWaitingList(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("waitingListEventIds", user.getWaitingListEventIds());
     }
 
+    /**
+     * Updates the registered events for a user in Firebase Firestore.
+     *
+     * @param user The user whose registered events are to be updated.
+     */
     public void updateRegisteredEvents(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("registeredEventIds", user.getRegisteredEventIds());
     }
 
+    /**
+     * Updates the notification preference for a user in Firebase Firestore.
+     *
+     * @param user The user whose notification preference is to be updated.
+     */
     public void updateNotificationPreference(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("notificationsEnabled", user.isNotificationsEnabled());
     }
 
-    // Manh Duong Hoang
+    /**
+     * Updates the user's win notification preference in the Firebase database.
+     * The preference is stored in the user's document under the field "winNotificationPref".
+     *
+     * @param user The user whose win notification preference needs to be updated.
+     */
     public void updateWinNotificationPreference(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("winNotificationPref", user.isWinNotificationPref());
     }
 
+    /**
+     * Updates the user's lose notification preference in the Firebase database.
+     * The preference is stored in the user's document under the field "loseNotificationPref".
+     *
+     * @param user The user whose lose notification preference needs to be updated.
+     */
     public void updateLoseNotificationPreference(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
         userRef.update("loseNotificationPref", user.isLoseNotificationPref());
     }
-    //
 
     // Event-related methods
+
+    /**
+     * Retrieves the details of a specific event.
+     *
+     * @param eventId  The ID of the event to retrieve.
+     * @param callback The callback to handle the result of the operation.
+     */
     public void getEventDetails(String eventId, EventController.EventDetailsCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.get().addOnCompleteListener(task -> {
@@ -135,6 +190,11 @@ public class FirebaseAttendee {
         });
     }
 
+    /**
+     * Retrieves all events from Firebase Firestore.
+     *
+     * @param callback The callback to handle the result of the operation.
+     */
     public void getAllEvents(EventController.EventListCallback callback) {
         eventsCollection.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -146,13 +206,24 @@ public class FirebaseAttendee {
         });
     }
 
-    // Add event and generate a new qrcode
+    /**
+     * Adds a new event and generates a QR code for the event.
+     *
+     * @param event The event to add.
+     * @param user The user organizing the event.
+     */
     public void addEvent(Event event, User user) {
         DocumentReference eventRef = eventsCollection.document(event.getEventId());
         event.setOrganizerID(user.getUserId());
         eventRef.set(event);
     }
 
+    /**
+     * Retrieves the map of entrant locations for a specific event.
+     *
+     * @param eventId  The ID of the event.
+     * @param callback The callback to handle the result of the operation.
+     */
     public void getEventMap(String eventId, EventController.EventMapCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.get().addOnCompleteListener(task -> {
@@ -181,16 +252,26 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 
-    public interface DeleteEventCallback {
-        void onSuccess();
-
-        void onError(String message);
-    }
+    /**
+     * Updates the event details in the Firebase database.
+     * This method updates the entire event document with the provided event object.
+     *
+     * @param event The event object containing the updated event details.
+     */
     public void updateEventDetails(Event event) {
         DocumentReference eventRef = eventsCollection.document(event.getEventId());
         eventRef.set(event);
     }
 
+    /**
+     * Adds the user to the event's waiting list along with their location.
+     * This method updates both the "waitingList" and "entrantLocations" fields of the event document.
+     *
+     * @param eventId      The ID of the event to join.
+     * @param userId       The ID of the user joining the event.
+     * @param userLocation The location of the user.
+     * @param callback     The callback interface to notify the success or failure of the operation.
+     */
     public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         WriteBatch writebatch = FirebaseFirestore.getInstance().batch();
@@ -202,6 +283,14 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to join waiting list"));
     }
 
+    /**
+     * Adds a user to the event's waiting list without including their location.
+     * This method updates the "waitingList" field of the event document by adding the user ID.
+     *
+     * @param eventId The ID of the event to which the user is joining the waiting list.
+     * @param userId The ID of the user joining the waiting list.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
     public void joinWaitingListWithoutLocation(String eventId, String userId, EventController.JoinWaitingListCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
@@ -209,6 +298,14 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
     }
 
+    /**
+     * Removes a user from the event's waiting list.
+     * This method updates the "waitingList" field of the event document by removing the user ID.
+     *
+     * @param eventId The ID of the event from which the user is leaving the waiting list.
+     * @param userId The ID of the user leaving the waiting list.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
     public void leaveWaitingList(String eventId, String userId, EventController.LeaveWaitingListCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
@@ -216,6 +313,14 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
     }
 
+    /**
+     * Accepts an event invitation for a user, adding them to the registered attendees list.
+     * This method updates the "registeredAttendees" field of the event document by adding the user ID.
+     *
+     * @param eventId The ID of the event to which the user is accepting the invitation.
+     * @param userId The ID of the user accepting the invitation.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
     public void acceptEventInvitation(String eventId, String userId, EventController.AcceptInvitationCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.update("registeredAttendees", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
@@ -223,6 +328,14 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
     }
 
+    /**
+     * Declines an event invitation for a user, removing them from the waiting list.
+     * This method updates the "waitingList" field of the event document by removing the user ID.
+     *
+     * @param eventId The ID of the event to which the user is declining the invitation.
+     * @param userId The ID of the user declining the invitation.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
     public void declineEventInvitation(String eventId, String userId, EventController.DeclineInvitationCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
         eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
@@ -230,6 +343,15 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to decline invitation"));
     }
 
+    /**
+     * Scans a QR code to find an event and attempts to add the user to the waiting list.
+     * This method retrieves the event associated with the QR code and joins the waiting list.
+     *
+     * @param qrCodeData The data encoded in the QR code (event identifier).
+     * @param userId     The ID of the user scanning the QR code.
+     * @param userLocation The location of the user scanning the QR code.
+     * @param callback   The callback interface to notify the success or failure of the operation.
+     */
     public void scanQRCode(String qrCodeData, String userId, GeoPoint userLocation, EventController.ScanQRCodeCallback callback) {
         eventsCollection.whereEqualTo("qrCode", qrCodeData)
                 .get()
@@ -263,6 +385,14 @@ public class FirebaseAttendee {
 
 
     // Notification-related methods
+
+    /**
+     * Retrieves the notifications for a specific user.
+     * Queries Firestore for notifications associated with the user.
+     *
+     * @param userId   The ID of the user whose notifications are to be retrieved.
+     * @param callback The callback interface to notify the success or failure of the operation.
+     */
     public void getNotifications(String userId, NotificationController.GetNotificationsCallback callback) {
         notificationsCollection.whereEqualTo("userId", userId)
                 .get()
@@ -276,6 +406,13 @@ public class FirebaseAttendee {
                 });
     }
 
+    /**
+     * Marks a specific notification as read for a user.
+     * Updates the "read" field of the notification document in Firestore.
+     *
+     * @param notificationId The ID of the notification to mark as read.
+     * @param callback       The callback interface to notify the success or failure of the operation.
+     */
     public void markNotificationAsRead(String notificationId, NotificationController.MarkNotificationAsReadCallback callback) {
         notificationsCollection.document(notificationId)
                 .update("read", true)
@@ -283,34 +420,54 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Failed to mark notification as read"));
     }
 
-    public void getUserEvents(String userId, EventController.EventListCallback callback) {
-        // Query for events where the user is in the waiting list or the organizer
-        eventsCollection
-                .whereArrayContains("waitingList", userId)
+    /**
+     * Retrieves the list of events for a user's waiting list.
+     * The method queries Firestore for all events where the user is present in the waiting list.
+     *
+     * @param userId   The ID of the user whose waiting list events are to be retrieved.
+     * @param callback The callback interface to notify the success or failure of the operation.
+     */
+    public void getUserWaitingListEvents(String userId, EventController.EventListCallback callback) {
+        eventsCollection.whereArrayContains("waitingList", userId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        List<Event> events = new ArrayList<>(task.getResult().toObjects(Event.class));
-
-                        // Now fetch events where the user is the organizer and combine the results
-                        eventsCollection
-                                .whereEqualTo("organizerID", userId)
-                                .get()
-                                .addOnCompleteListener(task2 -> {
-                                    if (task2.isSuccessful()) {
-                                        List<Event> organizerEvents = task2.getResult().toObjects(Event.class);
-                                        events.addAll(organizerEvents); // Combine the lists
-                                        callback.onEventsFetched(new ArrayList<>(events));
-                                    } else {
-                                        callback.onError("Failed to fetch organizer events.");
-                                    }
-                                });
+                        List<Event> events = task.getResult().toObjects(Event.class);
+                        callback.onEventsFetched(new ArrayList<>(events));
                     } else {
-                        callback.onError("Failed to fetch events for user.");
+                        callback.onError("Failed to fetch events for user waiting list.");
                     }
                 });
     }
 
+    /**
+     * Updates the event's invited and declined lists in the Firebase database.
+     * This method updates the event document with the provided lists of invited and declined users.
+     *
+     * @param eventId The ID of the event whose lists are being updated.
+     * @param invitedList The list of users invited to the event.
+     * @param declinedList The list of users who have declined the invitation.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
+    public void updateEventLists(String eventId, List<String> invitedList, List<String> declinedList, UpdateCallback callback) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("invitedList", invitedList);
+        updates.put("declinedList", declinedList);
+
+        eventsCollection.document(eventId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to update event lists: " + e.getMessage()));
+    }
+
+    /**
+     * Uploads the event poster to Firebase Storage and retrieves the download URL.
+     * The image is uploaded under the "event_posters" directory in Firebase Storage.
+     *
+     * @param eventUri URI of the event poster image.
+     * @param eventObj The event object associated with the poster.
+     * @param callback The callback interface to notify the success or failure of the upload.
+     */
     public void addEventPoster(Uri eventUri, Event eventObj, EventController.UploadEventPosterCallback callback) {
         String eventId = eventObj.getEventId();
         String filePath = "event_posters/" + eventId;
@@ -327,6 +484,13 @@ public class FirebaseAttendee {
         });
     }
 
+    /**
+     * Adds the QR code for an event to Firebase Storage and retrieves the download URL.
+     * The QR code is generated based on the event's `qrCode` field and uploaded as a JPEG image.
+     *
+     * @param eventObj The event object containing the QR code data.
+     * @param callback The callback interface to notify the success or failure of the upload.
+     */
     public void addEventQRCode(Event eventObj, EventController.UploadEventQRCodeCallback callback) {
         BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
         try {
@@ -354,31 +518,43 @@ public class FirebaseAttendee {
         }
     }
 
-    // EventDetailsCallback to fetch event details
+
+    /**
+     * Callback interface for handling the result of fetching event details.
+     */
     public interface EventDetailsCallback {
         void onEventDetailsFetched(Event event);
         void onError(String message);
     }
 
-    // UserFetchCallback to fetch user details
+    /**
+     * Callback interface for handling the result of fetching user details.
+     */
     public interface UserFetchCallback {
         void onUserFetched(User user);
         void onError(String message);
     }
 
-    public void updateEventLists(String eventId, List<String> invitedList, List<String> declinedList, UpdateCallback callback) {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("invitedList", invitedList);
-        updates.put("declinedList", declinedList);
-
-        eventsCollection.document(eventId)
-                .update(updates)
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to update event lists: " + e.getMessage()));
-    }
-
+    /**
+     * Callback interface for handling success or failure of an update operation.
+     */
     public interface UpdateCallback {
         void onSuccess();
         void onError(String message);
+    }
+
+    /**
+     * Callback interface for handling success or failure of an event deletion operation.
+     */
+    public interface DeleteEventCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for handling the result of a user deletion operation.
+     */
+    public interface DeleteUserCallback {
+        void onUserDeleted(boolean success);
     }
 }

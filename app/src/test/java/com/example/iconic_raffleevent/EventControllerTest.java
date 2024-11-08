@@ -19,7 +19,7 @@ public class EventControllerTest {
 
     private final String testEventId = "event123";
     private final String testUserId = "user123";
-    private final Event testEvent = new Event("Sample Event", "Sample Description");
+    private final Event testEvent = new Event();
 
     @Before
     public void setUp() {

@@ -13,13 +13,22 @@ import com.example.iconic_raffleevent.model.QRCodeData;
 
 import java.util.ArrayList;
 
+/**
+ * AdminQRCodeActivity provides an interface for administrators to manage QR codes within the application.
+ * This activity displays a list of QR codes fetched from Firebase and allows administrators to delete QR codes.
+ */
 public class AdminQRCodeActivity extends AppCompatActivity {
-
     private ListView qrCodeListView;
     private ArrayAdapter<String> qrCodeAdapter;
     private ArrayList<QRCodeData> qrCodeList;
     private FirebaseOrganizer firebaseOrganizer;
 
+    /**
+     * Called when the activity is created. Sets up the layout and initializes the QR code list.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +39,10 @@ public class AdminQRCodeActivity extends AppCompatActivity {
         loadQRCodeList();
     }
 
+    /**
+     * Loads the list of QR codes from Firebase and populates the ListView with QR code names.
+     * Sets up a click listener for each item in the list to allow for QR code deletion.
+     */
     private void loadQRCodeList() {
         firebaseOrganizer.getAllQRCodes(new FirebaseOrganizer.GetQRCodesCallback() {
             @Override
@@ -51,6 +64,11 @@ public class AdminQRCodeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a confirmation dialog for deleting a selected QR code.
+     *
+     * @param qrCode The QRCodeData object representing the QR code to be deleted.
+     */
     private void showDeleteDialog(QRCodeData qrCode) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete QR Code")
@@ -60,6 +78,11 @@ public class AdminQRCodeActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Deletes the specified QR code from Firebase and refreshes the QR code list on success.
+     *
+     * @param qrCode The QRCodeData object representing the QR code to delete.
+     */
     private void deleteQRCode(QRCodeData qrCode) {
         firebaseOrganizer.deleteQRCode(qrCode.getQrCodeId(), new FirebaseOrganizer.DeleteQRCodeCallback() {
             @Override
