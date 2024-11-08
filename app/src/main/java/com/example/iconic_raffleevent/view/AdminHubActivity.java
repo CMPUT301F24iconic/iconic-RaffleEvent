@@ -24,6 +24,7 @@ public class AdminHubActivity extends AppCompatActivity {
     private Button manageEventsButton;
     private Button manageImagesButton;
     private Button manageQRCodeButton;
+    private Button backToRoleSelectionButton;
     private boolean isAdminAuthenticated = false;
 
     /**
@@ -43,6 +44,7 @@ public class AdminHubActivity extends AppCompatActivity {
         manageEventsButton = findViewById(R.id.manage_events_button);
         manageImagesButton = findViewById(R.id.manage_images_button);
         manageQRCodeButton = findViewById(R.id.manage_qr_code_button);
+        backToRoleSelectionButton = findViewById(R.id.back_to_role_selection_button);
 
         // Show password dialog to confirm admin access
         if (!isAdminAuthenticated) {
@@ -80,6 +82,10 @@ public class AdminHubActivity extends AppCompatActivity {
             } else {
                 showPasswordDialog();
             }
+        });
+
+        backToRoleSelectionButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, RoleSelectionActivity.class));
         });
     }
 

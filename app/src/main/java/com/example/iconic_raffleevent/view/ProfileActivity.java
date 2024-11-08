@@ -381,7 +381,7 @@ public class ProfileActivity extends AppCompatActivity {
                     .into(profileImageView);
         } else {
             // Generate avatar if no profile image is available
-            generateAndSetAvatar(user.getUsername());
+            generateAndSetAvatar(user.getName());
         }
     }
 

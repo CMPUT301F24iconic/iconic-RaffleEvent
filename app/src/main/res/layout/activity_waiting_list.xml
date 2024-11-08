@@ -71,6 +71,17 @@
             android:textSize="@dimen/text_size_large"
             android:backgroundTint="@color/buttonPrimary"
             app:cornerRadius="@dimen/button_corner_radius" />
+
+        <!-- Send Notification Button with Icon -->
+        <Button
+            android:id="@+id/sendNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send Notification"
+            android:textColor="@color/buttonTextColor"
+            android:textSize="@dimen/text_size_large"
+            android:backgroundTint="@color/buttonPrimary"
+            app:cornerRadius="@dimen/button_corner_radius" />
     </LinearLayout>
 
     <!-- Include Bottom Navbar -->

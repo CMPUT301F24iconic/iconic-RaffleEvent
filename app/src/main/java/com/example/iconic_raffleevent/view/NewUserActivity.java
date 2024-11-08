@@ -16,10 +16,10 @@ import com.example.iconic_raffleevent.model.User;
 
 /**
  * NewUserActivity is responsible for handling the creation of a new user within the application.
- * It provides a user interface for entering a username and submitting it to create a new account.
+ * It provides a user interface for entering a name and submitting it to create a new account.
  */
 public class NewUserActivity extends AppCompatActivity {
-    private EditText usernameEditText;
+    private EditText nameEditText;
     private Button joinAppButton;
     private UserControllerViewModel userControllerViewModel;
     private UserController userController;
@@ -42,7 +42,7 @@ public class NewUserActivity extends AppCompatActivity {
      * Initializes the views in the layout by finding them by ID.
      */
     private void initializeViews() {
-        usernameEditText = findViewById(R.id.edit_username_field);
+        nameEditText = findViewById(R.id.edit_name_field);
         joinAppButton = findViewById(R.id.join_app_button);
     }
 
@@ -65,20 +65,20 @@ public class NewUserActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates a new user with the entered username. If successful, a toast message
+     * Creates a new user with the entered name. If successful, a toast message
      * is displayed, and the user is redirected to the Event List screen. If an error occurs,
      * a toast message with the error is displayed.
      */
     private void createNewUser() {
-        String username = usernameEditText.getText().toString().trim();
+        String name = nameEditText.getText().toString().trim();
 
-        if (username.isEmpty()) {
-            usernameEditText.setError("This field cannot be empty");
+        if (name.isEmpty()) {
+            nameEditText.setError("This field cannot be empty");
             return;
         }
 
         User newUser = new User();
-        newUser.setUsername(username);
+        newUser.setName(name);
         newUser.setUserId(getUserId());
 
         userController.addUser(newUser, new UserController.AddUserCallback() {
