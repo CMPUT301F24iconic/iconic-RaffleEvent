@@ -60,6 +60,40 @@
         <activity android:name=".view.EventListActivity" android:exported="false" />
         <activity android:name=".view.EventDetailsActivity" android:exported="false" />
         <activity
+
+            android:name=".view.NotificationSettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.MapActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.CreateFacilityActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.CreateEventActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.ManageEventActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.WaitingListActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.InvitedListActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.DeclinedListActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.ConfirmedListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.DisplayQRCodeActivity"
+            android:exported="false" />
             android:name=".view.QRScannerActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -29,7 +29,9 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Zhiyuan Li - upload image error checking
 import android.util.Log;
@@ -335,4 +337,34 @@ public class FirebaseAttendee {
             throw new RuntimeException(e);
         }
     }
+
+
+    // EventDetailsCallback to fetch event details
+    public interface EventDetailsCallback {
+        void onEventDetailsFetched(Event event);
+        void onError(String message);
+    }
+
+    // UserFetchCallback to fetch user details
+    public interface UserFetchCallback {
+        void onUserFetched(User user);
+        void onError(String message);
+    }
+
+    public void updateEventLists(String eventId, List<String> invitedList, List<String> declinedList, UpdateCallback callback) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("invitedList", invitedList);
+        updates.put("declinedList", declinedList);
+
+        eventsCollection.document(eventId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to update event lists: " + e.getMessage()));
+    }
+
+    public interface UpdateCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
 }

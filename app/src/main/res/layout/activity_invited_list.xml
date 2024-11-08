@@ -14,13 +14,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Title: Waiting List -->
+    <!-- Title: Invited List -->
     <TextView
-        android:id="@+id/waitingListTitle"
+        android:id="@+id/invitedListTitle"
         style="@style/TextHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/waiting_list"
+        android:text="Invited Attendees List"
         android:textColor="@color/textColorPrimary"
         android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
@@ -33,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/small_margin"
-        app:layout_constraintTop_toBottomOf="@id/waitingListTitle"
+        app:layout_constraintTop_toBottomOf="@id/invitedListTitle"
         app:layout_constraintBottom_toTopOf="@id/bottomButtonsLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,23 +50,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Set Waiting List Limit Button -->
+        <!-- Draw Replacement Button with Icon -->
         <Button
-            android:id="@+id/setWaitingListLimitButton"
+            android:id="@+id/drawReplacement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/set_waiting_list_limit"
-            android:textColor="@color/textColorOnSecondary"
-            android:backgroundTint="@color/white"
-            app:cornerRadius="@dimen/button_corner_radius"
-            android:layout_marginBottom="4dp" /> <!-- Reduced the bottom margin -->
-
-        <!-- Sample Attendees Randomly Button with Icon -->
-        <Button
-            android:id="@+id/sampleAttendeesButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sample Attendees Randomly"
+            android:text="Draw Replacement"
             android:textColor="@color/buttonTextColor"
             android:textSize="@dimen/text_size_large"
             android:backgroundTint="@color/buttonPrimary"
