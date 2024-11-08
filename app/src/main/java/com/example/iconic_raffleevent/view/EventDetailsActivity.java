@@ -44,6 +44,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
     private Button mapButton;
+    private Button editButton;
+    private Button manageButton;
 
     // Nav bar
     private ImageButton homeButton;
@@ -87,6 +89,9 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         // Link map button
         mapButton = findViewById(R.id.map_button);
+
+        editButton = findViewById(R.id.edit_button);
+        manageButton = findViewById(R.id.manage_button);
 
         eventController = new EventController();
         userController = getUserController();
@@ -163,7 +168,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void updateUI(Event event) {
-        System.out.println(event);
         if (event != null) {
             Glide.with(this)
                     .load(event.getEventImageUrl())
@@ -175,12 +179,24 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventLocationTextView.setText(event.getEventLocation());
         eventDateTextView.setText(event.getEventStartDate());
 
-        if (event.getWaitingList().contains(userObj.getUserId())) {
-            joinWaitingListButton.setVisibility(View.INVISIBLE);
-            leaveWaitingListButton.setVisibility(View.VISIBLE);
+        // Check if the current user is the organizer
+        if (event.getOrganizerID().equals(userObj.getUserId())) {
+            // Show Edit and Manage buttons for the organizer
+            editButton.setVisibility(View.VISIBLE);
+            manageButton.setVisibility(View.VISIBLE);
+
+            // Hide Join and Leave buttons as they are not applicable for the organizer
+            joinWaitingListButton.setVisibility(View.GONE);
+            leaveWaitingListButton.setVisibility(View.GONE);
         } else {
-            joinWaitingListButton.setVisibility(View.VISIBLE);
-            leaveWaitingListButton.setVisibility(View.INVISIBLE);
+            // For non-organizers, handle Join/Leave button visibility
+            if (event.getWaitingList().contains(userObj.getUserId())) {
+                joinWaitingListButton.setVisibility(View.INVISIBLE);
+                leaveWaitingListButton.setVisibility(View.VISIBLE);
+            } else {
+                joinWaitingListButton.setVisibility(View.VISIBLE);
+                leaveWaitingListButton.setVisibility(View.INVISIBLE);
+            }
         }
 
         if (event.isGeolocationRequired()) {
