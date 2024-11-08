@@ -15,7 +15,7 @@ public class FacilityTest {
 
     @BeforeEach
     public void setup() {
-        creator = new User("123", "Organizer Name");  // Assuming User class has this constructor
+        creator = new User();  // Assuming User class has this constructor
         facility = new Facility("Event Hall", "123 Main St", creator);
     }
 
@@ -41,7 +41,7 @@ public class FacilityTest {
 
     @Test
     public void testSetCreator() {
-        User newCreator = new User("456", "New Organizer");
+        User newCreator = new User();
         facility.setCreator(newCreator);
         assertEquals(newCreator, facility.getCreator());
     }

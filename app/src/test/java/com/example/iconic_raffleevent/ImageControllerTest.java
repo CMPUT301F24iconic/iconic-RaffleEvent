@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.CollectionReference;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,10 @@ public class ImageControllerTest {
     private QuerySnapshot querySnapshotMock;
 
     @Mock
-    private QueryDocumentSnapshot documentSnapshotMock;
+    private CollectionReference collectionReferenceMock;
+
+    @Mock
+    private DocumentReference documentReferenceMock;
 
     private ImageController imageController;
 
@@ -43,6 +47,8 @@ public class ImageControllerTest {
         MockitoAnnotations.initMocks(this);
         imageController = new ImageController();
         imageController.db = dbMock; // Inject mock Firestore instance
+
+        when(dbMock.collection("images")).thenReturn(collectionReferenceMock);
     }
 
     /**
@@ -53,15 +59,16 @@ public class ImageControllerTest {
     public void testGetAllImages_Success() {
         ImageController.ImageListCallback callback = mock(ImageController.ImageListCallback.class);
 
-        // Mock Firestore 'images' collection retrieval
+        // Mock a list of QueryDocumentSnapshots to simulate returned images
         List<QueryDocumentSnapshot> documentSnapshots = new ArrayList<>();
-        when(querySnapshotMock.getDocuments()).thenReturn(documentSnapshots);
+        doReturn(documentSnapshots).when(querySnapshotMock).getDocuments();
 
-        // Simulate a successful fetch
+        // Simulate a successful fetch with addOnSuccessListener
         doAnswer(invocation -> {
-            ((OnSuccessListener<QuerySnapshot>) invocation.getArgument(0)).onSuccess(querySnapshotMock);
+            OnSuccessListener<QuerySnapshot> onSuccessListener = invocation.getArgument(0);
+            onSuccessListener.onSuccess(querySnapshotMock);
             return null;
-        }).when(dbMock.collection("images")).get().addOnSuccessListener(any(OnSuccessListener.class));
+        }).when(collectionReferenceMock).get().addOnSuccessListener(any(OnSuccessListener.class));
 
         imageController.getAllImages(callback);
 
@@ -81,9 +88,10 @@ public class ImageControllerTest {
 
         // Simulate a failed fetch
         doAnswer(invocation -> {
-            ((OnFailureListener) invocation.getArgument(1)).onFailure(new Exception("Fetch error"));
+            OnFailureListener onFailureListener = invocation.getArgument(1);
+            onFailureListener.onFailure(new Exception("Fetch error"));
             return null;
-        }).when(dbMock.collection("images")).get().addOnFailureListener(any(OnFailureListener.class));
+        }).when(collectionReferenceMock).get().addOnFailureListener(any(OnFailureListener.class));
 
         imageController.getAllImages(callback);
 
@@ -98,13 +106,13 @@ public class ImageControllerTest {
     public void testDeleteImage_Success() {
         String imageId = "testImageId";
         ImageController.DeleteImageCallback callback = mock(ImageController.DeleteImageCallback.class);
-        DocumentReference documentReferenceMock = mock(DocumentReference.class);
 
-        when(dbMock.collection("images").document(imageId)).thenReturn(documentReferenceMock);
+        when(collectionReferenceMock.document(imageId)).thenReturn(documentReferenceMock);
 
         // Simulate successful deletion
         doAnswer(invocation -> {
-            ((OnSuccessListener<Void>) invocation.getArgument(0)).onSuccess(null);
+            OnSuccessListener<Void> onSuccessListener = invocation.getArgument(0);
+            onSuccessListener.onSuccess(null);
             return null;
         }).when(documentReferenceMock).delete().addOnSuccessListener(any(OnSuccessListener.class));
 
@@ -121,13 +129,13 @@ public class ImageControllerTest {
     public void testDeleteImage_Failure() {
         String imageId = "testImageId";
         ImageController.DeleteImageCallback callback = mock(ImageController.DeleteImageCallback.class);
-        DocumentReference documentReferenceMock = mock(DocumentReference.class);
 
-        when(dbMock.collection("images").document(imageId)).thenReturn(documentReferenceMock);
+        when(collectionReferenceMock.document(imageId)).thenReturn(documentReferenceMock);
 
         // Simulate failed deletion
         doAnswer(invocation -> {
-            ((OnFailureListener) invocation.getArgument(1)).onFailure(new Exception("Deletion error"));
+            OnFailureListener onFailureListener = invocation.getArgument(1);
+            onFailureListener.onFailure(new Exception("Deletion error"));
             return null;
         }).when(documentReferenceMock).delete().addOnFailureListener(any(OnFailureListener.class));
 

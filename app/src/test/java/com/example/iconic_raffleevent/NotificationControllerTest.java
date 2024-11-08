@@ -60,8 +60,8 @@ public class NotificationControllerTest {
         NotificationController.GetNotificationsCallback callback = mock(NotificationController.GetNotificationsCallback.class);
         String userId = "testUserId";
         List<Notification> mockNotifications = new ArrayList<>();
-        mockNotifications.add(new Notification("1", "Test notification 1"));
-        mockNotifications.add(new Notification("2", "Test notification 2"));
+        mockNotifications.add(new Notification());
+        mockNotifications.add(new Notification());
 
         doAnswer(invocation -> {
             NotificationController.GetNotificationsCallback callbackArg = invocation.getArgument(1);

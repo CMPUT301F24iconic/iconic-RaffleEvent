@@ -31,18 +31,18 @@ public class EventListActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ListView eventListView;
-    private EventAdapter eventAdapter;
-    private List<Event> eventList;
+    public EventAdapter eventAdapter;
+    public List<Event> eventList;
     private EventController eventController;
 
     // Nav bar
     private ImageButton homeButton;
-    private ImageButton qrButton;
-    private ImageButton profileButton;
+    public ImageButton qrButton;
+    public ImageButton profileButton;
     private ImageButton menuButton;
     private ImageButton notificationButton;
 
-    private User userObj;
+    public User userObj;
     private UserController userController;
 
     /**
