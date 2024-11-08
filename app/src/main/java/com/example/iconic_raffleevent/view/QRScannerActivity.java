@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -41,8 +40,8 @@ import java.io.IOException;
  */
 public class QRScannerActivity extends AppCompatActivity {
     private static final String TAG = "QRScannerActivity";
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     private SurfaceView cameraPreview;
     private TextView qrCodeTextView;
@@ -113,16 +112,16 @@ public class QRScannerActivity extends AppCompatActivity {
     private void setupCameraPreview() {
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
-            public void surfaceCreated(SurfaceHolder holder) {
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
                 startCamera();
             }
 
             @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
             }
 
             @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
                 if (cameraSource != null) {
                     cameraSource.stop();
                 }
@@ -134,7 +133,7 @@ public class QRScannerActivity extends AppCompatActivity {
      * Sets up the barcode processor for detecting and processing QR codes.
      */
     private void setupBarcodeProcessor() {
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+        barcodeDetector.setProcessor(new Detector.Processor<>() {
             private boolean isProcessing = false;
 
             @Override
@@ -142,7 +141,7 @@ public class QRScannerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
+            public void receiveDetections(@NonNull Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0 && !isProcessing) {
                     isProcessing = true;
