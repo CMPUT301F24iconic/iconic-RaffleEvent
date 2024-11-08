@@ -2,12 +2,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Camera Preview Surface -->
     <SurfaceView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/qr_code_text" />
 
+    <!-- QR Code Text Display -->
     <TextView
         android:id="@+id/qr_code_text"
         android:layout_width="match_parent"
@@ -16,5 +18,37 @@
         android:padding="16dp"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
+
+    <!-- Button to Open Gallery -->
+    <Button
+        android:id="@+id/gallery_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"
+        android:text="Gallery" />
+
+    <!-- Cancel Button -->
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"
+        android:text="Cancel" />
+
+    <!-- Flashlight Toggle Button with Direct Icons for On and Off States -->
+    <ImageButton
+        android:id="@+id/flashlight_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_flashlight_off"
+        android:background="@android:color/transparent"
+        android:contentDescription="Flashlight button" />
 
 </RelativeLayout>
