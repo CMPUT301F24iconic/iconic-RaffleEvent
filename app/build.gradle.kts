@@ -56,8 +56,13 @@ dependencies {
     implementation(libs.play.services.vision)
     implementation(libs.cronet.embedded)
     implementation(libs.play.services.location)
+    implementation(libs.espresso.intents)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.test.core)
+    testImplementation(libs.espresso.core)
+    testImplementation(libs.espresso.core)
+    testImplementation(libs.ext.junit)
     androidTestImplementation(libs.ext.junit)
 
     // Added the following dependencies

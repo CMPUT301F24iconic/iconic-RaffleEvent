@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class FacilityController {
 
-    private FirebaseOrganizer firebaseOrganizer;
+    public FirebaseOrganizer firebaseOrganizer;
 
     /**
      * Constructs a new FacilityController and initializes FirebaseOrganizer.

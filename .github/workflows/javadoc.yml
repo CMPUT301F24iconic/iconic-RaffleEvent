@@ -3,37 +3,40 @@ name: Deploy Javadoc
 on:
   push:
     branches:
-      - master
+      - main
+    paths:
+      - 'app/src/main/java/**' # Only trigger when changes are made in the main Java source directory
+      - 'README.md'            # Example additional files to trigger workflow
 
 jobs:
-  publish_javadoc:
+  build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Filter to run only on the main branch
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Create local.properties
-        env:
-          MAPS_API_KEY: ${{secrets.MAPS_API_KEY}}
-        run: echo "MAPS_API_KEY=$MAPS_API_KEY" >> local.properties
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
 
-      - name: Setup Java JDK 11
-        uses: actions/setup-java@v3
-        with:
-          distribution: "temurin"
-          java-version: "11"
-          cache: "gradle"
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
 
-      - name: Give gradlew Execute Permission
-        run: chmod +x gradlew
+    - name: Generate Javadoc
+      run: ./gradlew javadoc
 
-      - name: Build App (fixes some dependency errors with Javadoc)
-        run: ./gradlew build --parallel -x test
+    - name: Deploy Javadoc to GitHub Pages
+      if: success()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages  # Target branch for GitHub Pages
+        folder: app/build/docs/javadoc  # Path to the Javadoc output
+        clean: true  # Clean the target branch before deployment
 
-      - name: Create Javadoc
-        run: ./gradlew generateReleaseJavadoc
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: doc
+    - name: Confirm Javadoc generation
+      if: success()
+      run: echo "Javadoc generated and deployed to GitHub Pages."

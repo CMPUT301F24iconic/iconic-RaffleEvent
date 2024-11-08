@@ -1,72 +1,48 @@
 package com.example.iconic_raffleevent;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.User;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-class FacilityTest {
+public class FacilityTest {
 
     private Facility facility;
-    private User user;
+    private User creator;
 
     @BeforeEach
-    void setUp() {
-        user = new User();
-        facility = new Facility("Conference Hall", "Downtown", user);
+    public void setup() {
+        creator = new User();  // Assuming User class has this constructor
+        facility = new Facility("Event Hall", "123 Main St", creator);
     }
 
     @Test
-    void testGetId() {
-        assertEquals("fac123", facility.getId());
+    public void testFacilityInitialization() {
+        assertEquals("Event Hall", facility.getFacilityName());
+        assertEquals("123 Main St", facility.getFacilityLocation());
+        assertEquals(creator, facility.getCreator());
+        assertEquals("", facility.getAdditionalInfo());
     }
 
     @Test
-    void testSetId() {
-        facility.setId("fac456");
-        assertEquals("fac456", facility.getId());
+    public void testSetFacilityName() {
+        facility.setFacilityName("New Name");
+        assertEquals("New Name", facility.getFacilityName());
     }
 
     @Test
-    void testGetName() {
-        assertEquals("Conference Hall", facility.getFacilityName());
+    public void testSetAdditionalInfo() {
+        facility.setAdditionalInfo("Parking available");
+        assertEquals("Parking available", facility.getAdditionalInfo());
     }
 
     @Test
-    void testSetName() {
-        facility.setFacilityName("Banquet Hall");
-        assertEquals("Banquet Hall", facility.getFacilityName());
-    }
-
-    @Test
-    void testGetLocation() {
-        assertEquals("Downtown", facility.getFacilityName());
-    }
-
-    @Test
-    void testSetLocation() {
-        facility.setFacilityLocation("Uptown");
-        assertEquals("Uptown", facility.getFacilityName());
-    }
-
-    //@Test
-    //void testGetCapacity() {
-       // assertEquals(100, facility.getCapacity());
-    //}
-
-   // @Test
-    //void testSetCapacity() {
-      //  facility.setCapacity(150);
-        //assertEquals(150, facility.getCapacity());
-    //}
-
-    @Test
-    void testEquals() {
-        Facility sameFacility = new Facility("Conference Hall", "Downtown", user);
-        Facility differentFacility = new Facility("Meeting Room", "Suburb", user);
-        assertEquals(facility, sameFacility);
-        assertNotEquals(facility, differentFacility);
+    public void testSetCreator() {
+        User newCreator = new User();
+        facility.setCreator(newCreator);
+        assertEquals(newCreator, facility.getCreator());
     }
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class ImageController {
 
-    private FirebaseFirestore db;
+    public FirebaseFirestore db;
 
     /**
      * Constructs a new ImageController and initializes the Firebase Firestore instance.

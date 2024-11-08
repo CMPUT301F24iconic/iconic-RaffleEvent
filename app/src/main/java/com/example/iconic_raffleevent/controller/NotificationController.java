@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class NotificationController {
 
-    private FirebaseFirestore db;
-    private CollectionReference notificationsCollection;
-    private FirebaseAttendee firebaseAttendee;
+    public FirebaseFirestore db;
+    public CollectionReference notificationsCollection;
+    public FirebaseAttendee firebaseAttendee;
 
     /**
      * Constructs a new NotificationController and initializes the Firebase Firestore instance.

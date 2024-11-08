@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return True if the user controller was successfully initialized, false otherwise.
      */
-    private boolean initializeUserController() {
+    public boolean initializeUserController() {
         try {
             String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             if (deviceID == null || deviceID.isEmpty()) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * New users are redirected to registration, while existing users are directed
      * to their respective roles.
      */
-    private void checkUserAndNavigate() {
+    public void checkUserAndNavigate() {
         if (userController == null) {
             Log.e(TAG, "UserController is not initialized.");
             showToast("App error. Please restart.");

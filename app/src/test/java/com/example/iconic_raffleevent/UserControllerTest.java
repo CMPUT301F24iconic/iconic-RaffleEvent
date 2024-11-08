@@ -21,7 +21,7 @@ public class UserControllerTest {
 
     private UserController userController;
     private final String testUserId = "testUser123";
-    private final User testUser = new User(testUserId, "testUser", "test@example.com", "1234567890");
+    private final User testUser = new User();
 
     @Before
     public void setUp() {

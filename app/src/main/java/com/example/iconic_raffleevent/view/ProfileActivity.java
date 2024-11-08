@@ -39,7 +39,7 @@ import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator
  */
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 71;
+    public static final int PICK_IMAGE_REQUEST = 71;
     private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
     private ImageView profileImageView;
@@ -53,8 +53,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button removePhotoButton;
 
     private Uri currentImageUri;
-    private User currentUser;
-    private UserController userController;
+    public User currentUser;
+    public UserController userController;
 
     // Nav bar
     private ImageButton homeButton;

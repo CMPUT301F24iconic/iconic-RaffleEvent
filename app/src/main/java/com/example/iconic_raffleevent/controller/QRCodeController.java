@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class QRCodeController {
 
-    private final FirebaseFirestore db;
+    public FirebaseFirestore db;
 
     /**
      * Constructs a new QRCodeController and initializes the Firebase Firestore instance.
