@@ -12,13 +12,19 @@ import com.example.iconic_raffleevent.model.User;
 
 /**
  * MainActivity serves as the home screen of the application.
- * It provides navigation options for users to view events, their profile, or create new events.
+ * Upon the initial launch of the application, this activity will display a welcome screen as it fetches user data.
+ * Depending on if the user exists in the database, and their current permissions, main activity will redirect the
+ * user to the appropriate screen
  */
 public class MainActivity extends AppCompatActivity {
     private UserControllerViewModel userControllerViewModel;
     private UserController userController;
     private User userObj;
 
+    /**
+     * Initializes the activity and sets up the initial view.
+     * @param savedInstanceState Bundle containing saved state data, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         checkUserAndNavigate();
     }
 
+    /**
+     * Initializes the UserController by setting the device ID and context.
+     * The method retrieves the device ID, checks its validity, and sets up the
+     * UserController instance within the ViewModel.
+     */
     private void initializeUserController() {
         // Retrieve Device ID
         String deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -44,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
         userController = userControllerViewModel.getUserController();
     }
 
+    /**
+     * Checks the user status and navigates to the appropriate screen based on their role.
+     * If no user is found, the user is redirected to the New User screen.
+     * If the user has an admin role, they are redirected to the Role Selection screen.
+     * Otherwise, the user is redirected to the Event List screen.
+     */
     private void checkUserAndNavigate() {
         if (userController == null) {
             System.out.println("Error: UserController not initialized");
@@ -72,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Navigates to a specified activity.
+     * @param activityClass the class of the activity to navigate to.
+     */
     private void navigateToActivity(Class<?> activityClass) {
         runOnUiThread(() -> {
             Intent intent = new Intent(MainActivity.this, activityClass);
@@ -80,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Handles the destruction of the activity, releasing resources as needed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
