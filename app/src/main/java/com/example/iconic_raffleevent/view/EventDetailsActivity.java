@@ -139,6 +139,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
         });
 
+        manageButton.setOnClickListener(v -> {
+            Intent intent = new Intent(EventDetailsActivity.this, ManageEventActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         // Redirect user when clicking on mapButton
