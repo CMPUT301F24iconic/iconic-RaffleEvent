@@ -4,8 +4,14 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.example.iconic_raffleevent.R;
+import com.google.android.material.navigation.NavigationView;
 
 /**
  * Activity for managing various lists associated with an event, such as the waiting list,
@@ -17,6 +23,19 @@ public class ManageEventActivity extends AppCompatActivity {
     private Button cancelledAttendeeListButton;
     private Button finalAttendeeListButton;
     private String eventId;
+
+    // Navigation UI
+//    private DrawerLayout drawerLayout;
+//    private NavigationView navigationView;
+
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+//    private ImageButton menuButton;
+
+    // Top Nav bar
+    private ImageButton notificationButton;
 
     /**
      * Called when the activity is first created. Sets the layout, retrieves the event ID,
@@ -32,6 +51,19 @@ public class ManageEventActivity extends AppCompatActivity {
 
         // Get the event ID passed from the previous screen
         eventId = getIntent().getStringExtra("eventId");
+
+        // Initialize DrawerLayout and NavigationView
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
+
+        // in onCreate
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        notificationButton = findViewById(R.id.notification_icon);
+//        menuButton = findViewById(R.id.menu_button);
+
+//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Link UI elements
         waitingListButton = findViewById(R.id.waitingListButton);
@@ -64,6 +96,25 @@ public class ManageEventActivity extends AppCompatActivity {
             Intent intent = new Intent(ManageEventActivity.this, ConfirmedListActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
+        });
+
+        // Top nav bar
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(ManageEventActivity.this, NotificationsActivity.class))
+        );
+//        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(ManageEventActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(ManageEventActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(ManageEventActivity.this, ProfileActivity.class));
         });
     }
 }
