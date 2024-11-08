@@ -55,23 +55,6 @@ public class WaitingListActivity extends AppCompatActivity {
         sampleAttendeesButton.setOnClickListener(v -> sampleAttendees());
     }
 
-    /*
-    private void loadWaitingList() {
-        firebaseAttendee.getWaitingList(eventId, new FirebaseAttendee.EventDetailsCallback() {
-            @Override
-            public void onEventDetailsFetched(Event event) {
-                List<String> waitingListIds = event.getWaitingList();
-                fetchUsersFromWaitingList(waitingListIds);
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-     */
-
     public void loadWaitingList() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
@@ -107,30 +90,8 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    private void fetchUsersFromWaitingList(List<String> userIds) {
-        for (String userId: userIds) {
-            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-                @Override
-                public void onUserFetched(User user) {
-                if (user != null) {
-                    userAdapter.addUser(user);
-                    userAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-                @Override
-                public void onError(String message) {
-                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-            });
-        }
-
-     */
     private void loadEventDetails() {
-        firebaseAttendee.getEventDetailsForWaitingList(eventId, new FirebaseAttendee.EventDetailsCallback() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
                 eventObj = event;

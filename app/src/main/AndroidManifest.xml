@@ -72,6 +72,9 @@
         <activity android:name=".view.DisplayQRCodeActivity" android:exported="false" />
         <activity android:name=".view.ManageEventActivity" android:exported="false" />
         <activity android:name=".view.WaitingListActivity" android:exported="false" />
+        <activity android:name=".view.InvitedListActivity" android:exported="false" />
+        <activity android:name=".view.DeclinedListActivity" android:exported="false" />
+        <activity android:name=".view.ConfirmedListActivity" android:exported="false" />
 
         <!-- Admin Role Activities -->
         <activity android:name=".view.AdminHubActivity" android:exported="false" />
@@ -95,19 +98,6 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/notification_color" />
         -->
-
-        <activity android:name=".view.InvitedListActivity"
-            android:exported="false" />
-
-        <activity android:name=".view.DeclinedListActivity"
-            android:exported="false" />
-
-        <activity android:name=".view.ConfirmedListActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".view.DisplayQRCodeActivity"
-            android:exported="false" />
 
         <!-- api for google maps -->
         <!-- Google Maps API Key -->

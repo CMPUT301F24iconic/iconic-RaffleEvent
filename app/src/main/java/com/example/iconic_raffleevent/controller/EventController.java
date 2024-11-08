@@ -149,7 +149,7 @@ public class EventController {
     }
 
     public void getUserEvents(String userId, EventListCallback callback) {
-        firebaseAttendee.getUserWaitingListEvents(userId, callback);
+        firebaseAttendee.getUserEvents(userId, callback);
     }
 
     public interface UploadEventPosterCallback {
