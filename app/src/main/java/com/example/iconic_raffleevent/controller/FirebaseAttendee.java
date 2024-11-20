@@ -351,28 +351,16 @@ public class FirebaseAttendee {
      * This method retrieves the event associated with the QR code and joins the waiting list.
      *
      * @param qrCodeData The data encoded in the QR code (event identifier).
-     * @param userId     The ID of the user scanning the QR code.
-     * @param userLocation The location of the user scanning the QR code.
      * @param callback   The callback interface to notify the success or failure of the operation.
      */
-    public void scanQRCode(String qrCodeData, String userId, GeoPoint userLocation, EventController.ScanQRCodeCallback callback) {
+    public void scanQRCode(String qrCodeData, EventController.ScanQRCodeCallback callback) {
         eventsCollection.whereEqualTo("qrCode", qrCodeData)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             String eventId = task.getResult().getDocuments().get(0).getId();
-                            joinWaitingListWithLocation(eventId, userId, userLocation, new EventController.JoinWaitingListCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    callback.onEventFound(eventId);
-                                }
-
-                                @Override
-                                public void onError(String message) {
-                                    callback.onError(message);
-                                }
-                            });
+                            callback.onEventFound(eventId);
                         } else {
                             callback.onError("Event not found");
                         }

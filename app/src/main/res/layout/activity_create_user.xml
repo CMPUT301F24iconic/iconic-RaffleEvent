@@ -44,7 +44,7 @@
         app:srcCompat="@drawable/welcome_icon" />
 
     <EditText
-        android:id="@+id/edit_username_field"
+        android:id="@+id/edit_name_field"
         android:layout_width="320dp"
         android:layout_height="55dp"
         android:layout_marginBottom="24dp"
@@ -54,7 +54,7 @@
         android:textAlignment="center"
         android:gravity="center"
         android:textColor="@color/input_text_color"
-        android:hint="@string/enter_your_username"
+        android:hint="@string/enter_your_name"
         app:layout_constraintBottom_toTopOf="@+id/join_app_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -64,8 +64,8 @@
         android:layout_width="320dp"
         android:layout_height="55dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/rounded_corner"
-        android:backgroundTint="@color/purple_for_app"
+        app:cornerRadius="24dp"
+        android:backgroundTint="@color/buttonPrimary"
         android:text="@string/join"
         android:textColor="@color/white"
         android:textSize="18sp"

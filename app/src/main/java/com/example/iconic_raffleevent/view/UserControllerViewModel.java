@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.iconic_raffleevent.controller.UserController;
 
 /**
- * ViewModel class for managing an instance of {@link UserController}.
- * Ensures that the {@link UserController} is created and retained across configuration changes.
+ * ViewModel class for managing an instance of UserController.
+ * Ensures that the UserController is created and retained across configuration changes.
  */
 public class UserControllerViewModel extends ViewModel {
     private UserController userController;

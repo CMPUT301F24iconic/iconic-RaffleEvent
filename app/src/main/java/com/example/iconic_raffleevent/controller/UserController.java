@@ -77,12 +77,14 @@ public class UserController {
      * @param phoneNo The new phone number of the user.
      */
     public void updateProfile(User user, String name, String email, String phoneNo) {
-        if (!isValidPhoneNumber(phoneNo)) {
-            Log.e(TAG, "Invalid phone number format");
-            return;
+        // Change to maybe be a toast or something. Or move phone number check into profile activity
+        if (!phoneNo.isEmpty()) {
+            if (!isValidPhoneNumber(phoneNo)) {
+                Log.e(TAG, "Invalid phone number format");
+                return;
+            }
         }
 
-        System.out.println("Here");
 
         user.setName(name);
         user.setEmail(email);

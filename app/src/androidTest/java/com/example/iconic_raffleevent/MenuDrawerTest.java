@@ -49,7 +49,7 @@ public class MenuDrawerTest {
 
         // Check to see if notifications UI is loaded
         onView(withId(R.id.notification_list)).check(matches(isDisplayed()));
-        onView(withId(R.id.notification_settings)).check(matches(isDisplayed()));
+        onView(withId(R.id.notification_icon)).check(matches(isDisplayed()));
     }
 
     @Test

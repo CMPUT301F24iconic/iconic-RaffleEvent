@@ -48,11 +48,7 @@ public class QRScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
 
-    private UserController userController;
     private EventController eventController;
-    private User userObj;
-    private GeoPoint userLocation;
-    private FusedLocationProviderClient fusedLocationClient;
 
     /**
      * Initializes the activity, sets up views, controllers, barcode scanner, and user data.
@@ -67,7 +63,6 @@ public class QRScannerActivity extends AppCompatActivity {
         initializeViews();
         initializeControllers();
         initializeBarcodeScanner();
-        getCurrentUser();
     }
 
     /**
@@ -79,14 +74,10 @@ public class QRScannerActivity extends AppCompatActivity {
     }
 
     /**
-     * Initializes controllers for handling user and event-related actions.
+     * Initializes controller for handling event-related actions.
      */
     private void initializeControllers() {
-        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
-        userController = userControllerViewModel.getUserController();
         eventController = new EventController();
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     /**
@@ -148,7 +139,7 @@ public class QRScannerActivity extends AppCompatActivity {
                     String qrCodeData = barcodes.valueAt(0).displayValue;
                     runOnUiThread(() -> {
                         qrCodeTextView.setText(qrCodeData);
-                        getUserLocation(qrCodeData);
+                        processQRCodeData(qrCodeData);
                     });
                 }
             }
@@ -187,12 +178,7 @@ public class QRScannerActivity extends AppCompatActivity {
      * @param qrCodeData the data from the scanned QR code.
      */
     private void processQRCodeData(String qrCodeData) {
-        if (userObj == null || userLocation == null) {
-            Toast.makeText(this, "User data or location not available", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        eventController.scanQRCode(qrCodeData, userObj.getUserId(), userLocation,
+        eventController.scanQRCode(qrCodeData,
                 new EventController.ScanQRCodeCallback() {
                     @Override
                     public void onEventFound(String eventId) {
@@ -213,114 +199,6 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Fetches the current user's information from the UserController.
-     */
-    private void getCurrentUser() {
-        userController.getUserInformation(new UserController.UserFetchCallback() {
-            @Override
-            public void onUserFetched(User user) {
-                if (user != null) {
-                    userObj = user;
-                } else {
-                    runOnUiThread(() ->
-                            Toast.makeText(QRScannerActivity.this,
-                                    "Unable to load user profile", Toast.LENGTH_SHORT).show()
-                    );
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                runOnUiThread(() ->
-                        Toast.makeText(QRScannerActivity.this,
-                                "Error loading user profile: " + message, Toast.LENGTH_SHORT).show()
-                );
-            }
-        });
-    }
-
-    /**
-     * Retrieves the user's current location.
-     *
-     * @param qrCodeData the QR code data to process after the location is retrieved.
-     */
-    private void getUserLocation(String qrCodeData) {
-        if (!checkLocationPermissions()) {
-            requestLocationPermissions();
-            return;
-        }
-
-        userController.retrieveUserLocation(fusedLocationClient,
-                new UserController.OnLocationReceivedCallback() {
-                    @Override
-                    public void onLocationReceived(GeoPoint location) {
-                        userLocation = location;
-                        processQRCodeData(qrCodeData);
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        runOnUiThread(() ->
-                                Toast.makeText(QRScannerActivity.this,
-                                        "Error getting location: " + message, Toast.LENGTH_SHORT).show()
-                        );
-                    }
-                });
-    }
-
-    /**
-     * Checks if the app has permission to access the user's location.
-     *
-     * @return true if location permissions are granted, false otherwise.
-     */
-    private boolean checkLocationPermissions() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED;
-    }
-
-    /**
-     * Requests permission to access the user's location.
-     */
-    private void requestLocationPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        }, LOCATION_PERMISSION_REQUEST_CODE);
-    }
-
-    /**
-     * Handles the result of permission requests for camera and location permissions.
-     *
-     * @param requestCode  the request code.
-     * @param permissions  the requested permissions.
-     * @param grantResults the results of the permissions request.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        boolean permissionGranted = grantResults.length > 0 &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED;
-
-        switch (requestCode) {
-            case CAMERA_PERMISSION_REQUEST_CODE:
-                if (permissionGranted) {
-                    startCamera();
-                } else {
-                    Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                if (!permissionGranted) {
-                    Toast.makeText(this, "Location permission required", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
 
     /**
      * Retrieves the unique user ID based on the device's Android ID.

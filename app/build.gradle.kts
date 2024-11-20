@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.cronet.embedded)
     implementation(libs.play.services.location)
     implementation(libs.espresso.intents)
+    //noinspection GradlePath
+    //implementation(files("C:/Users/Aiden Teal.DESKTOP-1RMQJI7/AppData/Local/Android/Sdk/platforms/android-35/android.jar"))
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.test.core)

@@ -223,6 +223,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             // Show Edit and Manage buttons for the organizer
             editButton.setVisibility(View.VISIBLE);
             manageButton.setVisibility(View.VISIBLE);
+            mapButton.setVisibility(View.VISIBLE);
 
             // Hide Join and Leave buttons as they are not applicable for the organizer
             joinWaitingListButton.setVisibility(View.GONE);
@@ -232,9 +233,11 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (event.getWaitingList().contains(userObj.getUserId())) {
                 joinWaitingListButton.setVisibility(View.INVISIBLE);
                 leaveWaitingListButton.setVisibility(View.VISIBLE);
+                mapButton.setVisibility(View.INVISIBLE);
             } else {
                 joinWaitingListButton.setVisibility(View.VISIBLE);
                 leaveWaitingListButton.setVisibility(View.INVISIBLE);
+                mapButton.setVisibility(View.INVISIBLE);
             }
         }
 
