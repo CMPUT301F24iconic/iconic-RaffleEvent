@@ -24,7 +24,7 @@ public class Event {
     private String eventEndDate;
     private String eventEndTime;
     private String eventImageUrl;
-    private int maxAttendees;
+    private Integer maxAttendees;
     private boolean geolocationRequired;
     private List<String> waitingList;
     private List<String> registeredAttendees;
@@ -199,7 +199,7 @@ public class Event {
      * Gets the maximum number of attendees for the event.
      * @return the max number of attendees as an int
      */
-    public int getMaxAttendees() {
+    public Integer getMaxAttendees() {
         return maxAttendees;
     }
 
@@ -207,7 +207,7 @@ public class Event {
      * Sets the maximum number of attendees for the event.
      * @param maxAttendees the max number of attendees as an int
      */
-    public void setMaxAttendees(int maxAttendees) {
+    public void setMaxAttendees(Integer maxAttendees) {
         this.maxAttendees = maxAttendees;
     }
 

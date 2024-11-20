@@ -116,23 +116,6 @@ public class EventController {
     }
 
     /**
-     * Scans a QR code and processes its data to find the associated event.
-     *
-     * @param qrCodeData The data encoded in the QR code.
-     * @param callback   The callback to handle success or error.
-     */
-    public void scanQRCode(String qrCodeData, ScanQRCodeCallback callback) {
-        // Implement the logic to handle QR code scanning
-        // Example:
-        if (isValidQRCode(qrCodeData)) {
-            String eventId = extractEventIdFromQRCode(qrCodeData);
-            callback.onEventFound(eventId);
-        } else {
-            callback.onError("Invalid QR code");
-        }
-    }
-
-    /**
      * Validates whether the QR code data is in a correct format.
      *
      * @param qrCodeData The data from the QR code.
@@ -188,15 +171,13 @@ public class EventController {
     }
 
     /**
-     * Scan a qrcode from the users camera and add them to event
+     * Scan a qrcode from the users camera and returns the event
      *
-     * @param userId   The ID of the user.
      * @param callback The callback to handle the fetched events or error.
      * @param qrCodeData The qr code data embedded in the qrcode image
-     * @param location Entrant location when scanning the QR code
      */
-    public void scanQRCode(String qrCodeData, String userId, GeoPoint location, ScanQRCodeCallback callback) {
-        firebaseAttendee.scanQRCode(qrCodeData, userId, location, callback);
+    public void scanQRCode(String qrCodeData, ScanQRCodeCallback callback) {
+        firebaseAttendee.scanQRCode(qrCodeData, callback);
     }
 
     /**

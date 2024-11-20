@@ -48,11 +48,23 @@ public class CreateEventActivity extends AppCompatActivity {
     CardView addFacility;
     Button uploadPosterButton, saveEventButton;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton menuButton;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ImageButton notificationButton;
+
     // Controllers
     UserControllerViewModel userControllerViewModel;
     UserController userController;
     EventController eventController;
     FacilityController facilityController;
+
+    // Linked Facility
+    String userFacilityId;
 
     // Objects
     User userObj;
@@ -75,6 +87,39 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+        // Initialize DrawerLayout and NavigationView
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+
+        // Navigation Bars
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        menuButton = findViewById(R.id.menu_button);
+
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+
+        // Top nav bar
+        notificationButton = findViewById(R.id.notification_icon);
+        notificationButton.setOnClickListener(v ->
+                startActivity(new Intent(CreateEventActivity.this, NotificationsActivity.class))
+        );
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(CreateEventActivity.this, ProfileActivity.class));
+        });
+
+        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
         // Initialize views and controllers
         initializeViews();
         initializeControllers();
@@ -84,6 +129,33 @@ public class CreateEventActivity extends AppCompatActivity {
 
         uploadPosterButton.setOnClickListener(v -> selectPoster());
         saveEventButton.setOnClickListener(v -> validateAndSaveEvent());
+
+        // Set listener for add facility button
+        addFacility.setOnClickListener(v -> {
+            // Check if user has a facility
+            facilityController.checkUserFacility(userObj.getUserId(), new FacilityController.FacilityCheckCallback() {
+                @Override
+                public void onFacilityExists(String facilityId) {
+                    userFacilityId = facilityId;
+                    Toast.makeText(CreateEventActivity.this, "Successfully attached facility", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFacilityNotExists() {
+                    Toast.makeText(CreateEventActivity.this, "You do not own a facility", Toast.LENGTH_SHORT).show();
+                    // If user does not have facility, redirect to create facility page
+                    Intent intent = new Intent(CreateEventActivity.this, CreateFacilityActivity.class);
+                    intent.putExtra("userId", userObj.getUserId());
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(CreateEventActivity.this, "Unable to locate facility in database", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
     }
 
     /**
@@ -117,6 +189,23 @@ public class CreateEventActivity extends AppCompatActivity {
         userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
+
+        // Fetch User Information
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Error fetching user");
+            }
+        });
+
+        // Initialize event and facility controllers
         eventController = new EventController();
         facilityController = new FacilityController();
     }
@@ -213,8 +302,20 @@ public class CreateEventActivity extends AppCompatActivity {
      */
     private void validateAndSaveEvent() {
         validateInputFields();
+        Integer maxAttendees = null;
         if (!inputError) {
+            // Check to ensure facility is linked
+            if (userFacilityId.isEmpty()) {
+                return;
+            }
+            System.out.println("Max attendees");
+            System.out.println(maxAttendeesText.getText().toString());
+            if (!(maxAttendeesText.getText() == null || maxAttendeesText.getText().length() == 0)) {
+                maxAttendees = Integer.valueOf(maxAttendeesText.getText().toString());
+            }
+
             eventObj = new Event();
+            eventObj.setEventId(eventTitleText.getText().toString());
             eventObj.setEventTitle(eventTitleText.getText().toString());
             eventObj.setEventStartDate(startDateText.getText().toString());
             eventObj.setEventStartTime(startTimeText.getText().toString());
@@ -222,6 +323,12 @@ public class CreateEventActivity extends AppCompatActivity {
             eventObj.setEventEndTime(endTimeText.getText().toString());
             eventObj.setEventDescription(eventDescriptionText.getText().toString());
             eventObj.setGeolocationRequired(geolocationRequiredSwitch.isChecked());
+            String hashed_qr_data = "event_" + eventObj.getEventId();
+            eventObj.setMaxAttendees(maxAttendees);
+            eventObj.setQrCode(hashed_qr_data);
+            eventObj.setFacilityId(userFacilityId);
+
+            // Save event and event poster to database
             saveEvent(imageUri, eventObj);
         }
     }
@@ -280,7 +387,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 @Override
                 public void onSuccessfulUpload(String posterUrl) {
                     eventObj.setEventImageUrl(posterUrl);
-                    saveEventToDatabase(eventObj);
+
+                    // Save event qr image to storage
+                    saveEventQR(eventObj);
                 }
                 @Override
                 public void onError(String message) {
@@ -288,20 +397,35 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             });
         } else {
-            saveEventToDatabase(eventObj);
+            Toast.makeText(CreateEventActivity.this, "Unable to create event", Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
-     * Saves the event object to the database and redirects the user to the event details page.
+     * Generates a QR code for the event and uploads it to the database.
      *
-     * @param eventObj The event object to be saved.
+     * @param eventObj The event object with QR code details to be saved
      */
-    private void saveEventToDatabase(Event eventObj) {
-        eventController.saveEventToDatabase(eventObj, userObj);
-        Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
-        intent.putExtra("eventId", eventObj.getEventId());
-        startActivity(intent);
+    private void saveEventQR(Event eventObj) {
+        eventController.uploadEventQRCode(eventObj, new EventController.UploadEventQRCodeCallback() {
+            @Override
+            public void onSuccessfulQRUpload(String qrUrl) {
+                eventObj.setEventQrUrl(qrUrl);
+
+                // upload event to database
+                eventController.saveEventToDatabase(eventObj, userObj);
+
+                // Redirect user to event details page after creating event
+                Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
+                intent.putExtra("eventId", eventObj.getEventId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onError(String message) {
+
+            }
+        });
     }
 
     /**
