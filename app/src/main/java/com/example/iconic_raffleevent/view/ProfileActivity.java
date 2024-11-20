@@ -306,8 +306,8 @@ public class ProfileActivity extends AppCompatActivity {
         boolean notificationsEnabled = notificationsSwitch.isChecked();
 
         // Validate inputs
-        if (name.isEmpty() || email.isEmpty() || phoneNo.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || email.isEmpty()) {
+            Toast.makeText(this, "Please fill in email and name fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
