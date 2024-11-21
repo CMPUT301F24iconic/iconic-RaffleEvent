@@ -117,4 +117,6 @@ dependencies {
     implementation(libs.play.services.location.v2101)
     implementation(libs.core.ktx)  // Replacing libs.core.ktx
 
+    // image cropper
+    implementation (libs.circleimageview)
 }
