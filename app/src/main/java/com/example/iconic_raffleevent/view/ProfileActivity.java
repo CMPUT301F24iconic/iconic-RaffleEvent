@@ -31,6 +31,7 @@ import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 
 import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator class
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * ProfileActivity manages the user's profile, allowing for viewing, editing,
@@ -128,6 +129,8 @@ public class ProfileActivity extends AppCompatActivity {
         uploadPhotoButton = findViewById(R.id.upload_photo_button);
         removePhotoButton = findViewById(R.id.remove_photo_button);
         backButton = findViewById(R.id.back_to_hub_button);
+
+        profileImageView = findViewById(R.id.profile_image);
     }
 
     /**

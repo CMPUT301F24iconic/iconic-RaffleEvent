@@ -269,7 +269,7 @@ public class QRScannerActivity extends AppCompatActivity {
                                         "Error: " + message, Toast.LENGTH_SHORT).show()
                         );
                     }
-        });
+                });
     }
 
 
