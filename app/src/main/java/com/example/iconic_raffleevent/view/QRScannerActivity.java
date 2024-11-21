@@ -4,12 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +36,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * QRScannerActivity is responsible for scanning QR codes using the device's camera,
@@ -50,6 +55,13 @@ public class QRScannerActivity extends AppCompatActivity {
 
     private EventController eventController;
 
+    private Button cancelButton;
+    private Button galleryButton;
+    private ImageButton flashlightButton;
+    private boolean isFlashlightOn = false;
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+
     /**
      * Initializes the activity, sets up views, controllers, barcode scanner, and user data.
      *
@@ -63,6 +75,67 @@ public class QRScannerActivity extends AppCompatActivity {
         initializeViews();
         initializeControllers();
         initializeBarcodeScanner();
+
+        cancelButton = findViewById(R.id.cancel_button);
+        galleryButton = findViewById(R.id.gallery_button);
+        flashlightButton = findViewById(R.id.flashlight_button)
+        ;
+        cancelButton.setOnClickListener(v -> {
+            // Return to the event list page
+            startActivity(new Intent(QRScannerActivity.this, EventListActivity.class));
+            finish();
+        });
+
+        galleryButton.setOnClickListener(v -> {
+            // Open the gallery to select an image
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        });
+
+        flashlightButton.setOnClickListener(v -> {
+            toggleFlashlight();
+        });
+    }
+
+    private void toggleFlashlight() {
+        if (cameraSource != null) {
+            if (isFlashlightOn) {
+                Camera camera = getCamera(cameraSource);
+                if (camera != null) {
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    camera.setParameters(parameters);
+                    flashlightButton.setImageResource(R.drawable.ic_flashlight_off);
+                    isFlashlightOn = false;
+                }
+            } else {
+                Camera camera = getCamera(cameraSource);
+                if (camera != null) {
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    camera.setParameters(parameters);
+                    flashlightButton.setImageResource(R.drawable.ic_flashlight_on);
+                    isFlashlightOn = true;
+                }
+            }
+        }
+    }
+
+    private Camera getCamera(CameraSource cameraSource) {
+        Field[] declaredFields = CameraSource.class.getDeclaredFields();
+
+        for (Field field : declaredFields) {
+            if (field.getType() == Camera.class) {
+                field.setAccessible(true);
+                try {
+                    return (Camera) field.get(cameraSource);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+        return null;
     }
 
     /**
