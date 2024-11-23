@@ -1,6 +1,7 @@
 package com.example.iconic_raffleevent.view;
 
 import android.annotation.SuppressLint;
+import androidx.appcompat.app.AlertDialog; // Keep this import
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -9,8 +10,11 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.database.Cursor;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,8 +34,10 @@ import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 
-import com.example.iconic_raffleevent.AvatarGenerator; // Import AvatarGenerator class
+import com.example.iconic_raffleevent.AvatarGenerator;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import androidx.activity.OnBackPressedCallback; // Import this for handling back press
 
 /**
  * ProfileActivity manages the user's profile, allowing for viewing, editing,
@@ -66,6 +72,10 @@ public class ProfileActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private ImageButton notificationButton;
 
+    private boolean profileChanged = false;
+
+    private boolean photoChanged = false;
+
     /**
      * Initializes the ProfileActivity. Sets up the layout, navigation buttons,
      * controllers, and loads user profile information.
@@ -95,17 +105,24 @@ public class ProfileActivity extends AppCompatActivity {
 
         DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
+
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, EventListActivity.class));
+            handleNavigationWithUnsavedChanges(() -> {
+                startActivity(new Intent(ProfileActivity.this, EventListActivity.class));
+                finish();
+            });
         });
 
         qrButton.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, QRScannerActivity.class));
+            handleNavigationWithUnsavedChanges(() -> {
+                startActivity(new Intent(ProfileActivity.this, QRScannerActivity.class));
+                finish();
+            });
         });
 
         profileButton.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
+            // Do nothing or refresh the profile
         });
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
@@ -114,6 +131,15 @@ public class ProfileActivity extends AppCompatActivity {
         initializeControllers();
         setupClickListeners();
         loadUserProfile();
+
+        // Handle back press using OnBackPressedCallback
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBackNavigation();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     /**
@@ -125,12 +151,21 @@ public class ProfileActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email_edit_text);
         phoneEditText = findViewById(R.id.phone_edit_text);
         notificationsSwitch = findViewById(R.id.notifications_switch);
+
         saveButton = findViewById(R.id.save_button);
+        saveButton.setVisibility(View.GONE); // Hide the save button initially
+
         uploadPhotoButton = findViewById(R.id.upload_photo_button);
         removePhotoButton = findViewById(R.id.remove_photo_button);
         backButton = findViewById(R.id.back_to_hub_button);
 
         profileImageView = findViewById(R.id.profile_image);
+
+        // Add TextWatcher to track changes in EditText fields
+        nameEditText.addTextChangedListener(textWatcher);
+        emailEditText.addTextChangedListener(textWatcher);
+        phoneEditText.addTextChangedListener(textWatcher);
+
     }
 
     /**
@@ -151,9 +186,22 @@ public class ProfileActivity extends AppCompatActivity {
         removePhotoButton.setOnClickListener(v -> removeProfileImage());
         saveButton.setOnClickListener(v -> saveProfile());
         backButton.setOnClickListener(v -> {
-            startActivity(new Intent(ProfileActivity.this, EventListActivity.class));
-            finish();
+            handleBackNavigation();
         });
+
+        // Add OnCheckedChangeListener to track changes in Switch
+        notificationsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            profileChanged = true;
+            updateSaveButtonVisibility();
+        });
+    }
+
+    private void updateSaveButtonVisibility() {
+        if (profileChanged || photoChanged) {
+            saveButton.setVisibility(View.VISIBLE);
+        } else {
+            saveButton.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -192,17 +240,22 @@ public class ProfileActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Set photoChanged flag and update save button visibility
+                photoChanged = true;
+                updateSaveButtonVisibility();
+
                 // Display the selected image
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), currentImageUri);
                 profileImageView.setImageBitmap(bitmap);
-
-                // Upload the image
-                uploadImage(currentImageUri);
 
             } catch (Exception e) {
                 Log.e("ProfileActivity", "Error processing image: " + e.getMessage(), e);
                 Toast.makeText(this, "Error processing image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_CANCELED) {
+            // User canceled photo selection, reset photoChanged flag
+            photoChanged = false;
+            updateSaveButtonVisibility();
         }
     }
 
@@ -266,6 +319,29 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void handleNavigationWithUnsavedChanges(Runnable navigationAction) {
+        if (profileChanged || photoChanged) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Discard changes?")
+                    .setMessage("You have unsaved changes. Do you want to save them before leaving?")
+                    .setPositiveButton("Save", (dialog, which) -> {
+                        saveProfile();
+                        navigationAction.run();
+                    })
+                    .setNegativeButton("Discard", (dialog, which) -> {
+                        profileChanged = false;
+                        photoChanged = false;
+                        updateSaveButtonVisibility();
+                        loadUserProfile(); // Reload original data
+                        navigationAction.run();
+                    })
+                    .setNeutralButton("Cancel", null)
+                    .show();
+        } else {
+            navigationAction.run();
+        }
+    }
+
     /**
      * Removes the current profile image from the user’s profile and database.
      */
@@ -281,6 +357,9 @@ public class ProfileActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     profileImageView.setImageResource(R.drawable.default_profile);
                     Toast.makeText(ProfileActivity.this, "Profile picture removed", Toast.LENGTH_SHORT).show();
+                    // Set photoChanged flag and update save button visibility
+                    photoChanged = true;
+                    updateSaveButtonVisibility();
                 });
             }
 
@@ -303,6 +382,9 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        profileChanged = false;
+        updateSaveButtonVisibility();
+
         String name = nameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
         String phoneNo = phoneEditText.getText().toString().trim();
@@ -321,11 +403,51 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        userController.updateProfile(currentUser, name, email, phoneNo);
-        userController.setNotificationsEnabled(currentUser, notificationsEnabled);
+        if (photoChanged) {
+            if (currentImageUri != null) {
+                uploadImage(currentImageUri);
+            } else {
+                removeProfileImage();
+            }
+        }
 
-        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+        userController.updateProfile(currentUser, name, email, phoneNo, new UserController.UpdateProfileCallback() {
+            @Override
+            public void onProfileUpdated() {
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    profileChanged = false;
+                    photoChanged = false;
+                    updateSaveButtonVisibility();
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> {
+                    Toast.makeText(ProfileActivity.this, "Failed to update profile: " + message, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+
+        userController.setNotificationsEnabled(currentUser, notificationsEnabled);
     }
+
+    private final TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            profileChanged = true;
+            updateSaveButtonVisibility();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     /**
      * Validates if the provided email has a valid format.
@@ -374,6 +496,9 @@ public class ProfileActivity extends AppCompatActivity {
         phoneEditText.setText(user.getPhoneNo());
         notificationsSwitch.setChecked(user.isNotificationsEnabled());
 
+        profileChanged = false;
+        photoChanged = false;
+        updateSaveButtonVisibility();
         String profileImageUrl = user.getProfileImageUrl();
 
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
@@ -388,6 +513,25 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    // Handle back navigation with unsaved changes
+    private void handleBackNavigation() {
+        if (profileChanged || photoChanged) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Discard changes?")
+                    .setMessage("You have unsaved changes. Do you want to discard them?")
+                    .setPositiveButton("Discard", (dialog, which) -> {
+                        profileChanged = false;
+                        photoChanged = false;
+                        updateSaveButtonVisibility();
+                        loadUserProfile(); // Reload original data
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        } else {
+            finish();
+        }
+    }
     /**
      * Generates an avatar based on the user's name and sets it as the profile image.
      *
