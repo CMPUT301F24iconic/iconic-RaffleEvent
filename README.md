@@ -1,3 +1,4 @@
+**[javadoc here](https://cmput301f24iconic.github.io/)**
 
 # iconic-RaffleEvent Application
 
