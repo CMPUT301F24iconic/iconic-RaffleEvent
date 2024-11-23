@@ -1,6 +1,7 @@
 
-# iconic-RaffleEvent Application
 
+# iconic-RaffleEvent Application
+## **[Javadocs Here](https://cmput301f24iconic.github.io/)**
 ## Overview
 The **iconic-RaffleEvent Application** is an Android mobile application that allows users to sign up for popular events at community centers via a lottery system. This ensures a fair and accessible system for people who may have limitations like work or disabilities. Instead of first-come-first-served registration, users can express interest in an event and be selected via a lottery process. Event organizers can manage waiting lists and registrants efficiently, while entrants are notified if they win or lose the lottery.
 

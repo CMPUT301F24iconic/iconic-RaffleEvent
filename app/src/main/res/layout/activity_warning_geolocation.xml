@@ -48,28 +48,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/medium_margin"
-            android:text="@string/geolocation_warning_message" />
+            android:text="@string/geolocation_warning_message"
+            android:textAlignment="center" />
 
         <!-- Allow Access Button -->
         <Button
             android:id="@+id/allowAccessButton"
-            style="@style/ButtonPrimary"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/small_margin"
-            android:backgroundTint="@color/buttonPrimary"
+            android:backgroundTint="@color/black"
             android:text="@string/allow_access"
-            android:textColor="@color/textColorOnPrimary" />
+            android:textSize="20dp"
+            android:textColor="@color/white" />
 
         <!-- Decline Button -->
         <Button
             android:id="@+id/declineButton"
-            style="@style/ButtonSecondary"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:backgroundTint="@color/buttonTextColor"
+            android:backgroundTint="@color/buttonPrimary"
             android:text="@string/decline"
-            android:textColor="@color/textColorOnSecondary" />
+            android:textSize="20dp"
+            android:textColor="@color/textColorOnPrimary" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
