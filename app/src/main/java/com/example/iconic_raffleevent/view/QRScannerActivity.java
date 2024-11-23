@@ -1,10 +1,14 @@
 package com.example.iconic_raffleevent.view;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -12,12 +16,16 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -31,12 +39,15 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import com.google.android.gms.vision.Frame;
 
 /**
  * QRScannerActivity is responsible for scanning QR codes using the device's camera,
@@ -62,6 +73,9 @@ public class QRScannerActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
+    private View scanningWave;
+    private TextView messageTextView;
+
     /**
      * Initializes the activity, sets up views, controllers, barcode scanner, and user data.
      *
@@ -76,10 +90,12 @@ public class QRScannerActivity extends AppCompatActivity {
         initializeControllers();
         initializeBarcodeScanner();
 
+        scanningWave = findViewById(R.id.scanning_wave);
+        messageTextView = findViewById(R.id.message_text);
         cancelButton = findViewById(R.id.cancel_button);
         galleryButton = findViewById(R.id.gallery_button);
-        flashlightButton = findViewById(R.id.flashlight_button)
-        ;
+        flashlightButton = findViewById(R.id.flashlight_button);
+
         cancelButton.setOnClickListener(v -> {
             // Return to the event list page
             startActivity(new Intent(QRScannerActivity.this, EventListActivity.class));
@@ -272,6 +288,97 @@ public class QRScannerActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
+                        .setBarcodeFormats(Barcode.QR_CODE)
+                        .build();
+
+                if (!detector.isOperational()) {
+                    showErrorDialog("Barcode detector is not operational");
+                    return;
+                }
+
+                Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+                SparseArray<Barcode> barcodes = detector.detect(frame);
+
+                if (barcodes.size() == 0) {
+                    showQRCodeNotFoundDialog();
+                } else {
+                    Barcode barcode = barcodes.valueAt(0);
+                    String qrCodeData = barcode.displayValue;
+                    qrCodeTextView.setText(qrCodeData);
+                    processQRCodeData(qrCodeData);
+                    stopScanningWaveAnimation();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void startScanningWaveAnimation() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(1000); // Adjust the duration to make it move faster
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.RESTART);
+        animator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            scanningWave.setTranslationY(value * scanningWave.getHeight());
+        });
+        animator.start();
+        scanningWave.setVisibility(View.VISIBLE);
+    }
+
+    private void stopScanningWaveAnimation() {
+        scanningWave.setVisibility(View.GONE);
+    }
+
+    private void showQRCodeNotFoundDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("QR Code Not Found")
+                .setMessage("No QR code was detected in the selected image.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startScanningWaveAnimation();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showErrorDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startScanningWaveAnimation();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopScanningWaveAnimation();
+    }
 
     /**
      * Retrieves the unique user ID based on the device's Android ID.

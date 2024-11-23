@@ -100,6 +100,8 @@ dependencies {
     implementation (libs.firebase.messaging)
     implementation (libs.volley)
 
+    implementation (libs.annotation)
+
     // avatar generation and image upload
     implementation (libs.avatarview.coil)
     implementation (libs.glide)

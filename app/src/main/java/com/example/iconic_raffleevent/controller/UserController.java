@@ -52,7 +52,7 @@ public class UserController {
     }
 
     // Regex pattern for validating phone numbers (US/international format)
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
+//    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
 
 
     /**
@@ -75,32 +75,41 @@ public class UserController {
      * @param name The new name of the user.
      * @param email The new email of the user.
      * @param phoneNo The new phone number of the user.
+     * @param callback The callback to notify the result of the update operation.
      */
-    public void updateProfile(User user, String name, String email, String phoneNo) {
-        // Change to maybe be a toast or something. Or move phone number check into profile activity
-        if (!phoneNo.isEmpty()) {
-            if (!isValidPhoneNumber(phoneNo)) {
-                Log.e(TAG, "Invalid phone number format");
-                return;
-            }
-        }
-
+    public void updateProfile(User user, String name, String email, String phoneNo, UpdateProfileCallback callback) {
+//        if (!phoneNo.isEmpty()) {
+//            if (!isValidPhoneNumber(phoneNo)) {
+//                Log.e(TAG, "Invalid phone number format");
+//                callback.onError("Invalid phone number format");
+//                return;
+//            }
+//        }
 
         user.setName(name);
         user.setEmail(email);
         user.setPhoneNo(phoneNo);
-        updateUser(user); // Call the simplified version without callback
-    }
+        updateUser(user, new UpdateUserCallback() {
+            @Override
+            public void onSuccess() {
+                callback.onProfileUpdated();
+            }
 
-    /**
-     * Validates the format of the phone number.
-     *
-     * @param phoneNo The phone number to validate.
-     * @return true if the phone number is valid, false otherwise.
-     */
-    private boolean isValidPhoneNumber(String phoneNo) {
-        return phoneNo != null && PHONE_PATTERN.matcher(phoneNo).matches();
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
     }
+//    /**
+//     * Validates the format of the phone number.
+//     *
+//     * @param phoneNo The phone number to validate.
+//     * @return true if the phone number is valid, false otherwise.
+//     */
+//    private boolean isValidPhoneNumber(String phoneNo) {
+//        return phoneNo != null && PHONE_PATTERN.matcher(phoneNo).matches();
+//    }
 
     /**
      * Uploads the user's profile image to Firebase Storage.
@@ -185,6 +194,7 @@ public class UserController {
             callback.onError("No profile image to remove");
         }
     }
+
 
     /**
      * Sets the notification preference for the user.
@@ -420,5 +430,13 @@ public class UserController {
          *             this parameter will be null
          */
         void onUserRetrieved(User user);
+    }
+
+    /**
+     * Callback interface for updating a user's profile.
+     */
+    public interface UpdateProfileCallback {
+        void onProfileUpdated();
+        void onError(String message);
     }
 }
