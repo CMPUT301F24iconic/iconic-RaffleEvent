@@ -103,9 +103,6 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(ProfileActivity.this, NotificationsActivity.class))
         );
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
-
-
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
             handleNavigationWithUnsavedChanges(() -> {
@@ -469,6 +466,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (user != null) {
                     currentUser = user;
                     runOnUiThread(() -> updateUIWithUserData(user));
+                    DrawerHelper.setupDrawer(ProfileActivity.this, drawerLayout, navigationView, user.getUserId());
                 } else {
                     runOnUiThread(() -> Toast.makeText(ProfileActivity.this,
                             "Unable to load user profile", Toast.LENGTH_SHORT).show());

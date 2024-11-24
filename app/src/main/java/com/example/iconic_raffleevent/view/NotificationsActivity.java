@@ -10,9 +10,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.NotificationController;
+import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
@@ -42,6 +44,9 @@ public class NotificationsActivity extends AppCompatActivity {
      private DrawerLayout drawerLayout;
      private NavigationView navigationView;
 
+    private UserController userController;
+    private User userObj;
+
     /**
      * Initializes the activity, sets the content view, and initializes the views and listeners.
      * Also sets up the drawer and fetches notifications from the NotificationController.
@@ -54,7 +59,8 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
 
         initializeViews();
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+        initializeUserController();
+        loadUserProfile();
         setupListeners();
 
         notificationList = new ArrayList<>();
@@ -83,6 +89,35 @@ public class NotificationsActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         menuButton = findViewById(R.id.menu_button);
+    }
+
+    private void initializeUserController() {
+        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
+        userController = userControllerViewModel.getUserController();
+    }
+
+    private void loadUserProfile() {
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+                    DrawerHelper.setupDrawer(NotificationsActivity.this, drawerLayout, navigationView, userObj.getUserId());
+                } else {
+                    System.out.println("User information is null");
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Cannot fetch user information: " + message);
+            }
+        });
+    }
+
+    private String getUserID() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     /**

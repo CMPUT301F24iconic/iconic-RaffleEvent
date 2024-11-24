@@ -26,10 +26,91 @@ public class FacilityController {
      * @param callback The callback to handle the result of the facility creation.
      */
     public void createFacility(Facility facility, FacilityCreationCallback callback) {
-        firebaseOrganizer.createFacility(facility, new FirebaseOrganizer.FacilityCreationCallback() {
+        firebaseOrganizer.checkUserFacility(facility.getCreator().getUserId(), new FirebaseOrganizer.FacilityCheckCallback() {
             @Override
-            public void onFacilityCreated(String facilityId) {
-                callback.onFacilityCreated(facilityId);
+            public void onFacilityExists(String facilityId) {
+                // Update the existing facility
+                firebaseOrganizer.updateFacility(facilityId, facility, new FirebaseOrganizer.FacilityUpdateCallback() {
+                    @Override
+                    public void onFacilityUpdated() {
+                        // Update user's facilityId after updating the facility
+                        firebaseOrganizer.updateUserFacilityId(facility.getCreator().getUserId(), facilityId, new FirebaseOrganizer.UserUpdateCallback() {
+                            @Override
+                            public void onSuccess() {
+                                callback.onFacilityCreated(facilityId);
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                callback.onError("Failed to update user: " + message);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        callback.onError("Failed to update facility: " + message);
+                    }
+                });
+            }
+
+            @Override
+            public void onFacilityNotExists() {
+                // Create a new facility
+                firebaseOrganizer.createFacility(facility, new FirebaseOrganizer.FacilityCreationCallback() {
+                    @Override
+                    public void onFacilityCreated(String facilityId) {
+                        // Update user's facilityId after creating the facility
+                        firebaseOrganizer.updateUserFacilityId(facility.getCreator().getUserId(), facilityId, new FirebaseOrganizer.UserUpdateCallback() {
+                            @Override
+                            public void onSuccess() {
+                                callback.onFacilityCreated(facilityId);
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                callback.onError("Facility created, but failed to update user: " + message);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        callback.onError(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError("Error checking user facility: " + message);
+            }
+        });
+
+//        firebaseOrganizer.createFacility(facility, new FirebaseOrganizer.FacilityCreationCallback() {
+//            @Override
+//            public void onFacilityCreated(String facilityId) {
+//                callback.onFacilityCreated(facilityId);
+//            }
+//
+//            @Override
+//            public void onError(String message) {
+//                callback.onError(message);
+//            }
+//        });
+    }
+
+    /**
+     * Updates an existing facility in the database.
+     *
+     * @param facility The facility object with updated details.
+     * @param callback The callback to handle the result of the update operation.
+     */
+    public void updateFacility(Facility facility, FacilityUpdateCallback callback) {
+        firebaseOrganizer.updateFacility(facility.getId(), facility, new FirebaseOrganizer.FacilityUpdateCallback() {
+            @Override
+            public void onFacilityUpdated() {
+                callback.onFacilityUpdated();
             }
 
             @Override
@@ -55,6 +136,26 @@ public class FacilityController {
             @Override
             public void onFacilityNotExists() {
                 callback.onFacilityNotExists();
+            }
+
+            @Override
+            public void onError(String message) {
+                callback.onError(message);
+            }
+        });
+    }
+
+    /**
+     * Retrieves the facility details linked to the user ID.
+     *
+     * @param userId The ID of the user whose facility needs to be fetched.
+     * @param callback The callback to handle the fetched facility or errors.
+     */
+    public void getFacilityByUserId(String userId, FacilityFetchCallback callback) {
+        firebaseOrganizer.getFacilityByUserId(userId, new FirebaseOrganizer.FacilityFetchCallback() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
+                callback.onFacilityFetched(facility);
             }
 
             @Override
@@ -134,6 +235,14 @@ public class FacilityController {
      */
     public interface FacilityFetchCallback {
         void onFacilityFetched(Facility facility);
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for facility updates.
+     */
+    public interface FacilityUpdateCallback {
+        void onFacilityUpdated();
         void onError(String message);
     }
 

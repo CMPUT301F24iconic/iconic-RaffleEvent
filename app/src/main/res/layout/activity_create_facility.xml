@@ -133,6 +133,7 @@
                     android:hint="@string/facility_details_hint"
                     android:inputType="textMultiLine"
                     android:minLines="3"
+                    android:gravity="top|start"
                     android:textColor="@color/textColorPrimary" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>

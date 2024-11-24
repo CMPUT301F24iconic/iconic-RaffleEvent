@@ -93,7 +93,6 @@ public class EventListActivity extends AppCompatActivity {
     private void initializeControllers() {
         eventController = new EventController();
         userController = getUserController();
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
     }
 
     /**
@@ -191,6 +190,7 @@ public class EventListActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
+                    DrawerHelper.setupDrawer(EventListActivity.this, drawerLayout, navigationView, userObj.getUserId());
                 } else {
                     runOnUiThread(() ->
                             Toast.makeText(EventListActivity.this,

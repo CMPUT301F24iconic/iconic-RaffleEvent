@@ -2,6 +2,7 @@ package com.example.iconic_raffleevent.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -9,9 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
+import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,6 +48,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ImageButton menuButton;
     private ImageButton notificationButton;
 
+    // User fields
+    private UserController userController;
+    private User userObj;
+
     /**
      * Initializes the activity, setting up the UI elements, navigation drawer, and map.
      * Fetches event details such as event ID and title and initializes the map.
@@ -64,8 +72,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
-
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         eventController = new EventController();
         eventId = getIntent().getStringExtra("eventId");
@@ -94,6 +100,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        // Fetch user profile and set up drawer
+        initializeUserController();
+        loadUserProfile();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -135,5 +145,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 System.out.println("System could not retrieve event and entrant locations");
             }
         });
+    }
+
+    private void initializeUserController() {
+        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
+        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
+        userController = userControllerViewModel.getUserController();
+    }
+
+    private void loadUserProfile() {
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+                    DrawerHelper.setupDrawer(MapActivity.this, drawerLayout, navigationView, userObj.getUserId());
+                } else {
+                    System.out.println("User information is null");
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Cannot fetch user information: " + message);
+            }
+        });
+    }
+
+    private String getUserID() {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }
