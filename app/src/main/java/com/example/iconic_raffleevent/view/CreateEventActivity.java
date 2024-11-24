@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -34,6 +36,12 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.io.IOException;
 import java.util.Calendar;
 
+import androidx.appcompat.app.AlertDialog;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.view.Window;
+
 /**
  * Activity for creating an event within the Iconic Raffle Event application.
  * Allows users to input event details, attach a facility, upload a poster, and save the event to the database.
@@ -41,6 +49,7 @@ import java.util.Calendar;
  */
 public class CreateEventActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 71;
+    private ImageView posterPreviewImageView;
 
     // Views
     TextInputLayout eventTitleLayout, startDateLayout, startTimeLayout, endDateLayout, endTimeLayout, maxAttendeesLayout, eventDescriptionLayout;
@@ -87,6 +96,9 @@ public class CreateEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        // upload poster preview
+        posterPreviewImageView = findViewById(R.id.posterPreviewImageView);
 
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -330,10 +342,50 @@ public class CreateEventActivity extends AppCompatActivity {
             imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                showPosterPreviewDialog(bitmap); // Show preview dialog
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showPosterPreviewDialog(Bitmap posterBitmap) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Poster Preview");
+        builder.setMessage("Please confirm the selected poster.");
+
+        ImageView imageView = new ImageView(this);
+        imageView.setImageBitmap(posterBitmap);
+        imageView.setAdjustViewBounds(true);
+        imageView.setMaxHeight((int) (getResources().getDisplayMetrics().heightPixels * 0.5));
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        builder.setView(imageView);
+
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            // User confirmed the poster, proceed with saving the event
+            posterPreviewImageView.setImageBitmap(posterBitmap);
+            posterPreviewImageView.setVisibility(View.VISIBLE);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // User canceled the poster selection
+            imageUri = null;
+            posterPreviewImageView.setVisibility(View.GONE);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // Set the dialog window to half screen size
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (int) (getResources().getDisplayMetrics().heightPixels * 0.5));
+            window.setGravity(Gravity.CENTER);
+            window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        dialog.show();
     }
 
     /**
