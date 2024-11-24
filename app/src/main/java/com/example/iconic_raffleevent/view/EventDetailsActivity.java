@@ -135,7 +135,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
+        DrawerHelper.setupDrawer(this, drawerLayout, navigationView, userObj != null ? userObj.getUserId() : "");
 
         /*
             Setup geolocation services to obtain location when joining waitlist

@@ -32,9 +32,70 @@ public class FirebaseOrganizer {
      * @param callback The callback interface for handling success or error responses.
      */
     public void createFacility(Facility facility, FacilityCreationCallback callback) {
-        db.collection("Facility").add(facility)
-                .addOnSuccessListener(documentReference -> callback.onFacilityCreated(documentReference.getId()))
+        // Ensure the creator is not null before saving
+        if (facility.getCreator() == null || facility.getCreator().getUserId() == null) {
+            callback.onError("Facility must be linked to a valid creator.");
+            return;
+        }
+
+        String facilityId = db.collection("Facility").document().getId(); // Pre-generate ID
+        facility.setId(facilityId); // Set the ID in the facility object
+
+        db.collection("Facility").document(facilityId).set(facility)
+                .addOnSuccessListener(aVoid -> callback.onFacilityCreated(facilityId))
                 .addOnFailureListener(e -> callback.onError("Failed to create facility: " + e.getMessage()));
+    }
+
+    /**
+     * Updates an existing facility in the Firestore database.
+     *
+     * @param facilityId The ID of the facility to update.
+     * @param facility   The Facility object containing the updated details.
+     * @param callback   The callback interface for handling success or error responses.
+     */
+    public void updateFacility(String facilityId, Facility facility, FacilityUpdateCallback callback) {
+        if (facility == null || facilityId == null || facilityId.isEmpty()) {
+            callback.onError("Invalid facility data for update.");
+            return;
+        }
+
+        db.collection("Facility").document(facilityId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        db.collection("Facility").document(facilityId).set(facility)
+                                .addOnSuccessListener(aVoid -> callback.onFacilityUpdated())
+                                .addOnFailureListener(e -> callback.onError("Failed to update facility: " + e.getMessage()));
+                    } else {
+                        callback.onError("Facility does not exist for update.");
+                    }
+                })
+                .addOnFailureListener(e -> callback.onError("Error validating facility existence: " + e.getMessage()));
+    }
+
+    /**
+     * Fetches the facility associated with the given user ID.
+     *
+     * @param userId  The ID of the user whose facility is to be fetched.
+     * @param callback The callback to handle the fetched facility or errors.
+     */
+    public void getFacilityByUserId(String userId, FacilityFetchCallback callback) {
+        db.collection("Facility")
+                .whereEqualTo("creator.userId", userId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        if (queryDocumentSnapshots.size() > 1) {
+                            // Log a warning for unexpected multiple facilities
+                            System.out.println("Warning: Multiple facilities found for user ID: " + userId);
+                        }
+                        Facility facility = queryDocumentSnapshots.getDocuments().get(0).toObject(Facility.class);
+                        facility.setId(queryDocumentSnapshots.getDocuments().get(0).getId());
+                        callback.onFacilityFetched(facility);
+                    } else {
+                        callback.onError("No facility found for this user.");
+                    }
+                })
+                .addOnFailureListener(e -> callback.onError("Error fetching facility: " + e.getMessage()));
     }
 
     /**
@@ -49,6 +110,7 @@ public class FirebaseOrganizer {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
+                        // Retrieve the facility object and its ID
                         String facilityId = queryDocumentSnapshots.getDocuments().get(0).getId();
                         callback.onFacilityExists(facilityId);
                     } else {
@@ -125,6 +187,12 @@ public class FirebaseOrganizer {
         db.collection("Facility").document(facilityId).delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to delete facility: " + e.getMessage()));
+    }
+
+    public void updateUserFacilityId(String userId, String facilityId, UserUpdateCallback callback) {
+        db.collection("User").document(userId).update("facilityId", facilityId)
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to update facilityId in user: " + e.getMessage()));
     }
 
     /**
@@ -219,9 +287,19 @@ public class FirebaseOrganizer {
         void onError(String message);
     }
 
+    public interface FacilityUpdateCallback {
+        void onFacilityUpdated();
+        void onError(String message);
+    }
+
     public interface FacilityCheckCallback {
         void onFacilityExists(String facilityId);
         void onFacilityNotExists();
+        void onError(String message);
+    }
+
+    public interface FacilityFetchCallback {
+        void onFacilityFetched(Facility facility);
         void onError(String message);
     }
 
@@ -231,6 +309,11 @@ public class FirebaseOrganizer {
     }
 
     public interface DeleteFacilityCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
+    public interface UserUpdateCallback {
         void onSuccess();
         void onError(String message);
     }

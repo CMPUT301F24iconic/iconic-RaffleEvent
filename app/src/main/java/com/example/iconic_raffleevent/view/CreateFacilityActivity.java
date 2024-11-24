@@ -40,6 +40,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
     private UserController userController;
     private User currentUser;  // Assume this is passed in as the organizer user
     private String userId;
+    private Facility currentFacility; // Holds existing facility details if any
 
     // Nav bar
     private ImageButton homeButton;
@@ -76,8 +77,6 @@ public class CreateFacilityActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
-
         // Top nav bar
         notificationButton = findViewById(R.id.notification_icon);
         notificationButton.setOnClickListener(v ->
@@ -111,6 +110,12 @@ public class CreateFacilityActivity extends AppCompatActivity {
         // Get user ID
         userId = getIntent().getStringExtra("userId");
 
+        if (TextUtils.isEmpty(userId)) {
+            Toast.makeText(this, "Error: User ID is missing. Please try again.", Toast.LENGTH_LONG).show();
+            finish(); // Close the activity to prevent further errors
+            return;
+        }
+
         // Initialize FacilityController
         facilityController = new FacilityController();
 
@@ -121,18 +126,36 @@ public class CreateFacilityActivity extends AppCompatActivity {
         loadUserProfile();
 
         // Set up save button listener
-        saveButton.setOnClickListener(v -> saveFacility());
+        saveButton.setOnClickListener(v -> {
+            if (currentFacility != null) {
+                updateFacility(); // Call update logic if prefilled
+            } else {
+                saveFacility(); // Call save logic if new
+            }
+        });
+
+        // Hint behavior for Facility Details
+        facilityDetailsEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                facilityDetailsInputLayout.setHint(null); // Remove hint when focused
+            } else if (TextUtils.isEmpty(facilityDetailsEditText.getText())) {
+                facilityDetailsInputLayout.setHint(getString(R.string.facility_details_hint)); // Restore hint if input is empty
+            }
+        });
     }
 
     /**
-     * Validates input fields and creates a facility if all inputs are valid.
-     * Displays a toast message indicating success or error.
+     * Saves a new facility to the database.
      */
     private void saveFacility() {
         validateInputFields();
         if (!inputError) {
             // Create Facility object
-            Facility facility = new Facility(facilityNameEditText.getText().toString(), locationEditText.getText().toString(), currentUser);
+            Facility facility = new Facility(
+                    facilityNameEditText.getText().toString(),
+                    locationEditText.getText().toString(),
+                    currentUser
+            );
             facility.setAdditionalInfo(facilityDetailsEditText.getText().toString());
 
             // Use FacilityController to create facility
@@ -140,7 +163,12 @@ public class CreateFacilityActivity extends AppCompatActivity {
                 @Override
                 public void onFacilityCreated(String facilityId) {
                     Toast.makeText(CreateFacilityActivity.this, "Facility created successfully", Toast.LENGTH_SHORT).show();
-                    // Redirect to event creation page or another activity as needed
+
+                    // Redirect back to the Create Event page
+                    Intent intent = new Intent(CreateFacilityActivity.this, CreateEventActivity.class);
+                    intent.putExtra("facilityId", facilityId); // Pass the facilityId
+                    intent.putExtra("userId", userId); // Pass the userId back
+                    startActivity(intent);
                     finish();
                 }
 
@@ -150,7 +178,33 @@ public class CreateFacilityActivity extends AppCompatActivity {
                 }
             });
         }
+    }
 
+    /**
+     * Updates an existing facility in the database.
+     */
+    private void updateFacility() {
+        validateInputFields();
+        if (!inputError) {
+            // Update currentFacility object
+            currentFacility.setFacilityName(facilityNameEditText.getText().toString());
+            currentFacility.setFacilityLocation(locationEditText.getText().toString());
+            currentFacility.setAdditionalInfo(facilityDetailsEditText.getText().toString());
+
+            // Use FacilityController to update facility
+            facilityController.updateFacility(currentFacility, new FacilityController.FacilityUpdateCallback() {
+                @Override
+                public void onFacilityUpdated() {
+                    Toast.makeText(CreateFacilityActivity.this, "Facility updated successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(CreateFacilityActivity.this, "Error updating facility: " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     /**
@@ -208,12 +262,16 @@ public class CreateFacilityActivity extends AppCompatActivity {
      * Loads the current user's profile information from the database.
      */
     private void loadUserProfile() {
-        /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
                 if (user != null) {
                     currentUser = user;
+                    System.out.println("User fetched successfully: " + currentUser.getUsername());
+                    runOnUiThread(() -> {
+                        DrawerHelper.setupDrawer(CreateFacilityActivity.this, drawerLayout, navigationView, currentUser.getUserId());
+                        loadFacilityDetails(); // Load facility details after setting up the drawer
+                    });
                 } else {
                     System.out.println("User information is null");
                 }
@@ -221,9 +279,49 @@ public class CreateFacilityActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                System.out.println("Cannot fetch user information");
+                System.out.println("Error fetching user information: " + message);
             }
         });
+    }
+
+    /**
+     * Loads the facility details if a facility exists for the user.
+     */
+    private void loadFacilityDetails() {
+        facilityController.getFacilityByUserId(userId, new FacilityController.FacilityFetchCallback() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
+                currentFacility = facility;
+                System.out.println("Facility fetched successfully: " + currentFacility.getFacilityName());
+                runOnUiThread(() -> prefillFacilityForm()); // Prefill form on the main thread
+            }
+
+            @Override
+            public void onError(String message) {
+                currentFacility = null;
+                System.out.println("No facility found or error fetching facility: " + message);
+            }
+        });
+    }
+
+    /**
+     * Prefills the form with existing facility details and updates the button text to "Update".
+     */
+    private void prefillFacilityForm() {
+        if (currentFacility != null) {
+            System.out.println("Prefilling form with: " + currentFacility.getFacilityName());
+            facilityNameEditText.setText(currentFacility.getFacilityName());
+            locationEditText.setText(currentFacility.getFacilityLocation());
+            facilityDetailsEditText.setText(currentFacility.getAdditionalInfo());
+
+            if (!TextUtils.isEmpty(currentFacility.getAdditionalInfo())) {
+                facilityDetailsInputLayout.setHint(null);
+            }
+
+            saveButton.setText("Update"); // Change button text to "Update"
+        } else {
+            System.out.println("No facility to prefill.");
+        }
     }
 
     /**

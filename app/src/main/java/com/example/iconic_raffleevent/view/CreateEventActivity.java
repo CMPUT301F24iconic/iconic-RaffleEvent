@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -97,8 +98,6 @@ public class CreateEventActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
         menuButton = findViewById(R.id.menu_button);
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
-
         // Top nav bar
         notificationButton = findViewById(R.id.notification_icon);
         notificationButton.setOnClickListener(v ->
@@ -120,6 +119,14 @@ public class CreateEventActivity extends AppCompatActivity {
 
         menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
+        userFacilityId = getIntent().getStringExtra("facilityId");
+
+        if (TextUtils.isEmpty(userFacilityId)) {
+            Toast.makeText(this, "No facility linked. Please create a facility first.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         // Initialize views and controllers
         initializeViews();
         initializeControllers();
@@ -131,30 +138,30 @@ public class CreateEventActivity extends AppCompatActivity {
         saveEventButton.setOnClickListener(v -> validateAndSaveEvent());
 
         // Set listener for add facility button
-        addFacility.setOnClickListener(v -> {
-            // Check if user has a facility
-            facilityController.checkUserFacility(userObj.getUserId(), new FacilityController.FacilityCheckCallback() {
-                @Override
-                public void onFacilityExists(String facilityId) {
-                    userFacilityId = facilityId;
-                    Toast.makeText(CreateEventActivity.this, "Successfully attached facility", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFacilityNotExists() {
-                    Toast.makeText(CreateEventActivity.this, "You do not own a facility", Toast.LENGTH_SHORT).show();
-                    // If user does not have facility, redirect to create facility page
-                    Intent intent = new Intent(CreateEventActivity.this, CreateFacilityActivity.class);
-                    intent.putExtra("userId", userObj.getUserId());
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(CreateEventActivity.this, "Unable to locate facility in database", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+//        addFacility.setOnClickListener(v -> {
+//            // Check if user has a facility
+//            facilityController.checkUserFacility(userObj.getUserId(), new FacilityController.FacilityCheckCallback() {
+//                @Override
+//                public void onFacilityExists(String facilityId) {
+//                    userFacilityId = facilityId;
+//                    Toast.makeText(CreateEventActivity.this, "Successfully attached facility", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onFacilityNotExists() {
+//                    Toast.makeText(CreateEventActivity.this, "You do not own a facility", Toast.LENGTH_SHORT).show();
+//                    // If user does not have facility, redirect to create facility page
+//                    Intent intent = new Intent(CreateEventActivity.this, CreateFacilityActivity.class);
+//                    intent.putExtra("userId", userObj.getUserId());
+//                    startActivity(intent);
+//                }
+//
+//                @Override
+//                public void onError(String message) {
+//                    Toast.makeText(CreateEventActivity.this, "Unable to locate facility in database", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        });
 
     }
 
@@ -177,13 +184,38 @@ public class CreateEventActivity extends AppCompatActivity {
         maxAttendeesText = findViewById(R.id.maxAttendeesEditText);
         eventDescriptionLayout = findViewById(R.id.eventDescriptionInputLayout);
         eventDescriptionText = findViewById(R.id.eventDescriptionEditText);
-        addFacility = findViewById(R.id.addFacilityButton);
+//        addFacility = findViewById(R.id.addFacilityButton);
         uploadPosterButton = findViewById(R.id.uploadPosterButton);
         saveEventButton = findViewById(R.id.saveButton);
+
+        // Disable manual input for Start Date, Start Time, End Date, and End Time
+        startDateText.setKeyListener(null);
+        startTimeText.setKeyListener(null);
+        endDateText.setKeyListener(null);
+        endTimeText.setKeyListener(null);
+
+        // For Max Attendees
+        maxAttendeesText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                maxAttendeesLayout.setHint(null); // Remove the hint when focused
+            } else if (maxAttendeesText.getText().toString().isEmpty()) {
+                maxAttendeesLayout.setHint(getString(R.string.max_attendees_hint)); // Restore hint if input is empty
+            }
+        });
+
+        // For Event Description
+        eventDescriptionText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                eventDescriptionLayout.setHint(null); // Remove the hint when focused
+            } else if (eventDescriptionText.getText().toString().isEmpty()) {
+                eventDescriptionLayout.setHint(getString(R.string.event_description_hint)); // Restore hint if input is empty
+            }
+        });
     }
 
     /**
      * Initializes the UserController, EventController, and FacilityController.
+     * Fetches the user and checks for facility after the user is fetched.
      */
     private void initializeControllers() {
         userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
@@ -196,12 +228,18 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
+                    runOnUiThread(() -> {
+                        // Set up the drawer only after fetching the user information
+                        DrawerHelper.setupDrawer(CreateEventActivity.this, drawerLayout, navigationView, userObj.getUserId());
+                    });
+                } else {
+                    Toast.makeText(CreateEventActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onError(String message) {
-                System.out.println("Error fetching user");
+                System.out.println("Error fetching user: " + message);
             }
         });
 
@@ -210,15 +248,16 @@ public class CreateEventActivity extends AppCompatActivity {
         facilityController = new FacilityController();
     }
 
-
-
     /**
      * Sets up click listeners for date and time text fields to open DatePickerDialog and TimePickerDialog.
      */
     private void setupDateTimePickers() {
+        // Open Date Picker on click
         startDateText.setOnClickListener(v -> showDatePickerDialog(startDateText));
-        startTimeText.setOnClickListener(v -> showTimePickerDialog(startTimeText));
         endDateText.setOnClickListener(v -> showDatePickerDialog(endDateText));
+
+        // Open Time Picker on click
+        startTimeText.setOnClickListener(v -> showTimePickerDialog(startTimeText));
         endTimeText.setOnClickListener(v -> showTimePickerDialog(endTimeText));
     }
 
@@ -302,17 +341,24 @@ public class CreateEventActivity extends AppCompatActivity {
      */
     private void validateAndSaveEvent() {
         validateInputFields();
-        Integer maxAttendees = null;
+
+        if (imageUri == null) {
+            Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+//        Integer maxAttendees = null;
         if (!inputError) {
+            Integer maxAttendees = maxAttendeesText.getText().toString().isEmpty() ? null : Integer.valueOf(maxAttendeesText.getText().toString());
             // Check to ensure facility is linked
-            if (userFacilityId.isEmpty()) {
-                return;
-            }
-            System.out.println("Max attendees");
-            System.out.println(maxAttendeesText.getText().toString());
-            if (!(maxAttendeesText.getText() == null || maxAttendeesText.getText().length() == 0)) {
-                maxAttendees = Integer.valueOf(maxAttendeesText.getText().toString());
-            }
+//            if (userFacilityId.isEmpty()) {
+//                return;
+//            }
+//            System.out.println("Max attendees");
+//            System.out.println(maxAttendeesText.getText().toString());
+//            if (!(maxAttendeesText.getText() == null || maxAttendeesText.getText().length() == 0)) {
+//                maxAttendees = Integer.valueOf(maxAttendeesText.getText().toString());
+//            }
 
             eventObj = new Event();
             eventObj.setEventId(eventTitleText.getText().toString());
@@ -330,6 +376,8 @@ public class CreateEventActivity extends AppCompatActivity {
 
             // Save event and event poster to database
             saveEvent(imageUri, eventObj);
+        } else {
+            Toast.makeText(this, "Please complete all fields and try again.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -388,6 +436,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 public void onSuccessfulUpload(String posterUrl) {
                     eventObj.setEventImageUrl(posterUrl);
 
+                    // Show a success toast for the poster upload
+                    Toast.makeText(CreateEventActivity.this, "Poster uploaded successfully!", Toast.LENGTH_SHORT).show();
+
                     // Save event qr image to storage
                     saveEventQR(eventObj);
                 }
@@ -397,7 +448,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(CreateEventActivity.this, "Unable to create event", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateEventActivity.this, "Please upload a poster before saving the event.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -412,18 +463,19 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onSuccessfulQRUpload(String qrUrl) {
                 eventObj.setEventQrUrl(qrUrl);
 
-                // upload event to database
-                eventController.saveEventToDatabase(eventObj, userObj);
-
-                // Redirect user to event details page after creating event
-                Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
-                intent.putExtra("eventId", eventObj.getEventId());
-                startActivity(intent);
+                if (qrUrl != null && !qrUrl.isEmpty()) {
+                    eventController.saveEventToDatabase(eventObj, userObj);
+                    Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
+                    intent.putExtra("eventId", eventObj.getEventId());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(CreateEventActivity.this, "QR Code URL is missing!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onError(String message) {
-
+                Toast.makeText(CreateEventActivity.this, "QR Code generation failed: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
