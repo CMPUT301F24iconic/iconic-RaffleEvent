@@ -342,11 +342,6 @@ public class CreateEventActivity extends AppCompatActivity {
     private void validateAndSaveEvent() {
         validateInputFields();
 
-        if (TextUtils.isEmpty(userFacilityId)) {
-            Toast.makeText(this, "Please link a facility to create an event.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         if (imageUri == null) {
             Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
             return;

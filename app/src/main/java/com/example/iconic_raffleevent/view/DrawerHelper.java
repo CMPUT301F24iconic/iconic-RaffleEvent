@@ -51,8 +51,9 @@ public class DrawerHelper {
                 facilityController.checkUserFacility(userId, new FacilityController.FacilityCheckCallback() {
                     @Override
                     public void onFacilityExists(String facilityId) {
-                        // Redirect to Create Event page
+                        // Redirect to Create Event page with the facility ID
                         Intent intent = new Intent(context, CreateEventActivity.class);
+                        intent.putExtra("facilityId", facilityId); // Pass the facility ID
                         context.startActivity(intent);
                     }
 
@@ -61,7 +62,7 @@ public class DrawerHelper {
                         // Redirect to Create Facility page if no facility exists
                         Toast.makeText(context, "You must create a facility before creating an event.", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, CreateFacilityActivity.class);
-                        intent.putExtra("userId", userId);
+                        intent.putExtra("userId", userId); // Pass the user ID
                         context.startActivity(intent);
                     }
 
