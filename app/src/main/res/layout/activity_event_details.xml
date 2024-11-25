@@ -210,8 +210,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -220,7 +220,7 @@
             <!-- Edit Button -->
             <Button
                 android:id="@+id/edit_button"
-                android:layout_width="0dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
@@ -233,14 +233,26 @@
             <!-- Manage Button -->
             <Button
                 android:id="@+id/manage_button"
-                android:layout_width="0dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="8dp"
                 android:backgroundTint="@color/buttonPrimary"
                 android:text="Manage"
                 android:textColor="@color/textColorOnPrimary"
                 android:visibility="gone"
                 app:cornerRadius="@dimen/button_corner_radius" />
+
+            <Button
+                android:id="@+id/share_button"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="View QR"
+                android:textColor="@color/textColorOnPrimary"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius"/>
         </LinearLayout>
 
         <LinearLayout
