@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.example.iconic_raffleevent.model.Event;
@@ -9,172 +10,206 @@ import com.example.iconic_raffleevent.model.User;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/*
-    Tests Currently are not working, need to find a way to test firebase
- */
 public class UserModelTest {
-    private User mockUser() {
-        User user = new User();
-        user.setUserId("123");
-        user.setName("wack");
-        user.setUsername("Testname");
-        user.setEmail("test123@ualberta.ca");
-        user.setLocationPermission(Boolean.FALSE);
-        user.setNotificationsEnabled(Boolean.FALSE);
-        return user;
-    }
-    private Event mockEvent() {
-        return new Event();
-    }
 
-    private Notification mockNotification() {
-        return new Notification();
+    private User testUser;
+
+    @BeforeEach
+    void setUp() {
+        testUser = new User();
+        testUser.setUserId("123");
+        testUser.setName("wack");
+        testUser.setUsername("Testname");
+        testUser.setEmail("test123@ualberta.ca");
+        testUser.setLocationPermission(false);
+        testUser.setNotificationsEnabled(false);
+        testUser.setProfileImageUrl("");  // Initialize with empty string instead of null
+        testUser.setPhoneNo("");  // Initialize with empty string instead of null
     }
 
     @Test
     void testCheckUsername() {
-        User user = mockUser();
-        assertEquals("Testname", user.getUsername());
+        assertEquals("Testname", testUser.getUsername());
     }
 
     @Test
     void testCheckName() {
-        User user = mockUser();
-        assertEquals("wack", user.getName());
+        assertEquals("wack", testUser.getName());
     }
 
     @Test
     void testCheckID() {
-        User user = mockUser();
-        assertEquals("123", user.getUserId());
+        assertEquals("123", testUser.getUserId());
     }
 
     @Test
     void testCheckEmail() {
-        User user = mockUser();
-        assertEquals("test123@ualberta.ca", user.getEmail());
+        assertEquals("test123@ualberta.ca", testUser.getEmail());
     }
 
     @Test
     void testCheckPhoneNumber() {
-        User user = mockUser();
-        assertNull(user.getPhoneNo());
+        assertEquals("", testUser.getPhoneNo(),
+                "Phone number should be empty string by default");
     }
 
     @Test
     void testProfilePhoto() {
-        User user = mockUser();
-        assertNull(user.getProfileImageUrl());
+        assertEquals("", testUser.getProfileImageUrl(),
+                "Profile image URL should be empty string by default");
     }
 
     @Test
     void testCheckLocationPermission() {
-        User user = mockUser();
-        assertFalse(user.isLocationPermission());
+        assertFalse(testUser.isLocationPermission());
     }
 
     @Test
     void testCheckNotificationsEnabled() {
-        User user = mockUser();
-        assertFalse(user.isNotificationsEnabled());
+        assertFalse(testUser.isNotificationsEnabled());
     }
 
     @Test
     void testCheckWaitlistSize() {
-        User user = mockUser();
-        assertEquals(0, user.getWaitingListEventIds().size());
+        assertNotNull(testUser.getWaitingListEventIds(),
+                "Waiting list should be initialized");
+        assertEquals(0, testUser.getWaitingListEventIds().size());
     }
 
     @Test
     void testCheckRegisteredEventsSize() {
-        User user = mockUser();
-        assertEquals(0, user.getRegisteredEventIds().size());
+        assertNotNull(testUser.getRegisteredEventIds(),
+                "Registered events list should be initialized");
+        assertEquals(0, testUser.getRegisteredEventIds().size());
     }
 
     @Test
     void testSetUsername() {
-        User user = mockUser();
-        user.setUsername("Aiden123");
-        assertEquals("Aiden123", user.getUsername());
+        testUser.setUsername("Aiden123");
+        assertEquals("Aiden123", testUser.getUsername());
     }
 
     @Test
     void testSetName() {
-        User user = mockUser();
-        user.setName("Aiden");
-        assertEquals("Aiden", user.getName());
+        testUser.setName("Aiden");
+        assertEquals("Aiden", testUser.getName());
     }
 
     @Test
     void testSetID() {
-        User user = mockUser();
-        user.setUserId("1234");
-        assertEquals("1234", user.getUserId());
+        testUser.setUserId("1234");
+        assertEquals("1234", testUser.getUserId());
     }
 
     @Test
     void testSetEmail() {
-        User user = mockUser();
-        user.setEmail("Change123@yahoo.ca");
-        assertEquals("Change123@yahoo.ca", user.getEmail());
+        testUser.setEmail("Change123@yahoo.ca");
+        assertEquals("Change123@yahoo.ca", testUser.getEmail());
     }
 
     @Test
     void testSetPhoneNumber() {
-        User user = mockUser();
-        user.setPhoneNo("403-444-4444");
-        assertEquals("403-444-4444", user.getPhoneNo());
+        testUser.setPhoneNo("403-444-4444");
+        assertEquals("403-444-4444", testUser.getPhoneNo());
     }
 
     @Test
     void testSetPhotoURL() {
-        User user = mockUser();
-        user.setProfileImageUrl("xyz.html");
-        assertEquals("xyz.html", user.getProfileImageUrl());
+        testUser.setProfileImageUrl("xyz.html");
+        assertEquals("xyz.html", testUser.getProfileImageUrl());
     }
 
     @Test
     void testSetLocationPermissions() {
-        User user = mockUser();
-        user.setLocationPermission(Boolean.TRUE);
-        assertTrue(user.isLocationPermission());
+        testUser.setLocationPermission(true);
+        assertTrue(testUser.isLocationPermission());
     }
 
     @Test
     void testSetNotificationsEnabled() {
-        User user = mockUser();
-        user.setNotificationsEnabled(Boolean.TRUE);
-        assertTrue(user.isNotificationsEnabled());
+        testUser.setNotificationsEnabled(true);
+        assertTrue(testUser.isNotificationsEnabled());
     }
 
     @Test
     void testAddWaitlistId() {
-        User user = mockUser();
-        user.addWaitingListEvent("EventID");
-        assertEquals(1, user.getWaitingListEventIds().size());
+        testUser.addWaitingListEvent("EventID");
+        assertEquals(1, testUser.getWaitingListEventIds().size());
+        assertTrue(testUser.getWaitingListEventIds().contains("EventID"));
     }
 
     @Test
     void testAddRegisteredEventId() {
-        User user = mockUser();
-        user.addRegisteredEvent("EventID");
-        assertEquals(1, user.getRegisteredEventIds().size());
+        testUser.addRegisteredEvent("EventID");
+        assertEquals(1, testUser.getRegisteredEventIds().size());
+        assertTrue(testUser.getRegisteredEventIds().contains("EventID"));
     }
 
     @Test
-    void testDefaultConstructorValues() {
-        User user = new User();
-        assertNotNull(user.getWaitingListEventIds());
-        assertTrue(user.getWaitingListEventIds().isEmpty());
-        assertNotNull(user.getRegisteredEventIds());
-        assertTrue(user.getRegisteredEventIds().isEmpty());
-        assertTrue(user.isNotificationsEnabled());
+    void testDefaultConstructor() {
+        User defaultUser = new User();
+
+        // Check initialization of lists
+        assertNotNull(defaultUser.getWaitingListEventIds());
+        assertTrue(defaultUser.getWaitingListEventIds().isEmpty());
+        assertNotNull(defaultUser.getRegisteredEventIds());
+        assertTrue(defaultUser.getRegisteredEventIds().isEmpty());
+
+        // Check default values
+        assertEquals("", defaultUser.getUserId());
+        assertEquals("", defaultUser.getUsername());
+        assertEquals("", defaultUser.getName());
+        assertEquals("", defaultUser.getEmail());
+        assertEquals("", defaultUser.getPhoneNo());
+        assertEquals("", defaultUser.getProfileImageUrl());
+
+        // Check default boolean flags
+        assertTrue(defaultUser.isNotificationsEnabled());
+        assertTrue(defaultUser.isWinNotificationPref());
+        assertTrue(defaultUser.isLoseNotificationPref());
+        assertFalse(defaultUser.isLocationPermission());
+    }
+
+    @Test
+    void testNotificationPreferences() {
+        // Test win notification preference
+        testUser.setWinNotificationPref(true);
+        assertTrue(testUser.isWinNotificationPref());
+        testUser.setWinNotificationPref(false);
+        assertFalse(testUser.isWinNotificationPref());
+
+        // Test lose notification preference
+        testUser.setLoseNotificationPref(true);
+        assertTrue(testUser.isLoseNotificationPref());
+        testUser.setLoseNotificationPref(false);
+        assertFalse(testUser.isLoseNotificationPref());
+    }
+
+    @Test
+    void testUserRoles() {
+        // Test default role
+        assertTrue(testUser.getRoles().contains("entrant"));
+
+        // Test adding new role
+        testUser.addRole("organizer");
+        assertTrue(testUser.getRoles().contains("organizer"));
+
+        // Test removing role
+        testUser.removeRole("organizer");
+        assertFalse(testUser.getRoles().contains("organizer"));
+
+        // Test admin role check
+        assertFalse(testUser.checkAdminRole());
+        testUser.addRole("admin");
+        assertTrue(testUser.checkAdminRole());
+    }
+
+    @Test
+    void testFacilityId() {
+        String facilityId = "facility123";
+        testUser.setFacilityId(facilityId);
+        assertEquals(facilityId, testUser.getFacilityId());
     }
 }
-
-
-
-

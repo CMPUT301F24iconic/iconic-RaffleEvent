@@ -38,7 +38,7 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:theme="@style/Theme.IconicRaffleEvent">
-
+        <service android:name="com.google.firebase.components.ComponentDiscoveryService" />
         <!-- MainActivity: Entry point for role selection -->
         <activity
             android:name=".view.MainActivity"
