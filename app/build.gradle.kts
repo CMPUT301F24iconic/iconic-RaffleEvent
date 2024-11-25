@@ -133,6 +133,9 @@ dependencies {
     testImplementation (libs.core.v150)
     testImplementation (libs.robolectric)
 
+    testImplementation (libs.mockito.core.v480)
+    testImplementation (libs.mockito.inline)
+
     // Firebase test dependencies
     testImplementation (libs.google.firebase.firestore)
 }
