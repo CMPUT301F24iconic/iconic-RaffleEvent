@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
+import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
@@ -97,11 +98,12 @@ public class EventListUtils {
 
     /**
      * Deletes a user from all event lists: waitingList, invitedList, and registeredAttendees.
+     * If `event` is `null`, deletes the user globally from the Firestore database.
      *
      * @param context         The context of the calling activity.
-     * @param event           The event object containing the lists.
+     * @param event           The event object containing the lists (nullable for global deletion).
      * @param userId          The ID of the user to delete.
-     * @param firebaseAttendee The FirebaseAttendee controller for Firestore operations.
+     * @param firebaseAttendee The FirebaseAttendee controller for Firestore operations (nullable for global deletion).
      * @param callback        A callback to execute after successful deletion (e.g., refresh the UI).
      */
     public static void deleteUserFromLists(
@@ -112,11 +114,24 @@ public class EventListUtils {
             Runnable callback
     ) {
         if (event == null) {
-            Toast.makeText(context, "Event data not loaded.", Toast.LENGTH_SHORT).show();
+            // Global deletion (admin functionality)
+            UserController userController = new UserController(userId, context);
+            userController.deleteUser(userId, new UserController.DeleteUserCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(context, "User successfully deleted.", Toast.LENGTH_SHORT).show();
+                    callback.run(); // Refresh the UI
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(context, "Failed to delete user globally: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
             return;
         }
 
-        // Check and remove the user from each list
+        // Event-specific deletion
         List<String> waitingList = event.getWaitingList();
         List<String> invitedList = event.getInvitedList();
         List<String> registeredAttendees = event.getRegisteredAttendees();
