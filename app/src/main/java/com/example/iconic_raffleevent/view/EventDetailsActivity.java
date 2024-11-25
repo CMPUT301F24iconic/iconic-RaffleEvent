@@ -58,6 +58,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button acceptInvitationButton;
     private Button mapButton;
     private Button editButton;
+    private Button viewQRButton;
     private Button manageButton;
     private CardView congratsMessage;
 
@@ -117,6 +118,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         editButton = findViewById(R.id.edit_button);
         manageButton = findViewById(R.id.manage_button);
+        viewQRButton = findViewById(R.id.share_button);
 
         eventController = new EventController();
         userController = getUserController();
@@ -196,6 +198,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        viewQRButton.setOnClickListener(v -> {
+            Intent intent = new Intent(EventDetailsActivity.this, EventQRViewActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
         // Top nav bar
         notificationButton = findViewById(R.id.notification_icon);
         notificationButton.setOnClickListener(v ->
@@ -248,6 +256,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             editButton.setVisibility(View.VISIBLE);
             manageButton.setVisibility(View.VISIBLE);
             mapButton.setVisibility(View.VISIBLE);
+            viewQRButton.setVisibility(View.VISIBLE);
         } else {
             // For non-organizers, handle Join/Leave button visibility
             if (event.getWaitingList().contains(userObj.getUserId())) {
