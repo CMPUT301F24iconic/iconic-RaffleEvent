@@ -2,12 +2,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Camera Preview Surface -->
-    <SurfaceView
+    <!-- Camera Preview TextureView -->
+    <TextureView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/qr_code_text" />
+        android:layout_centerInParent="true" />
 
     <!-- Scanning Wave Animation -->
     <View
@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@drawable/scanning_wave_background"
-        android:layout_alignTop="@id/camera_preview"
-        android:layout_alignBottom="@id/camera_preview"
+        android:layout_centerInParent="true"
         android:visibility="gone"/>
 
     <!-- QR Code Text Display -->
@@ -27,14 +26,15 @@
         android:layout_alignParentBottom="true"
         android:padding="16dp"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
     <!-- Message Text View -->
     <TextView
         android:id="@+id/message_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/camera_preview"
+        android:layout_centerInParent="true"
         android:padding="16dp"
         android:textColor="@android:color/white"
         android:textSize="18sp"

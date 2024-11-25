@@ -96,6 +96,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         });
     }
 
+    /**
+     * Adds multiple users to the list and notifies the adapter.
+     *
+     * @param users the list of User objects to add.
+     */
+    public void addUsers(List<User> users) {
+        userList.addAll(users);
+        notifyDataSetChanged();
+    }
+
     public void clearUsers() {
         userList.clear();
         notifyDataSetChanged();
