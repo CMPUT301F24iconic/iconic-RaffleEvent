@@ -121,4 +121,18 @@ dependencies {
 
     // image cropper
     implementation (libs.circleimageview)
+
+    // Testing dependencies
+    testImplementation (libs.junit.jupiter.api)
+    testImplementation (libs.junit.jupiter.engine.v582)
+    testImplementation (libs.mockito.core.v480)
+    testImplementation (libs.mockito.inline)
+    testImplementation (libs.mockito.junit.jupiter)
+
+    // Android test dependencies
+    testImplementation (libs.core.v150)
+    testImplementation (libs.robolectric)
+
+    // Firebase test dependencies
+    testImplementation (libs.google.firebase.firestore)
 }

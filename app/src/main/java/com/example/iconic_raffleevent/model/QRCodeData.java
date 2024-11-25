@@ -1,5 +1,7 @@
 package com.example.iconic_raffleevent.model;
 
+import java.util.Objects;
+
 /**
  * Represents data for a QR code used in the raffle event.
  */
@@ -81,6 +83,21 @@ public class QRCodeData {
      */
     public void setQrCodeUrl(String qrCodeUrl) {
         this.qrCodeUrl = qrCodeUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QRCodeData that = (QRCodeData) o;
+        return Objects.equals(qrCodeId, that.qrCodeId) &&
+                Objects.equals(qrCodeName, that.qrCodeName) &&
+                Objects.equals(qrCodeUrl, that.qrCodeUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(qrCodeId, qrCodeName, qrCodeUrl);
     }
 }
 

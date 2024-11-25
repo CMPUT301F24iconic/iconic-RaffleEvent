@@ -1,5 +1,7 @@
 package com.example.iconic_raffleevent.model;
 
+import java.util.Objects;
+
 /**
  * Represents image data, including an image identifier, title, and the URL to the image.
  */
@@ -80,5 +82,20 @@ public class ImageData {
      */
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageData imageData = (ImageData) o;
+        return Objects.equals(imageId, imageData.imageId) &&
+                Objects.equals(title, imageData.title) &&
+                Objects.equals(imageUrl, imageData.imageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imageId, title, imageUrl);
     }
 }

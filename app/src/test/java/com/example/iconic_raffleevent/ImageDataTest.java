@@ -8,50 +8,105 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImageDataTest {
 
     private ImageData imageData;
+    private String testId = "img123";
+    private String testTitle = "Sunset";
+    private String testUrl = "http://example.com/sunset.jpg";
 
     @BeforeEach
     void setUp() {
-        imageData = new ImageData("img123", "Sunset", "http://example.com/sunset.jpg");
+        imageData = new ImageData(testId, testTitle, testUrl);
     }
 
     @Test
     void testGetImageId() {
-        assertEquals("img123", imageData.getImageId());
+        assertEquals(testId, imageData.getImageId());
     }
 
     @Test
     void testSetImageId() {
-        imageData.setImageId("img456");
-        assertEquals("img456", imageData.getImageId());
+        String newId = "img456";
+        imageData.setImageId(newId);
+        assertEquals(newId, imageData.getImageId());
     }
 
     @Test
     void testGetTitle() {
-        assertEquals("Sunset", imageData.getTitle());
+        assertEquals(testTitle, imageData.getTitle());
     }
 
     @Test
     void testSetTitle() {
-        imageData.setTitle("Sunrise");
-        assertEquals("Sunrise", imageData.getTitle());
+        String newTitle = "Sunrise";
+        imageData.setTitle(newTitle);
+        assertEquals(newTitle, imageData.getTitle());
     }
 
     @Test
     void testGetImageUrl() {
-        assertEquals("http://example.com/sunset.jpg", imageData.getImageUrl());
+        assertEquals(testUrl, imageData.getImageUrl());
     }
 
     @Test
     void testSetImageUrl() {
-        imageData.setImageUrl("http://example.com/sunrise.jpg");
-        assertEquals("http://example.com/sunrise.jpg", imageData.getImageUrl());
+        String newUrl = "http://example.com/sunrise.jpg";
+        imageData.setImageUrl(newUrl);
+        assertEquals(newUrl, imageData.getImageUrl());
     }
 
     @Test
-    void testEquals() {
-        ImageData sameImageData = new ImageData("img123", "Sunset", "http://example.com/sunset.jpg");
+    void testEqualsWithSameValues() {
+        ImageData sameImageData = new ImageData(testId, testTitle, testUrl);
+        assertTrue(imageData.equals(sameImageData), "Two ImageData objects with same values should be equal");
+    }
+
+    @Test
+    void testEqualsWithDifferentValues() {
         ImageData differentImageData = new ImageData("img789", "Mountain", "http://example.com/mountain.jpg");
-        assertEquals(imageData, sameImageData);
-        assertNotEquals(imageData, differentImageData);
+        assertFalse(imageData.equals(differentImageData), "ImageData objects with different values should not be equal");
+    }
+
+    @Test
+    void testEqualsWithSelf() {
+        assertTrue(imageData.equals(imageData), "ImageData should be equal to itself");
+    }
+
+    @Test
+    void testEqualsWithNull() {
+        assertFalse(imageData.equals(null), "ImageData should not be equal to null");
+    }
+
+    @Test
+    void testEqualsWithDifferentClass() {
+        assertFalse(imageData.equals("not an ImageData"), "ImageData should not be equal to other types");
+    }
+
+    @Test
+    void testHashCodeConsistency() {
+        ImageData sameImageData = new ImageData(testId, testTitle, testUrl);
+        assertEquals(imageData.hashCode(), sameImageData.hashCode(),
+                "Hash codes should be same for equal objects");
+    }
+
+    @Test
+    void testNullValues() {
+        ImageData nullImageData = new ImageData(null, null, null);
+        assertNull(nullImageData.getImageId());
+        assertNull(nullImageData.getTitle());
+        assertNull(nullImageData.getImageUrl());
+    }
+
+    @Test
+    void testConstructorWithEmptyStrings() {
+        ImageData emptyImageData = new ImageData("", "", "");
+        assertEquals("", emptyImageData.getImageId());
+        assertEquals("", emptyImageData.getTitle());
+        assertEquals("", emptyImageData.getImageUrl());
+    }
+
+    @Test
+    void testHashCodeWithNullValues() {
+        ImageData nullImageData = new ImageData(null, null, null);
+        assertDoesNotThrow(() -> nullImageData.hashCode(),
+                "hashCode should handle null values without throwing exception");
     }
 }
