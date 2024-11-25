@@ -25,6 +25,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
     private FirebaseAttendee firebaseAttendee;
     private UserAdapter userAdapter;
     private String eventId;
+    private Event eventObj;
 
     // Navigation UI
 //    private DrawerLayout drawerLayout;
@@ -75,9 +76,22 @@ public class ConfirmedListActivity extends AppCompatActivity {
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
 
+        loadEventDetails();
+
         // Initialize adapter and set it to RecyclerView
         userAdapter = new UserAdapter(new ArrayList<>());
         userRecyclerView.setAdapter(userAdapter);
+
+        // Set item click listener for the user list
+        userAdapter.setOnItemClickListener(user -> {
+            com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
+                    ConfirmedListActivity.this,
+                    user,
+                    eventObj,
+                    firebaseAttendee,
+                    this::refreshConfirmedList
+            );
+        });
 
         // Fetch and display waiting list
         loadConfirmedList();
@@ -101,6 +115,17 @@ public class ConfirmedListActivity extends AppCompatActivity {
             startActivity(new Intent(ConfirmedListActivity.this, ProfileActivity.class));
         });
     }
+
+    /**
+     * Refreshes the confirmed list by clearing the adapter and reloading the list.
+     */
+    private void refreshConfirmedList() {
+        // Clear the user adapter to reset the displayed list
+        userAdapter.clearUsers();
+        // Reload the waiting list from Firestore or backend
+        loadConfirmedList();
+    }
+
 
     /**
      * Loads the list of users who have confirmed attendance for the event.
@@ -147,5 +172,21 @@ public class ConfirmedListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the event details, including waiting list information and capacity.
+     * Stores the event object in the activity.
+     */
+    private void loadEventDetails() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+            }
 
+            @Override
+            public void onError(String message) {
+                Toast.makeText(ConfirmedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

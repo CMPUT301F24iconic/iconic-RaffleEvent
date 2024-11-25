@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/userProfileImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/default_profile"
+            android:contentDescription="User Profile Picture" />
+
+        <!-- User Name -->
+        <TextView
+            android:id="@+id/userNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="User Name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <!-- User Email -->
+        <TextView
+            android:id="@+id/userEmailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="user@example.com"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center" />
+
+        <!-- User Phone Number (Optional) -->
+        <TextView
+            android:id="@+id/userPhoneTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Phone: 123-456-7890"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <!-- Warning Message -->
+        <TextView
+            android:id="@+id/warningMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Warning: Deleting this user will remove them from all lists. This action cannot be undone."
+            android:textColor="@android:color/holo_red_dark"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Cancel Button -->
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Cancel"
+                android:textColor="@color/buttonPrimary"
+                android:backgroundTint="@color/white"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+            <!-- Delete Button -->
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Delete"
+                android:textColor="@color/buttonTextColor"
+                android:backgroundTint="@color/buttonPrimary"
+                app:cornerRadius="@dimen/button_corner_radius" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

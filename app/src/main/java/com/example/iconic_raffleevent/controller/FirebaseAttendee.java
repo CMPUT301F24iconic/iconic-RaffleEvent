@@ -317,8 +317,8 @@ public class FirebaseAttendee {
     }
 
     /**
-     * Accepts an event invitation for a user, adding them to the registered attendees list.
-     * This method updates the "registeredAttendees" field of the event document by adding the user ID.
+     * Accepts an event invitation for a user, adding them to the registered attendees list and removing from invitedList.
+     * This method updates the "registeredAttendees" and "invitedList" fields of the event document by adding the user ID.
      *
      * @param eventId The ID of the event to which the user is accepting the invitation.
      * @param userId The ID of the user accepting the invitation.
@@ -329,11 +329,15 @@ public class FirebaseAttendee {
         eventRef.update("registeredAttendees", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
+
+        eventRef.update("invitedList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
     }
 
     /**
-     * Declines an event invitation for a user, removing them from the waiting list.
-     * This method updates the "waitingList" field of the event document by removing the user ID.
+     * Declines an event invitation for a user, removing them from the invited list.
+     * This method updates the "invitedList" field of the event document by removing the user ID.
      *
      * @param eventId The ID of the event to which the user is declining the invitation.
      * @param userId The ID of the user declining the invitation.
@@ -341,7 +345,11 @@ public class FirebaseAttendee {
      */
     public void declineEventInvitation(String eventId, String userId, EventController.DeclineInvitationCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
-        eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
+        eventRef.update("declinedList", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError("Failed to decline invitation"));
+
+        eventRef.update("invitedList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to decline invitation"));
     }
@@ -440,6 +448,8 @@ public class FirebaseAttendee {
      */
     public void getAllUserEvents(String userId, EventController.EventListCallback callback) {
         Task<QuerySnapshot> waitingListQuery = eventsCollection.whereArrayContains("waitingList", userId).get();
+        Task<QuerySnapshot> invitedListQuery = eventsCollection.whereArrayContains("invitedList", userId).get();
+        Task<QuerySnapshot> registeredAttendeesQuery = eventsCollection.whereArrayContains("registeredAttendees", userId).get();
         Task<QuerySnapshot> ownerQuery = eventsCollection.whereEqualTo("organizerID", userId).get();
 
         Tasks.whenAllSuccess(waitingListQuery, ownerQuery)
@@ -447,24 +457,37 @@ public class FirebaseAttendee {
                     if (task.isSuccessful()) {
                         // Get results from the waiting list query
                         List<Event> waitingListEvents = waitingListQuery.getResult().toObjects(Event.class);
-
-                        // Add them to event list we're returning
-                        List<Event> events = new ArrayList<>(waitingListEvents);
-
-                        // Get results from the organizer query
+                        List<Event> invitedListEvents = invitedListQuery.getResult().toObjects(Event.class);
+                        List<Event> registeredListEvents = registeredAttendeesQuery.getResult().toObjects(Event.class);
                         List<Event> organizerEvents = ownerQuery.getResult().toObjects(Event.class);
 
-                        // Add organizer events, avoiding duplicates
-                        for (Event event : organizerEvents) {
-                            if (!events.contains(event)) {
-                                events.add(event);
-                            }
-                        }
-                        callback.onEventsFetched(new ArrayList<>(events));
+                        // Combine results into a single list, avoiding duplicates
+                        List<Event> allEvents = new ArrayList<>();
+                        addEventsToList(allEvents, waitingListEvents);
+                        addEventsToList(allEvents, invitedListEvents);
+                        addEventsToList(allEvents, registeredListEvents);
+                        addEventsToList(allEvents, organizerEvents);
+
+                        // Return the combined event list via callback
+                        callback.onEventsFetched(new ArrayList<>(allEvents));
                     } else {
                         callback.onError("Failed to fetch events for user waiting list.");
                     }
                 });
+    }
+
+    /**
+     * Adds events from the source list to the target list, avoiding duplicates.
+     *
+     * @param targetList The list to which events are added.
+     * @param sourceList The list of events to add.
+     */
+    private void addEventsToList(List<Event> targetList, List<Event> sourceList) {
+        for (Event event : sourceList) {
+            if (!targetList.contains(event)) {
+                targetList.add(event);
+            }
+        }
     }
 
     /**
@@ -473,13 +496,14 @@ public class FirebaseAttendee {
      *
      * @param eventId The ID of the event whose lists are being updated.
      * @param invitedList The list of users invited to the event.
-     * @param declinedList The list of users who have declined the invitation.
+     * @param waitingList The list of users who have declined the invitation.
      * @param callback The callback to notify the success or failure of the operation.
      */
-    public void updateEventLists(String eventId, List<String> invitedList, List<String> declinedList, UpdateCallback callback) {
+    public void updateEventLists(String eventId, List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, UpdateCallback callback) {
         Map<String, Object> updates = new HashMap<>();
+        updates.put("waitingList", waitingList);
         updates.put("invitedList", invitedList);
-        updates.put("declinedList", declinedList);
+        updates.put("registeredAttendees", registeredAttendees);
 
         eventsCollection.document(eventId)
                 .update(updates)

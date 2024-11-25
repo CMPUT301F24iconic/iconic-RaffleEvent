@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.model.User;
 import java.util.List;
@@ -18,6 +20,15 @@ import java.util.List;
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private List<User> userList;
+    private OnItemClickListener itemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(User user);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
 
     /**
      * Constructs a new UserAdapter with the provided list of users.
@@ -68,10 +79,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
             Glide.with(holder.itemView.getContext())
                     .load(user.getProfileImageUrl())
+                    .circleCrop()
+                    .error(R.drawable.default_profile)
                     .into(holder.profileImageView);
         } else {
-            holder.profileImageView.setImageResource(R.drawable.default_profile);
+            // Generate avatar and set as the image
+            Bitmap avatarBitmap = AvatarGenerator.generateAvatar(user.getName(), 200);
+            holder.profileImageView.setImageBitmap(avatarBitmap);
         }
+
+        // Set click listener on the user item
+        holder.itemView.setOnClickListener(v -> {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(user);
+            }
+        });
+    }
+
+    public void clearUsers() {
+        userList.clear();
+        notifyDataSetChanged();
     }
 
     /**
