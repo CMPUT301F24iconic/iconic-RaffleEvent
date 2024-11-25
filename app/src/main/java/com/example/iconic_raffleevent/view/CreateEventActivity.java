@@ -4,16 +4,19 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.BoringLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,18 +26,24 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FacilityController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
 import android.graphics.drawable.ColorDrawable;
@@ -54,8 +63,8 @@ public class CreateEventActivity extends AppCompatActivity {
     // Views
     TextInputLayout eventTitleLayout, startDateLayout, startTimeLayout, endDateLayout, endTimeLayout, maxAttendeesLayout, eventDescriptionLayout;
     TextInputEditText eventTitleText, startDateText, startTimeText, endDateText, endTimeText, maxAttendeesText, eventDescriptionText;
+    TextView posterLabel, eventTitleHeader;
     Switch geolocationRequiredSwitch;
-    CardView addFacility;
     Button uploadPosterButton, saveEventButton;
 
     // Nav bar
@@ -66,6 +75,9 @@ public class CreateEventActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ImageButton notificationButton;
+
+    // IDs
+    String eventId;
 
     // Controllers
     UserControllerViewModel userControllerViewModel;
@@ -140,47 +152,21 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
         // Initialize views and controllers
-        initializeViews();
         initializeControllers();
+        initializeViews();
 
         // Set up listeners for date and time pickers
         setupDateTimePickers();
 
         uploadPosterButton.setOnClickListener(v -> selectPoster());
         saveEventButton.setOnClickListener(v -> validateAndSaveEvent());
-
-        // Set listener for add facility button
-//        addFacility.setOnClickListener(v -> {
-//            // Check if user has a facility
-//            facilityController.checkUserFacility(userObj.getUserId(), new FacilityController.FacilityCheckCallback() {
-//                @Override
-//                public void onFacilityExists(String facilityId) {
-//                    userFacilityId = facilityId;
-//                    Toast.makeText(CreateEventActivity.this, "Successfully attached facility", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                @Override
-//                public void onFacilityNotExists() {
-//                    Toast.makeText(CreateEventActivity.this, "You do not own a facility", Toast.LENGTH_SHORT).show();
-//                    // If user does not have facility, redirect to create facility page
-//                    Intent intent = new Intent(CreateEventActivity.this, CreateFacilityActivity.class);
-//                    intent.putExtra("userId", userObj.getUserId());
-//                    startActivity(intent);
-//                }
-//
-//                @Override
-//                public void onError(String message) {
-//                    Toast.makeText(CreateEventActivity.this, "Unable to locate facility in database", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        });
-
     }
 
     /**
      * Initializes UI components for the event creation form.
      */
     private void initializeViews() {
+        eventTitleHeader = findViewById(R.id.createEventTitle);
         eventTitleLayout = findViewById(R.id.eventTitleInputLayout);
         eventTitleText = findViewById(R.id.eventTitleEditText);
         geolocationRequiredSwitch = findViewById(R.id.geolocationSwitch);
@@ -196,7 +182,7 @@ public class CreateEventActivity extends AppCompatActivity {
         maxAttendeesText = findViewById(R.id.maxAttendeesEditText);
         eventDescriptionLayout = findViewById(R.id.eventDescriptionInputLayout);
         eventDescriptionText = findViewById(R.id.eventDescriptionEditText);
-//        addFacility = findViewById(R.id.addFacilityButton);
+        posterLabel = findViewById(R.id.posterLabel);
         uploadPosterButton = findViewById(R.id.uploadPosterButton);
         saveEventButton = findViewById(R.id.saveButton);
 
@@ -223,6 +209,12 @@ public class CreateEventActivity extends AppCompatActivity {
                 eventDescriptionLayout.setHint(getString(R.string.event_description_hint)); // Restore hint if input is empty
             }
         });
+
+        // Check to see if we are editing event
+        if (checkEventExists() == Boolean.TRUE) {
+            // Fill in fields and adjust text to reflect edit event
+            loadEventDetails();
+        }
     }
 
     /**
@@ -366,12 +358,16 @@ public class CreateEventActivity extends AppCompatActivity {
             // User confirmed the poster, proceed with saving the event
             posterPreviewImageView.setImageBitmap(posterBitmap);
             posterPreviewImageView.setVisibility(View.VISIBLE);
+            posterLabel.setVisibility(View.VISIBLE);
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> {
             // User canceled the poster selection
             imageUri = null;
-            posterPreviewImageView.setVisibility(View.GONE);
+            if (eventId == null) {
+                posterPreviewImageView.setVisibility(View.GONE);
+                posterLabel.setVisibility(View.GONE);
+            }
         });
 
         AlertDialog dialog = builder.create();
@@ -382,36 +378,100 @@ public class CreateEventActivity extends AppCompatActivity {
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (int) (getResources().getDisplayMetrics().heightPixels * 0.5));
             window.setGravity(Gravity.CENTER);
-            window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.WHITE));
         }
 
         dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
     }
 
     /**
      * Validates the user inputs and, if valid, creates and saves the event to the database.
      */
-    private void validateAndSaveEvent() {
+    private void validateAndUpdateEvent() {
+        // Keep the Save button visible and enabled
+        saveEventButton.setVisibility(View.VISIBLE);
+        saveEventButton.setEnabled(true);
+
         validateInputFields();
 
+        // Check if a poster is uploaded
         if (imageUri == null) {
             Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
+            return; // Stop further processing
+        }
+
+        // Check if end time is later than start time
+        if (!isEndTimeLaterThanStartTime()) {
+            Toast.makeText(this, "End time must be later than start time.", Toast.LENGTH_SHORT).show();
+            return; // Stop further processing
+        }
+
+        // If there are input errors, notify the user and return
+        if (inputError) {
+            Toast.makeText(this, "Please complete all required fields and try again.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-//        Integer maxAttendees = null;
-        if (!inputError) {
-            Integer maxAttendees = maxAttendeesText.getText().toString().isEmpty() ? null : Integer.valueOf(maxAttendeesText.getText().toString());
-            // Check to ensure facility is linked
-//            if (userFacilityId.isEmpty()) {
-//                return;
-//            }
-//            System.out.println("Max attendees");
-//            System.out.println(maxAttendeesText.getText().toString());
-//            if (!(maxAttendeesText.getText() == null || maxAttendeesText.getText().length() == 0)) {
-//                maxAttendees = Integer.valueOf(maxAttendeesText.getText().toString());
-//            }
+        // Proceed with saving the event if all validations pass
+        Integer maxAttendees = maxAttendeesText.getText().toString().isEmpty() ? null : Integer.valueOf(maxAttendeesText.getText().toString());
 
+        eventObj = new Event();
+        eventObj.setEventId(eventTitleText.getText().toString());
+        eventObj.setEventTitle(eventTitleText.getText().toString());
+        eventObj.setEventStartDate(startDateText.getText().toString());
+        eventObj.setEventStartTime(startTimeText.getText().toString());
+        eventObj.setEventEndDate(endDateText.getText().toString());
+        eventObj.setEventEndTime(endTimeText.getText().toString());
+        eventObj.setEventDescription(eventDescriptionText.getText().toString());
+        eventObj.setGeolocationRequired(geolocationRequiredSwitch.isChecked());
+        String hashedQrData = "event_" + eventObj.getEventId();
+        eventObj.setMaxAttendees(maxAttendees);
+        eventObj.setQrCode(hashedQrData);
+        eventObj.setFacilityId(userFacilityId);
+
+        // Save event and event poster to the database
+        saveEvent(imageUri, eventObj);
+    }
+
+    /**
+     * Validates the user inputs and, if valid, updates the event in the database.
+     */
+    private void validateAndSaveEvent() {
+        // Keep the Save button visible and enabled
+        saveEventButton.setVisibility(View.VISIBLE);
+        saveEventButton.setEnabled(true);
+
+        validateInputFields();
+
+
+        if (eventId == null){
+            // Check if a poster is uploaded
+            if (imageUri == null) {
+                Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
+                return; // Stop further processing
+            }
+        }
+
+        // Check if end time is later than start time
+        if (!isEndTimeLaterThanStartTime()) {
+            Toast.makeText(this, "End time must be later than start time.", Toast.LENGTH_SHORT).show();
+            return; // Stop further processing
+        }
+
+        // If there are input errors, notify the user and return
+        if (inputError) {
+            Toast.makeText(this, "Please complete all required fields and try again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Proceed with saving the event if all validations pass
+        Integer maxAttendees = maxAttendeesText.getText().toString().isEmpty() ? null : Integer.valueOf(maxAttendeesText.getText().toString());
+
+        // If user is creating new event
+        if (eventObj == null) {
             eventObj = new Event();
             eventObj.setEventId(eventTitleText.getText().toString());
             eventObj.setEventTitle(eventTitleText.getText().toString());
@@ -421,15 +481,50 @@ public class CreateEventActivity extends AppCompatActivity {
             eventObj.setEventEndTime(endTimeText.getText().toString());
             eventObj.setEventDescription(eventDescriptionText.getText().toString());
             eventObj.setGeolocationRequired(geolocationRequiredSwitch.isChecked());
-            String hashed_qr_data = "event_" + eventObj.getEventId();
+            String hashedQrData = "event_" + eventObj.getEventId();
             eventObj.setMaxAttendees(maxAttendees);
-            eventObj.setQrCode(hashed_qr_data);
+            eventObj.setQrCode(hashedQrData);
             eventObj.setFacilityId(userFacilityId);
 
-            // Save event and event poster to database
+            // Save event and event poster to the database
             saveEvent(imageUri, eventObj);
         } else {
-            Toast.makeText(this, "Please complete all fields and try again.", Toast.LENGTH_SHORT).show();
+            // User is updating an existing event
+            eventObj.setEventTitle(eventTitleText.getText().toString());
+            eventObj.setEventStartDate(startDateText.getText().toString());
+            eventObj.setEventStartTime(startTimeText.getText().toString());
+            eventObj.setEventEndDate(endDateText.getText().toString());
+            eventObj.setEventEndTime(endTimeText.getText().toString());
+            eventObj.setEventDescription(eventDescriptionText.getText().toString());
+            eventObj.setGeolocationRequired(geolocationRequiredSwitch.isChecked());
+            eventObj.setMaxAttendees(maxAttendees);
+
+            // Update event details in database
+            updateEvent(imageUri, eventObj);
+        }
+    }
+
+
+
+    /**
+     * Checks if the selected end time is later than the selected start time.
+     *
+     * @return True if end time is later than start time, false otherwise.
+     */
+    private boolean isEndTimeLaterThanStartTime() {
+        String startDateTimeStr = startDateText.getText().toString() + " " + startTimeText.getText().toString();
+        String endDateTimeStr = endDateText.getText().toString() + " " + endTimeText.getText().toString();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.US);
+
+        try {
+            Date startDateTime = format.parse(startDateTimeStr);
+            Date endDateTime = format.parse(endDateTimeStr);
+
+            return endDateTime.after(startDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -461,9 +556,13 @@ public class CreateEventActivity extends AppCompatActivity {
         if (checkInput(editText)) {
             layout.setError(errorMessage);
         } else {
-            layout.setError(null);
+            layout.setError(null); // Clear error when input is valid
         }
+        // Ensure the Save button is visible and enabled
+        saveEventButton.setVisibility(View.VISIBLE);
+        saveEventButton.setEnabled(true);
     }
+
 
     /**
      * Checks if a TextInputEditText field is empty or null.
@@ -504,6 +603,33 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    private void updateEvent(Uri imageUri, Event eventObj) {
+        // Need to implement functionality to delete only image from firebase storage
+        // For now just focus on adding new image to firebase storage
+        if (imageUri != null) {
+            eventController.uploadEventPoster(imageUri, eventObj, new EventController.UploadEventPosterCallback() {
+                @Override
+                public void onSuccessfulUpload(String posterUrl) {
+                    eventObj.setEventImageUrl(posterUrl);
+
+                    // Show a success toast for the poster upload
+                    Toast.makeText(CreateEventActivity.this, "Poster uploaded successfully!", Toast.LENGTH_SHORT).show();
+
+                    // Update event
+                    eventController.updateEventDetails(eventObj);
+                }
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(CreateEventActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Update event with pre-existing poster image
+            eventController.updateEventDetails(eventObj);
+        }
+
+    }
+
     /**
      * Generates a QR code for the event and uploads it to the database.
      *
@@ -539,5 +665,61 @@ public class CreateEventActivity extends AppCompatActivity {
      */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    private Boolean checkEventExists() {
+        if (getIntent().getStringExtra("eventId") != null) {
+            eventId = getIntent().getStringExtra("eventId");
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+    }
+
+    /**
+     * Loads the event details if a organizer is editing an existing event.
+     */
+    private void loadEventDetails() {
+        eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+                runOnUiThread(() -> prefillEventForm()); // Prefill form on the main thread
+            }
+            @Override
+            public void onError(String message) {
+                eventObj = null;
+            }
+        });
+    }
+
+    /**
+     * Prefills the form with existing event details and updates the button text to "Update" and page title to Edit.
+     */
+    private void prefillEventForm() {
+        if (eventObj != null) {
+            eventTitleHeader.setText("Edit Event");
+            eventTitleText.setText(eventObj.getEventTitle());
+            geolocationRequiredSwitch.setChecked(eventObj.isGeolocationRequired());
+            startDateText.setText(eventObj.getEventStartDate());
+            startTimeText.setText(eventObj.getEventStartTime());
+            endDateText.setText(eventObj.getEventEndDate());
+            endTimeText.setText(eventObj.getEventEndTime());
+            if (eventObj.getMaxAttendees() != null) {
+                maxAttendeesText.setText(eventObj.getMaxAttendees().toString());
+            }
+            eventDescriptionText.setText(eventObj.getEventDescription());
+            posterPreviewImageView.setVisibility(View.VISIBLE);
+            posterLabel.setVisibility(View.VISIBLE);
+            // Load event image
+            Glide.with(this)
+                    .load(eventObj.getEventImageUrl())
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(posterPreviewImageView);
+            saveEventButton.setText("Update"); // Change button text to "Update"
+            uploadPosterButton.setText("Change Poster");
+        } else {
+            System.out.println("No facility to prefill.");
+        }
     }
 }

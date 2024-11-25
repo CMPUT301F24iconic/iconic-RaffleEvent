@@ -22,8 +22,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
+import com.example.iconic_raffleevent.controller.FacilityController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -75,6 +77,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private User userObj;
     private GeoPoint userLocation;
     private Event eventObj;
+    private String orgFacility;
 
     private Boolean isUserLoaded;
     private Boolean isEventLoaded;
@@ -182,6 +185,14 @@ public class EventDetailsActivity extends AppCompatActivity {
             Intent intent = new Intent(EventDetailsActivity.this, MapActivity.class);
             intent.putExtra("eventId", eventId);
             intent.putExtra("eventTitle", eventObj.getEventTitle());
+            startActivity(intent);
+        });
+
+        editButton.setOnClickListener(v -> {
+            // Create an intent to start the Create/Edit event activity
+            Intent intent = new Intent(EventDetailsActivity.this, CreateEventActivity.class);
+            intent.putExtra("facilityId", orgFacility); // Pass the facilityId
+            intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
 
@@ -451,6 +462,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                     joinWaitingListButton.setEnabled(true);
                     leaveWaitingListButton.setEnabled(true);
                     isUserLoaded = true;
+                    orgFacility = userObj.getFacilityId();
+                    System.out.println(orgFacility);
                     checkUIUpdate();
                 } else {
                     System.out.println("User information is null");
