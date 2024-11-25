@@ -189,4 +189,9 @@ public class ConfirmedListActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void setFirebaseAttendee(FirebaseAttendee firebaseAttendee) {
+        this.firebaseAttendee = firebaseAttendee;
+    }
+
 }
