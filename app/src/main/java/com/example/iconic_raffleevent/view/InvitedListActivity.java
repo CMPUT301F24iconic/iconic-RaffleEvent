@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -25,6 +26,7 @@ public class InvitedListActivity extends AppCompatActivity {
     private FirebaseAttendee firebaseAttendee;
     private UserAdapter userAdapter;
     private String eventId;
+    private Event eventObj;
 
     // Navigation UI
 //    private DrawerLayout drawerLayout;
@@ -75,9 +77,22 @@ public class InvitedListActivity extends AppCompatActivity {
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
 
+        loadEventDetails();
+
         // Initialize adapter and set it to RecyclerView
         userAdapter = new UserAdapter(new ArrayList<>());
         userRecyclerView.setAdapter(userAdapter);
+
+        // Set item click listener for the user list
+        userAdapter.setOnItemClickListener(user -> {
+            com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
+                    InvitedListActivity.this,
+                    user,
+                    eventObj,
+                    firebaseAttendee,
+                    this::refreshInvitedList
+            );
+        });
 
         // Fetch and display waiting list
         loadInvitedList();
@@ -100,6 +115,16 @@ public class InvitedListActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(InvitedListActivity.this, ProfileActivity.class));
         });
+    }
+
+    /**
+     * Refreshes the invited list by clearing the adapter and reloading the list.
+     */
+    private void refreshInvitedList() {
+        // Clear the user adapter to reset the displayed list
+        userAdapter.clearUsers();
+        // Reload the waiting list from Firestore or backend
+        loadInvitedList();
     }
 
     /**
@@ -147,5 +172,21 @@ public class InvitedListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the event details, including waiting list information and capacity.
+     * Stores the event object in the activity.
+     */
+    private void loadEventDetails() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+            }
 
+            @Override
+            public void onError(String message) {
+                Toast.makeText(InvitedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

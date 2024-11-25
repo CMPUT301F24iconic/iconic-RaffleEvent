@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.Manifest;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -53,9 +54,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventDateTextView;
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
+    private Button declineInvitationButton;
+    private Button acceptInvitationButton;
     private Button mapButton;
     private Button editButton;
     private Button manageButton;
+    private CardView congratsMessage;
 
     // Nav bar
     private ImageButton homeButton;
@@ -106,6 +110,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventDescriptionTextView = findViewById(R.id.eventDescription);
         eventLocationTextView = findViewById(R.id.eventLocation);
         eventDateTextView = findViewById(R.id.eventDate);
+        congratsMessage = findViewById(R.id.congratulations_card);
 
         // Link map button
         mapButton = findViewById(R.id.map_button);
@@ -123,6 +128,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         // Link to button views
         joinWaitingListButton = findViewById(R.id.joinWaitingListButton);
         leaveWaitingListButton = findViewById(R.id.leaveWaitingListButton);
+        declineInvitationButton = findViewById(R.id.decline_button);
+        acceptInvitationButton = findViewById(R.id.accept_button);
 
         joinWaitingListButton.setEnabled(false);
         leaveWaitingListButton.setEnabled(false);
@@ -131,6 +138,12 @@ public class EventDetailsActivity extends AppCompatActivity {
             joinWaitingList();
         });
         leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
+        declineInvitationButton.setOnClickListener(v -> {
+            declineInvitation();
+        });
+        acceptInvitationButton.setOnClickListener(v -> {
+            acceptInvitation();
+        });
 
         // in onCreate
         homeButton = findViewById(R.id.home_button);
@@ -235,20 +248,17 @@ public class EventDetailsActivity extends AppCompatActivity {
             editButton.setVisibility(View.VISIBLE);
             manageButton.setVisibility(View.VISIBLE);
             mapButton.setVisibility(View.VISIBLE);
-
-            // Hide Join and Leave buttons as they are not applicable for the organizer
-            joinWaitingListButton.setVisibility(View.GONE);
-            leaveWaitingListButton.setVisibility(View.GONE);
         } else {
             // For non-organizers, handle Join/Leave button visibility
             if (event.getWaitingList().contains(userObj.getUserId())) {
-                joinWaitingListButton.setVisibility(View.INVISIBLE);
                 leaveWaitingListButton.setVisibility(View.VISIBLE);
-                mapButton.setVisibility(View.INVISIBLE);
+            } else if (event.getInvitedList().contains(userObj.getUserId())) {
+                declineInvitationButton.setVisibility(View.VISIBLE);
+                acceptInvitationButton.setVisibility(View.VISIBLE);
+            } else if (event.getRegisteredAttendees().contains(userObj.getUserId())) {
+                congratsMessage.setVisibility(View.VISIBLE);
             } else {
                 joinWaitingListButton.setVisibility(View.VISIBLE);
-                leaveWaitingListButton.setVisibility(View.INVISIBLE);
-                mapButton.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -304,6 +314,52 @@ public class EventDetailsActivity extends AppCompatActivity {
                 // Update Button UI
                 joinWaitingListButton.setVisibility(View.VISIBLE);
                 leaveWaitingListButton.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Decline invitation to register for an event if invited.
+     */
+    private void declineInvitation() {
+        eventController.declineEventInvitation(eventId, userObj.getUserId(), new EventController.DeclineInvitationCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EventDetailsActivity.this, "Invitation declined to register for an event", Toast.LENGTH_SHORT).show();
+
+                // Redirect the user to the home page (EventListActivity)
+                Intent intent = new Intent(EventDetailsActivity.this, EventListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear activity stack
+                startActivity(intent);
+
+                // Finish the current activity to remove it from the back stack
+                finish();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Accept invitation to register for an event if invited (join the registeredAttendees list).
+     */
+    private void acceptInvitation() {
+        eventController.acceptEventInvitation(eventId, userObj.getUserId(), new EventController.AcceptInvitationCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EventDetailsActivity.this, "Congratulations! You are successfully registered for an event", Toast.LENGTH_SHORT).show();
+
+                declineInvitationButton.setVisibility(View.INVISIBLE);
+                acceptInvitationButton.setVisibility(View.INVISIBLE);
+                congratsMessage.setVisibility(View.VISIBLE);
             }
 
             @Override

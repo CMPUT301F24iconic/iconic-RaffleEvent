@@ -373,24 +373,33 @@
                 android:id="@+id/saveAndUploadLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_marginTop="@dimen/medium_margin"
                 android:layout_marginStart="@dimen/medium_margin"
                 android:layout_marginEnd="@dimen/medium_margin"
-                app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
+                app:layout_constraintTop_toBottomOf="@id/eventDescriptionLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <!-- Upload Poster Button -->
                 <Button
                     android:id="@+id/uploadPosterButton"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/upload_poster"
                     android:textColor="@color/buttonTextColor"
                     android:backgroundTint="@color/buttonPrimary"
-                    app:cornerRadius="@dimen/button_corner_radius" />
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    android:layout_marginBottom="@dimen/small_margin" />
+
+                <!-- Poster Preview ImageView - Zhiyuan -->
+                <ImageView
+                    android:id="@+id/posterPreviewImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:layout_marginBottom="@dimen/small_margin" />
 
                 <!-- Save Button -->
                 <Button
