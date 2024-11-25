@@ -64,7 +64,7 @@ public class QRScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
 
-    private EventController eventController;
+    public EventController eventController;
 
     private Button cancelButton;
     private Button galleryButton;
@@ -266,7 +266,7 @@ public class QRScannerActivity extends AppCompatActivity {
      *
      * @param qrCodeData the data from the scanned QR code.
      */
-    private void processQRCodeData(String qrCodeData) {
+    public void processQRCodeData(String qrCodeData) {
         eventController.scanQRCode(qrCodeData,
                 new EventController.ScanQRCodeCallback() {
                     @Override
