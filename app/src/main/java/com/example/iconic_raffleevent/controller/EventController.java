@@ -170,6 +170,10 @@ public class EventController {
         firebaseAttendee.addEventQRCode(eventObj, callback);
     }
 
+    public void updateEventDetails(Event eventObj) {
+        firebaseAttendee.updateEventDetails(eventObj);
+    }
+
     /**
      * Scan a qrcode from the users camera and returns the event
      *
