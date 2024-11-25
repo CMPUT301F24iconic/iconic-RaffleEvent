@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/backgroundColor">
+        android:layout_height="match_parent">
 
         <!-- Include Top Navbar -->
         <include
@@ -91,6 +91,13 @@
                 android:id="@+id/save_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColorOnPrimary"
+                android:backgroundTint="@color/buttonPrimary"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:layout_marginEnd="@dimen/medium_margin"
+                android:padding="10dp"
+                app:cornerRadius="@dimen/button_corner_radius"
                 android:text="Save"
                 tools:ignore="HardcodedText" />
 
@@ -98,6 +105,13 @@
                 android:id="@+id/back_to_hub_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/textColorOnPrimary"
+                android:backgroundTint="@color/buttonPrimary"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:layout_marginEnd="@dimen/medium_margin"
+                android:padding="10dp"
+                app:cornerRadius="@dimen/button_corner_radius"
                 android:text="Back"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
