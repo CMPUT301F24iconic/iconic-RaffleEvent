@@ -455,8 +455,6 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
-
-
     /**
      * Checks if the selected end time is later than the selected start time.
      *
