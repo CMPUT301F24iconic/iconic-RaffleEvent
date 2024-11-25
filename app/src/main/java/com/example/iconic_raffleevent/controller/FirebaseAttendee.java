@@ -527,12 +527,7 @@ public class FirebaseAttendee {
         ref.putFile(eventUri).addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
             String downloadUrl = uri.toString();
             callback.onSuccessfulUpload(downloadUrl);
-        })).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                callback.onError("Unable to upload event poster: " + e.getMessage());
-            }
-        });
+        })).addOnFailureListener(e -> callback.onError("Unable to upload event poster: " + e.getMessage()));
     }
 
     /**
