@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -31,12 +32,19 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private Switch loseSwitch;
     private Switch enableSwitch;
     private Button saveButton;
-    private Button backButton;
+    private ImageButton backButton;
+
+    private boolean switchesChanged = false;
+    // initial states of switches
+    private boolean initialWinState;
+    private boolean initialLoseState;
+    private boolean initialEnableState;
 
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
+
 
     /**
      * Called when the activity is created.
@@ -64,7 +72,8 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         loseSwitch = findViewById(R.id.lose_notification_switch);
         enableSwitch = findViewById(R.id.enable_notification_switch);
         saveButton = findViewById(R.id.save_button);
-        backButton = findViewById(R.id.back_button);
+        saveButton.setVisibility(View.GONE);  // hide save button until changes made
+        backButton = findViewById(R.id.back_page_button);
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
@@ -88,9 +97,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> navigateToNotifications());
 
         // Enable notifications switch logic
-        enableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        enableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!isChecked) {
                     // Turn win and lose preference switches off
                     winSwitch.setChecked(false);
@@ -103,7 +110,23 @@ public class NotificationSettingsActivity extends AppCompatActivity {
                     winSwitch.setEnabled(true);
                     loseSwitch.setEnabled(true);
                 }
+                if (isChecked != initialEnableState) {
+                    switchesChanged = true;
+                    updateSaveButtonVisibility();
+                }
+        });
 
+        winSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked != initialWinState) {
+                switchesChanged = true;
+                updateSaveButtonVisibility();
+            }
+        });
+
+        loseSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked != initialLoseState) {
+                switchesChanged = true;
+                updateSaveButtonVisibility();
             }
         });
 
@@ -111,6 +134,17 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         homeButton.setOnClickListener(v -> startActivity(new Intent(this, EventListActivity.class)));
         qrButton.setOnClickListener(v -> startActivity(new Intent(this, QRScannerActivity.class)));
         profileButton.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+    }
+
+    /**
+     * Makes save button visible if switches have been changed
+     */
+    private void updateSaveButtonVisibility() {
+        if (switchesChanged) {
+            saveButton.setVisibility(View.VISIBLE);
+        } else {
+            saveButton.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -122,6 +156,8 @@ public class NotificationSettingsActivity extends AppCompatActivity {
             Toast.makeText(this, "Unable to save settings: User data not loaded", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        switchesChanged = false;
 
         boolean winNotificationEnabled = winSwitch.isChecked();
         boolean loseNotificationEnabled = loseSwitch.isChecked();
@@ -177,6 +213,13 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         winSwitch.setChecked(user.isWinNotificationPref());
         loseSwitch.setChecked(user.isLoseNotificationPref());
         enableSwitch.setChecked(user.isNotificationsEnabled());
+
+        // save initial values
+        initialWinState = winSwitch.isChecked();
+        initialLoseState = loseSwitch.isChecked();
+        initialEnableState = enableSwitch.isChecked();
+        switchesChanged = false;
+        updateSaveButtonVisibility();
     }
 
     /**

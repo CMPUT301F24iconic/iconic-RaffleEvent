@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/header_id"
@@ -33,8 +34,9 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="65dp"
-            android:text="Role Select"
-            android:textColor="@color/black"
+            android:text="Select Role"
+            android:textColor="@color/textColorPrimary"
+            android:textStyle="bold"
             android:textSize="20sp"
             android:textAlignment="center"
             android:gravity="center"/>
@@ -44,8 +46,8 @@
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black"
+        android:layout_height="0.5dp"
+        android:background="@color/dividerColor"
         app:layout_constraintTop_toBottomOf="@id/header_id" />
 
     <TextView
@@ -80,7 +82,7 @@
         android:layout_width="320dp"
         android:layout_height="55dp"
         android:layout_marginTop="24dp"
-        app:cornerRadius="24dp"
+        app:cornerRadius="8dp"
         android:backgroundTint="@color/black"
         android:drawableLeft="@drawable/person_check"
         android:drawablePadding="10dp"
@@ -101,8 +103,8 @@
         style="@style/ButtonTertiary"
         android:layout_width="320dp"
         android:layout_height="55dp"
-        android:layout_marginTop="16dp"
-        app:cornerRadius="24dp"
+        android:layout_marginTop="5dp"
+        app:cornerRadius="8dp"
         android:backgroundTint="@color/buttonPrimary"
         android:drawableLeft="@drawable/person_admin"
         android:drawablePadding="10dp"
