@@ -85,37 +85,102 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/medium_margin"
             android:text="@string/sample_event_description"
-            android:maxLines="3"
             android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/eventLocation" />
+
+        <!-- Congratulatory Message -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/congratulations_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/white"
+            android:padding="16dp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
+            tools:layout_editor_absoluteX="16dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_margin="4dp">
+
+                <!-- Celebration Icon -->
+                <ImageView
+                    android:id="@+id/celebration_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Celebration Icon"
+                    android:src="@drawable/celebration_icon"
+                    app:tint="@color/buttonPrimary" />
+
+                <!-- Congratulatory Message Text -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/congratulations_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Congratulations!"
+                        android:textColor="@color/buttonPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/congratulations_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="You are successfully registered for this event."
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Join Waiting List Button -->
         <!-- style="@style/ButtonPrimary" -->
         <Button
             android:id="@+id/joinWaitingListButton"
-            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_margin"
             android:backgroundTint="@color/buttonPrimary"
             android:text="@string/join_waiting_list"
             android:textColor="@color/textColorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/eventDescription" />
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:cornerRadius="@dimen/button_corner_radius"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:visibility="gone" />
 
         <!-- Leave Waiting List Button -->
         <!-- style="@style/ButtonSecondary" -->
         <Button
             android:id="@+id/leaveWaitingListButton"
-            android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_margin"
             android:backgroundTint="@color/buttonPrimary"
             android:text="@string/leave_waiting_list"
             android:textColor="@color/textColorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/eventDescription" />
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            app:cornerRadius="@dimen/button_corner_radius"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:visibility="gone" />
 
         <!-- Bottom Navigation Bar -->
         <include
@@ -125,19 +190,21 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- Organizer-specific Buttons -->
         <Button
             android:id="@+id/map_button"
             android:layout_width="175dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:backgroundTint="@color/buttonPrimary"
+            android:backgroundTint="@color/white"
             android:text="Load Map"
-            android:textColor="@color/textColorOnPrimary"
+            android:textColor="@color/buttonPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/leaveWaitingListButton" />
+            app:layout_constraintTop_toBottomOf="@+id/eventDescription"
+            app:cornerRadius="@dimen/button_corner_radius"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:visibility="gone" />
 
-        <!-- Organizer-specific Buttons -->
         <LinearLayout
             android:id="@+id/organizer_buttons_layout"
             android:layout_width="0dp"
@@ -160,7 +227,8 @@
                 android:backgroundTint="@color/buttonPrimary"
                 android:text="Edit"
                 android:textColor="@color/textColorOnPrimary"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius"/>
 
             <!-- Manage Button -->
             <Button
@@ -171,22 +239,47 @@
                 android:backgroundTint="@color/buttonPrimary"
                 android:text="Manage"
                 android:textColor="@color/textColorOnPrimary"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/invited_attendee_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navbar">
 
-        <!--        <Button-->
-<!--            android:id="@+id/create_event_button"-->
-<!--            android:layout_width="175dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="@dimen/large_margin"-->
-<!--            android:backgroundTint="@color/buttonPrimary"-->
-<!--            android:text="Create Event"-->
-<!--            android:textColor="@color/textColorOnPrimary"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/map_button" />-->
+            <!-- Decline Button -->
+            <Button
+                android:id="@+id/decline_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/white"
+                android:text="Decline Invitation"
+                android:textColor="@color/buttonPrimary"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius"/>
+
+            <!-- Accept Button -->
+            <Button
+                android:id="@+id/accept_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="Accept Invitation"
+                android:textColor="@color/textColorOnPrimary"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
