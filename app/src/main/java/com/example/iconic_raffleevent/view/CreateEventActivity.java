@@ -388,56 +388,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     /**
-     * Validates the user inputs and, if valid, creates and saves the event to the database.
-     */
-    private void validateAndUpdateEvent() {
-        // Keep the Save button visible and enabled
-        saveEventButton.setVisibility(View.VISIBLE);
-        saveEventButton.setEnabled(true);
-
-        validateInputFields();
-
-        // Check if a poster is uploaded
-        if (imageUri == null) {
-            Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
-            return; // Stop further processing
-        }
-
-        // Check if end time is later than start time
-        if (!isEndTimeLaterThanStartTime()) {
-            Toast.makeText(this, "End time must be later than start time.", Toast.LENGTH_SHORT).show();
-            return; // Stop further processing
-        }
-
-        // If there are input errors, notify the user and return
-        if (inputError) {
-            Toast.makeText(this, "Please complete all required fields and try again.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Proceed with saving the event if all validations pass
-        Integer maxAttendees = maxAttendeesText.getText().toString().isEmpty() ? null : Integer.valueOf(maxAttendeesText.getText().toString());
-
-        eventObj = new Event();
-        eventObj.setEventId(eventTitleText.getText().toString());
-        eventObj.setEventTitle(eventTitleText.getText().toString());
-        eventObj.setEventStartDate(startDateText.getText().toString());
-        eventObj.setEventStartTime(startTimeText.getText().toString());
-        eventObj.setEventEndDate(endDateText.getText().toString());
-        eventObj.setEventEndTime(endTimeText.getText().toString());
-        eventObj.setEventDescription(eventDescriptionText.getText().toString());
-        eventObj.setGeolocationRequired(geolocationRequiredSwitch.isChecked());
-        String hashedQrData = "event_" + eventObj.getEventId();
-        eventObj.setMaxAttendees(maxAttendees);
-        eventObj.setQrCode(hashedQrData);
-        eventObj.setFacilityId(userFacilityId);
-
-        // Save event and event poster to the database
-        saveEvent(imageUri, eventObj);
-    }
-
-    /**
-     * Validates the user inputs and, if valid, updates the event in the database.
+     * Validates the user inputs and, if valid, updates/saves the event in the database.
      */
     private void validateAndSaveEvent() {
         // Keep the Save button visible and enabled
@@ -503,8 +454,6 @@ public class CreateEventActivity extends AppCompatActivity {
             updateEvent(imageUri, eventObj);
         }
     }
-
-
 
     /**
      * Checks if the selected end time is later than the selected start time.
@@ -595,7 +544,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(CreateEventActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -620,7 +569,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(CreateEventActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -668,6 +617,7 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private Boolean checkEventExists() {
+        System.out.println(getIntent().getStringExtra("eventId"));
         if (getIntent().getStringExtra("eventId") != null) {
             eventId = getIntent().getStringExtra("eventId");
             return Boolean.TRUE;
