@@ -4,6 +4,7 @@ import static java.lang.Math.min;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,15 @@ import com.example.iconic_raffleevent.controller.FirebaseAttendee;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
+import com.google.firebase.FirebaseOptions;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Activity that displays a waiting list of users for a specified event and allows the organizer
@@ -37,6 +44,9 @@ public class WaitingListActivity extends AppCompatActivity {
     private String eventId;
     private Event eventObj;
     private Button sampleAttendeesButton;
+    private ArrayList<User> usersObj;
+    private ArrayList<User> selectedUsersObj;
+    private ArrayList<User> nonSelectedUsersObj;
 
     // Navigation UI
 //    private DrawerLayout drawerLayout;
@@ -86,6 +96,11 @@ public class WaitingListActivity extends AppCompatActivity {
 
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
+
+        // Initialize lists
+        usersObj = new ArrayList<>();
+        selectedUsersObj = new ArrayList<>();
+        nonSelectedUsersObj = new ArrayList<>();
 
         loadEventDetails();
 
@@ -172,6 +187,7 @@ public class WaitingListActivity extends AppCompatActivity {
                     if (user != null) {
                         userAdapter.addUser(user);
                         userAdapter.notifyDataSetChanged();
+                        usersObj.add(user);
                     } else {
                         Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                     }
@@ -215,7 +231,12 @@ public class WaitingListActivity extends AppCompatActivity {
         List<String> waitingList = eventObj.getWaitingList();
         List<String> invitedList = eventObj.getInvitedList();
         List<String> registeredAttendees = eventObj.getRegisteredAttendees();
-        int maxAttendees = eventObj.getMaxAttendees();
+        // Placeholder for max attendees. If it is null in system, then there's no limit to the number of attendees
+        int maxAttendees = 999999;
+        int remainingSlots;
+        if (eventObj.getMaxAttendees() != null) {
+            maxAttendees = eventObj.getMaxAttendees();
+        }
 
         if (waitingList == null || waitingList.isEmpty()) {
             Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
@@ -225,7 +246,12 @@ public class WaitingListActivity extends AppCompatActivity {
         // Calculate remaining slots
         int alreadyRegistered = registeredAttendees != null ? registeredAttendees.size() : 0;
         int alreadyInvited = invitedList != null ? invitedList.size() : 0;
-        int remainingSlots = maxAttendees - (alreadyRegistered + alreadyInvited);
+
+        if (maxAttendees != 999999) {
+            remainingSlots = maxAttendees - (alreadyRegistered + alreadyInvited);
+        } else {
+            remainingSlots = 999999;
+        }
 
         if (remainingSlots <= 0) {
             Toast.makeText(this, "All slots have been filled. Cannot sample more attendees.", Toast.LENGTH_SHORT).show();
@@ -242,8 +268,13 @@ public class WaitingListActivity extends AppCompatActivity {
         CheckBox sampleAllCheckbox = dialogView.findViewById(R.id.sample_all_checkbox);
 
         // Update info text dynamically
-        infoText.setText(String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
-                waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots));
+        if (maxAttendees == 999999) {
+            infoText.setText(String.format("Waiting List: %d | Max Attendees: No Limit | Already Registered: %d | Remaining Slots: No Limit",
+                    waitingList.size(), alreadyRegistered));
+        } else {
+            infoText.setText(String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
+                    waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots));
+        }
 
         // Set default attendee count to min(remaining slots, waiting list size)
         int defaultSampleSize = Math.min(remainingSlots, waitingList.size());
@@ -317,7 +348,25 @@ public class WaitingListActivity extends AppCompatActivity {
         // Select attendees and update lists
         List<String> selectedAttendees = waitingList.subList(0, sampleSize);
         invitedList.addAll(selectedAttendees);
+        // update selectedUsersObj for notifications
+        //updateSelectedUsersObj(selectedAttendees);
+
+
+        // Get list of entrants who were not chosen
+        List<String> nonSelectedAttendees = waitingList.subList(sampleSize, waitingList.size());
+        // update nonSelectedUsersObj for notifications
+        //updateNonSelectedUsersObj(nonSelectedAttendees);
+
+        // Remove selected users from waitlist
         waitingList.removeAll(selectedAttendees);
+
+        // Send push notification to selected and non-selected users
+        //sendPushNotifications(selectedUsersObj, nonSelectedUsersObj);
+
+        // Add notification to database for selected and non-selected users
+
+
+
 
         // Update Firestore with the new lists
         updateEventListsInFirestore(invitedList, waitingList, registeredAttendees, dialog);
@@ -347,5 +396,52 @@ public class WaitingListActivity extends AppCompatActivity {
                 Toast.makeText(WaitingListActivity.this, "Failed to update event lists: " + message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void sendPushNotifications(ArrayList<User> selectedUsersObj, ArrayList<User> nonSelectedUsersObj) {
+        // Send notification to selected users
+        // Get fcm for users
+        ArrayList<String> selectedFCMs = new ArrayList<>();
+        for (User user : selectedUsersObj) {
+            selectedFCMs.add(user.getUserFCM());
+        }
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.execute(() -> {
+            try {
+                AssetManager assetManager = this.getAssets();
+
+                InputStream serviceAccount = assetManager.open("cred.json");
+
+                FirebaseOptions.Builder options = new FirebaseOptions.Builder();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+
+
+
+        // Send notification to non-selected users
+    }
+
+    private void sendInAppNotification() {
+
+    }
+
+    private void updateSelectedUsersObj(ArrayList<String> selectedAttendees) {
+        for (User user : usersObj) {
+            if (selectedAttendees.contains(user.getUserId())) {
+                selectedUsersObj.add(user);
+            }
+        }
+    }
+
+    private void updateNonSelectedUsersObj(ArrayList<String> nonSelectedAttendees) {
+        for (User user : usersObj) {
+            if (nonSelectedAttendees.contains(user.getUserId())) {
+                nonSelectedUsersObj.add(user);
+            }
+        }
     }
 }
