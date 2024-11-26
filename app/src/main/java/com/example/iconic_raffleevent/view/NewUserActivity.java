@@ -81,16 +81,27 @@ public class NewUserActivity extends AppCompatActivity {
         newUser.setName(name);
         newUser.setUserId(getUserId());
 
-        userController.addUser(newUser, new UserController.AddUserCallback() {
+        userController.getUserFCM(new UserController.GetUserFCMCallback() {
             @Override
-            public void onSuccess() {
-                Toast.makeText(NewUserActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
-                navigateToEventList();
-            }
+            public void onFCMFetched(String fcm) {
+                newUser.setUserFCM(fcm);
 
+                // Now add user to database
+                userController.addUser(newUser, new UserController.AddUserCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(NewUserActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                        navigateToEventList();
+                    }
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(NewUserActivity.this, "Error creating account: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
             @Override
             public void onError(String message) {
-                Toast.makeText(NewUserActivity.this, "Error creating account: " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewUserActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }

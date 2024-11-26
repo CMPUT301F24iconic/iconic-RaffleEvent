@@ -14,6 +14,7 @@ import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -52,8 +53,13 @@ public class UserController {
     }
 
     // Regex pattern for validating phone numbers (US/international format)
-//    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
+    // private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
 
+
+
+    public void getUserFCM(GetUserFCMCallback callback) {
+        firebaseAttendee.getUserFCM(callback);
+    }
 
     /**
      * Adds a new user to the Firebase Firestore database.
@@ -437,6 +443,11 @@ public class UserController {
      */
     public interface UpdateProfileCallback {
         void onProfileUpdated();
+        void onError(String message);
+    }
+
+    public interface GetUserFCMCallback {
+        void onFCMFetched(String fcm);
         void onError(String message);
     }
 }

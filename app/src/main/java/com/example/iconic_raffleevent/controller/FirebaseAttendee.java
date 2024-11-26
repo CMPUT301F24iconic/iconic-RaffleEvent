@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
@@ -49,6 +50,7 @@ public class FirebaseAttendee {
     private CollectionReference notificationsCollection;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
+    private FirebaseMessaging firebaseMessaging;
 
     /**
      * Constructs a FirebaseAttendee instance and initializes references to Firebase Firestore and Firebase Storage.
@@ -60,9 +62,19 @@ public class FirebaseAttendee {
         this.notificationsCollection = db.collection("Notification");
         this.firebaseStorage = FirebaseStorage.getInstance();
         this.storageReference = firebaseStorage.getReference();
+        this.firebaseMessaging = FirebaseMessaging.getInstance();
     }
 
     // User-related methods
+
+    public void getUserFCM(UserController.GetUserFCMCallback callback) {
+        firebaseMessaging.getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onFCMFetched(task.getResult());
+                    }
+                });
+    }
 
     /**
      * Updates a user's profile in Firebase Firestore.
