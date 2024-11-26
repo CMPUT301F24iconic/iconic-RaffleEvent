@@ -22,7 +22,7 @@ import java.util.List;
 public class DeclinedListActivity extends AppCompatActivity {
 
     private RecyclerView userRecyclerView;
-    private FirebaseAttendee firebaseAttendee;
+    public FirebaseAttendee firebaseAttendee;
     private UserAdapter userAdapter;
     private String eventId;
 
@@ -106,7 +106,7 @@ public class DeclinedListActivity extends AppCompatActivity {
      * Loads the list of users who have declined the event.
      * Fetches event details using the event ID and retrieves the declined list.
      */
-    private void loadDeclinedList() {
+    public void loadDeclinedList() {
         firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
             @Override
             public void onEventDetailsFetched(Event event) {
@@ -126,7 +126,7 @@ public class DeclinedListActivity extends AppCompatActivity {
      *
      * @param userIds List of user IDs who declined the event.
      */
-    private void fetchUsersFromDeclinedList(List<String> userIds) {
+    public void fetchUsersFromDeclinedList(List<String> userIds) {
         for (String userId : userIds) {
             firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
                 @Override

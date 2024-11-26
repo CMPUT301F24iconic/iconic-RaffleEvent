@@ -17,10 +17,10 @@ import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
 
 public class DisplayQRCodeActivity extends AppCompatActivity {
-    private User userObj;
-    private UserController userController;
-    private EventController eventController;
-    private Event event;
+    public User userObj;
+    public UserController userController;
+    public EventController eventController;
+    public Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
 
     }
 
-    private void loadUserProfile() {
+    public void loadUserProfile() {
         /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -81,11 +81,11 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
     /*
     Aiden Teal function to get userID
      */
-    private String getUserID() {
+    public String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    private void getUserController() {
+    public void getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(),getApplicationContext());
         userController = userControllerViewModel.getUserController();

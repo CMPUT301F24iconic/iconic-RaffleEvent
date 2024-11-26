@@ -35,24 +35,24 @@ public class CreateFacilityActivity extends AppCompatActivity {
     private TextInputLayout facilityDetailsInputLayout;
 
     private Button saveButton;
-    private FacilityController facilityController;
+    public FacilityController facilityController;
     private UserControllerViewModel userControllerViewModel;
-    private UserController userController;
+    public UserController userController;
     private User currentUser;  // Assume this is passed in as the organizer user
     private String userId;
-    private Facility currentFacility; // Holds existing facility details if any
+    public Facility currentFacility; // Holds existing facility details if any
 
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
-    private ImageButton profileButton;
+    ImageButton profileButton;
     private ImageButton menuButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ImageButton notificationButton;
 
     // Input Error
-    Boolean inputError;
+    public Boolean inputError;
 
     /**
      * Called when the activity is starting. Initializes views, navigation, controllers, and the current user profile.
@@ -261,7 +261,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
     /**
      * Loads the current user's profile information from the database.
      */
-    private void loadUserProfile() {
+    public void loadUserProfile() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
             public void onUserFetched(User user) {
@@ -287,7 +287,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
     /**
      * Loads the facility details if a facility exists for the user.
      */
-    private void loadFacilityDetails() {
+    public void loadFacilityDetails() {
         facilityController.getFacilityByUserId(userId, new FacilityController.FacilityFetchCallback() {
             @Override
             public void onFacilityFetched(Facility facility) {

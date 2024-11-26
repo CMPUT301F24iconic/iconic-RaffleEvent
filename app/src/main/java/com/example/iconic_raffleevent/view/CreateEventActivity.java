@@ -460,7 +460,7 @@ public class CreateEventActivity extends AppCompatActivity {
      *
      * @return True if end time is later than start time, false otherwise.
      */
-    private boolean isEndTimeLaterThanStartTime() {
+    public boolean isEndTimeLaterThanStartTime() {
         String startDateTimeStr = startDateText.getText().toString() + " " + startTimeText.getText().toString();
         String endDateTimeStr = endDateText.getText().toString() + " " + endTimeText.getText().toString();
 
@@ -672,4 +672,58 @@ public class CreateEventActivity extends AppCompatActivity {
             System.out.println("No facility to prefill.");
         }
     }
+
+    public void setEventTitle(String title) {
+        this.eventTitleText.setText(title);
+    }
+
+    public void setStartDate(String date) {
+        this.startDateText.setText(date);
+    }
+
+    public void setStartTime(String time) {
+        this.startTimeText.setText(time);
+    }
+
+    public void setEndDate(String date) {
+        this.endDateText.setText(date);
+    }
+
+    public void setEndTime(String time) {
+        this.endTimeText.setText(time);
+    }
+
+    public void setEventDescription(String description) {
+        this.eventDescriptionText.setText(description);
+    }
+
+    public void invokeValidateInputFields() {
+        validateInputFields();
+    }
+
+    public boolean isInputError() {
+        return inputError;
+    }
+
+    public String getEventTitleError() {
+        return eventTitleLayout.getError() != null ? eventTitleLayout.getError().toString() : null;
+    }
+
+    public String getEventDescriptionError() {
+        return eventDescriptionLayout.getError() != null ? eventDescriptionLayout.getError().toString() : null;
+    }
+
+    public void setImageUri(Uri uri) {
+        this.imageUri = uri;
+    }
+
+    public void setEventController(EventController controller) {
+        this.eventController = controller;
+    }
+
+    // Public methods to invoke private methods
+    public void invokeValidateAndSaveEvent() {
+        validateAndSaveEvent();
+    }
+
 }
