@@ -3,9 +3,13 @@ package com.example.iconic_raffleevent.view;
 import static java.lang.Math.min;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.iconic_raffleevent.R;
@@ -22,8 +27,11 @@ import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +56,8 @@ public class WaitingListActivity extends AppCompatActivity {
     private ArrayList<User> selectedUsersObj;
     private ArrayList<User> nonSelectedUsersObj;
 
+    private EventController eventController;
+
     // Navigation UI
 //    private DrawerLayout drawerLayout;
 //    private NavigationView navigationView;
@@ -71,6 +81,8 @@ public class WaitingListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_list);
+
+        eventController = new EventController();
 
         // Initialize DrawerLayout and NavigationView
 //        drawerLayout = findViewById(R.id.drawer_layout);
@@ -349,21 +361,22 @@ public class WaitingListActivity extends AppCompatActivity {
         List<String> selectedAttendees = waitingList.subList(0, sampleSize);
         invitedList.addAll(selectedAttendees);
         // update selectedUsersObj for notifications
-        //updateSelectedUsersObj(selectedAttendees);
+        updateSelectedUsersObj(selectedAttendees);
 
 
         // Get list of entrants who were not chosen
         List<String> nonSelectedAttendees = waitingList.subList(sampleSize, waitingList.size());
         // update nonSelectedUsersObj for notifications
-        //updateNonSelectedUsersObj(nonSelectedAttendees);
+        updateNonSelectedUsersObj(nonSelectedAttendees);
 
         // Remove selected users from waitlist
         waitingList.removeAll(selectedAttendees);
 
         // Send push notification to selected and non-selected users
-        //sendPushNotifications(selectedUsersObj, nonSelectedUsersObj);
+        sendPushNotifications(selectedUsersObj, nonSelectedUsersObj);
 
         // Add notification to database for selected and non-selected users
+        sendInAppNotification(selectedUsersObj, nonSelectedUsersObj);
 
 
 
@@ -401,35 +414,108 @@ public class WaitingListActivity extends AppCompatActivity {
     private void sendPushNotifications(ArrayList<User> selectedUsersObj, ArrayList<User> nonSelectedUsersObj) {
         // Send notification to selected users
         // Get fcm for users
-        ArrayList<String> selectedFCMs = new ArrayList<>();
-        for (User user : selectedUsersObj) {
-            selectedFCMs.add(user.getUserFCM());
+        //ArrayList<String> selectedFCMs = new ArrayList<>();
+        //for (User user : selectedUsersObj) {
+          //  selectedFCMs.add(user.getUserFCM());
+        //}
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
+                .setSmallIcon(R.drawable.celebration_icon)
+                .setContentTitle("Congratulations! You have been selected")
+                .setContentText("Congratulations! You have been selected to join the: '" + eventObj.getEventTitle() + "' event.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
+
+        // Check if the device is running Android Oreo or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create a notification channel
+            NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Draw Notifications");
+            // Register the channel with the system
+            notificationManager.createNotificationChannel(channel);
         }
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(() -> {
-            try {
-                AssetManager assetManager = this.getAssets();
-
-                InputStream serviceAccount = assetManager.open("cred.json");
-
-                FirebaseOptions.Builder options = new FirebaseOptions.Builder();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        // To see the message in logcat
+        Log.i("Notify","$builder");
+        // Issue the notification
+        notificationManager.notify(1, builder.build());
 
 
 
 
         // Send notification to non-selected users
+        NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "channel_id")
+                .setSmallIcon(R.drawable.warning_icon)
+                .setContentTitle("We regret to inform you that you have not been selected.")
+                .setContentText("We are sorry to inform you that you have not been selected to join the: '" + eventObj.getEventTitle() + "' event. We will keep your name for any future draws of the event.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager2 = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
+
+        // Check if the device is running Android Oreo or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create a notification channel
+            NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Draw Notifications");
+            // Register the channel with the system
+            notificationManager.createNotificationChannel(channel);
+        }
+        // To see the message in logcat
+        Log.i("Notify","$builder");
+        // Issue the notification
+        notificationManager2.notify(1, builder2.build());
     }
 
-    private void sendInAppNotification() {
+    private void sendInAppNotification(ArrayList<User> selectedUsersObj, ArrayList<User> nonSelectedUsersObj) {
+        // Send notification to selected user
+        for (User user : selectedUsersObj) {
+            Notification selectedNotification = new Notification();
+            selectedNotification.setSelected(Boolean.TRUE);
+            selectedNotification.setEventTitle(eventObj.getEventTitle());
+            selectedNotification.setEventId(eventObj.getEventId());
+            selectedNotification.setUserId(user.getUserId());
+            selectedNotification.setMessage("Congratulations! You have been selected to join the: '" + eventObj.getEventTitle() + "' event.");
+            String notificationID = eventObj.getEventId() + "-" + user.getUserId() + "-selected";
+            selectedNotification.setNotificationId(notificationID);
+
+            eventController.sendNotification(selectedNotification, new EventController.SendDrawNotificationCallback() {
+                @Override
+                public void onSuccess() {
+                    // Successfully drew applicants
+                }
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+        // Send notification to non-selected user
+        for (User user : nonSelectedUsersObj) {
+            Notification selectedNotification = new Notification();
+            selectedNotification.setSelected(Boolean.FALSE);
+            selectedNotification.setEventTitle(eventObj.getEventTitle());
+            selectedNotification.setEventId(eventObj.getEventId());
+            selectedNotification.setUserId(user.getUserId());
+            selectedNotification.setMessage("We are sorry to inform you that you have not been selected to join the: '" + eventObj.getEventTitle() + "' event. We will keep your name for any future draws of the event.");
+            String notificationID = eventObj.getEventId() + "-" + user.getUserId() + "-selected";
+            selectedNotification.setNotificationId(notificationID);
+
+            eventController.sendNotification(selectedNotification, new EventController.SendDrawNotificationCallback() {
+                @Override
+                public void onSuccess() {
+                    // Successfully drew applicants
+                }
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
     }
 
-    private void updateSelectedUsersObj(ArrayList<String> selectedAttendees) {
+    private void updateSelectedUsersObj(List<String> selectedAttendees) {
         for (User user : usersObj) {
             if (selectedAttendees.contains(user.getUserId())) {
                 selectedUsersObj.add(user);
@@ -437,7 +523,7 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
-    private void updateNonSelectedUsersObj(ArrayList<String> nonSelectedAttendees) {
+    private void updateNonSelectedUsersObj(List<String> nonSelectedAttendees) {
         for (User user : usersObj) {
             if (nonSelectedAttendees.contains(user.getUserId())) {
                 nonSelectedUsersObj.add(user);

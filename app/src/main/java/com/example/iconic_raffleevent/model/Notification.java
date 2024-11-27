@@ -8,8 +8,10 @@ public class Notification {
     private String notificationId;
     private String userId;
     private String eventId;
+    private String eventTitle;
     private String message;
     private boolean read;
+    private boolean selected;
 
     /**
      * Default constructor for creating an empty Notification object.
@@ -105,5 +107,21 @@ public class Notification {
      */
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
+    }
+
+    public String getEventTitle() {
+        return this.eventTitle;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean getSelected() {
+        return this.selected;
     }
 }

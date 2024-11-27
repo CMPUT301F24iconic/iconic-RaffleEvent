@@ -577,6 +577,17 @@ public class FirebaseAttendee {
     }
 
 
+
+    // --- Sending/Receiving notification --- //
+    public void sendDrawNotification(Notification notification, EventController.SendDrawNotificationCallback callback){
+        DocumentReference notificationRef = notificationsCollection.document(notification.getNotificationId());
+        notificationRef.set(notification)  // This will update the user document with all current fields
+                .addOnSuccessListener(aVoid -> Log.d("FirebaseAttendee", "Notification sent."))
+                .addOnFailureListener(e -> callback.onError("Error sending notification"));
+    }
+
+
+
     /**
      * Callback interface for handling the result of fetching event details.
      */

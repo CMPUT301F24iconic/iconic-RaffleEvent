@@ -566,6 +566,9 @@ public class CreateEventActivity extends AppCompatActivity {
 
                     // Update event
                     eventController.updateEventDetails(eventObj);
+                    Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
+                    intent.putExtra("eventId", eventObj.getEventId());
+                    startActivity(intent);
                 }
                 @Override
                 public void onError(String message) {
@@ -575,6 +578,9 @@ public class CreateEventActivity extends AppCompatActivity {
         } else {
             // Update event with pre-existing poster image
             eventController.updateEventDetails(eventObj);
+            Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
+            intent.putExtra("eventId", eventObj.getEventId());
+            startActivity(intent);
         }
 
     }
