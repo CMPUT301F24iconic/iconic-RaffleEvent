@@ -5,6 +5,7 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -224,6 +225,10 @@ public class EventController {
         });
     }
 
+    public void sendNotification(Notification notification, SendDrawNotificationCallback callback) {
+        firebaseAttendee.sendDrawNotification(notification, callback);
+    }
+
     /**
      * Callback interface for event map fetch operations.
      */
@@ -327,6 +332,12 @@ public class EventController {
      * Callback interface for retrieving a waitlist
      */
     public interface GetWaitlistCallback {
+        void onSuccess();
+
+        void onError(String message);
+    }
+
+    public interface SendDrawNotificationCallback {
         void onSuccess();
 
         void onError(String message);

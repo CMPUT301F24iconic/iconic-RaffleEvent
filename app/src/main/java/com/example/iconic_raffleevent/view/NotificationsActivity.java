@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
@@ -69,6 +71,16 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationController = new NotificationController();
 
         fetchNotifications();
+
+        notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Notification selectedNotification = notificationList.get(position);
+                Intent intent = new Intent(NotificationsActivity.this, EventDetailsActivity.class);
+                intent.putExtra("eventId", selectedNotification.getEventId());
+                startActivity(intent);
+            }
+        });
 
     }
 
