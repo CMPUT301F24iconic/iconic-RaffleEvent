@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.iconic_raffleevent.R;
@@ -34,10 +35,10 @@ public class DeclinedListActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
-//    private ImageButton menuButton;
+    private ImageButton backButton;
 
     // Top Nav bar
-    private ImageButton notificationButton;
+//    private ImageButton notificationButton;
 
     /**
      * Called when the activity is first created.
@@ -60,8 +61,8 @@ public class DeclinedListActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-        notificationButton = findViewById(R.id.notification_icon);
-//        menuButton = findViewById(R.id.menu_button);
+//        notificationButton = findViewById(R.id.notification_icon);
+        backButton = findViewById(R.id.back_button);
 
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
@@ -83,10 +84,10 @@ public class DeclinedListActivity extends AppCompatActivity {
         loadDeclinedList();
 
         // Top nav bar
-        notificationButton.setOnClickListener(v ->
-                startActivity(new Intent(DeclinedListActivity.this, NotificationsActivity.class))
-        );
-//        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+//        notificationButton.setOnClickListener(v ->
+//                startActivity(new Intent(DeclinedListActivity.this, NotificationsActivity.class))
+//        );
+        backButton.setOnClickListener(v -> finish());
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {

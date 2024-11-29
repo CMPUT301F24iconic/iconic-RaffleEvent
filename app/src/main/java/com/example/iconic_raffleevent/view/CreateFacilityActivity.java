@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,10 +47,10 @@ public class CreateFacilityActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     ImageButton profileButton;
-    private ImageButton menuButton;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private ImageButton notificationButton;
+    private ImageButton backButton;
+//    private DrawerLayout drawerLayout;
+//    private NavigationView navigationView;
+//    private ImageButton notificationButton;
 
     // Input Error
     public Boolean inputError;
@@ -68,20 +69,20 @@ public class CreateFacilityActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_facility);
 
         // Initialize DrawerLayout and NavigationView
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
 
         // Navigation Bars
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-        menuButton = findViewById(R.id.menu_button);
+        backButton = findViewById(R.id.back_button);
 
         // Top nav bar
-        notificationButton = findViewById(R.id.notification_icon);
-        notificationButton.setOnClickListener(v ->
-                startActivity(new Intent(CreateFacilityActivity.this, NotificationsActivity.class))
-        );
+//        notificationButton = findViewById(R.id.notification_icon);
+//        notificationButton.setOnClickListener(v ->
+//                startActivity(new Intent(CreateFacilityActivity.this, NotificationsActivity.class))
+//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
@@ -96,7 +97,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
             startActivity(new Intent(CreateFacilityActivity.this, ProfileActivity.class));
         });
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        backButton.setOnClickListener(v -> finish());
 
         // Initialize views
         facilityNameInputLayout = findViewById(R.id.facilityNameInputLayout);
@@ -269,7 +270,7 @@ public class CreateFacilityActivity extends AppCompatActivity {
                     currentUser = user;
                     System.out.println("User fetched successfully: " + currentUser.getUsername());
                     runOnUiThread(() -> {
-                        DrawerHelper.setupDrawer(CreateFacilityActivity.this, drawerLayout, navigationView, currentUser.getUserId());
+//                        DrawerHelper.setupDrawer(CreateFacilityActivity.this, drawerLayout, navigationView, currentUser.getUserId());
                         loadFacilityDetails(); // Load facility details after setting up the drawer
                     });
                 } else {
@@ -308,6 +309,9 @@ public class CreateFacilityActivity extends AppCompatActivity {
      * Prefills the form with existing facility details and updates the button text to "Update".
      */
     private void prefillFacilityForm() {
+        TextView createFacilityTitle = findViewById(R.id.createFacilityTitle);
+
+
         if (currentFacility != null) {
             System.out.println("Prefilling form with: " + currentFacility.getFacilityName());
             facilityNameEditText.setText(currentFacility.getFacilityName());
@@ -319,8 +323,10 @@ public class CreateFacilityActivity extends AppCompatActivity {
             }
 
             saveButton.setText("Update"); // Change button text to "Update"
+            createFacilityTitle.setText("Edit Facility"); // Change title to "Edit Facility"
         } else {
             System.out.println("No facility to prefill.");
+            createFacilityTitle.setText("Create Facility");
         }
     }
 

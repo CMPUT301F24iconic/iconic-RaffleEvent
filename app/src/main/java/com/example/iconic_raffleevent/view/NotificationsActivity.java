@@ -42,9 +42,9 @@ public class NotificationsActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
 
-     private ImageButton menuButton;
-     private DrawerLayout drawerLayout;
-     private NavigationView navigationView;
+     private ImageButton backButton;
+//     private DrawerLayout drawerLayout;
+//     private NavigationView navigationView;
 
     private UserController userController;
     private User userObj;
@@ -98,9 +98,9 @@ public class NotificationsActivity extends AppCompatActivity {
         settingsButton = findViewById(R.id.settings_icon);
 
         // Setting up hamburger button
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
-        menuButton = findViewById(R.id.menu_button);
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
+        backButton = findViewById(R.id.back_button);
     }
 
     private void initializeUserController() {
@@ -115,7 +115,7 @@ public class NotificationsActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-                    DrawerHelper.setupDrawer(NotificationsActivity.this, drawerLayout, navigationView, userObj.getUserId());
+//                    DrawerHelper.setupDrawer(NotificationsActivity.this, drawerLayout, navigationView, userObj.getUserId());
                 } else {
                     System.out.println("User information is null");
                 }
@@ -166,7 +166,7 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         });
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        backButton.setOnClickListener(v -> finish());
     }
 
     /**

@@ -43,8 +43,8 @@ import com.google.firebase.firestore.GeoPoint;
  */
 public class EventDetailsActivity extends AppCompatActivity {
     // Navigation UI
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+//    private DrawerLayout drawerLayout;
+//    private NavigationView navigationView;
 
     // View elements
     private ImageView eventImageView;
@@ -66,10 +66,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
-    private ImageButton menuButton;
+    private ImageButton backButton;
 
     // Top Nav bar
-    private ImageButton notificationButton;
+//    private ImageButton notificationButton;
 
     // Controllers and data related to objects
     private EventController eventController;
@@ -102,8 +102,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         isEventLoaded = false;
 
         // Initialize DrawerLayout and NavigationView
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
 
         // Link UI to views
         eventImageView = findViewById(R.id.eventImage);
@@ -151,9 +151,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-        menuButton = findViewById(R.id.menu_button);
+        backButton = findViewById(R.id.back_button);
 
-        DrawerHelper.setupDrawer(this, drawerLayout, navigationView, userObj != null ? userObj.getUserId() : "");
+//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView, userObj != null ? userObj.getUserId() : "");
 
         /*
             Setup geolocation services to obtain location when joining waitlist
@@ -179,7 +179,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        backButton.setOnClickListener(v -> finish());
 
         // Redirect user when clicking on mapButton
         mapButton.setOnClickListener(v -> {
@@ -205,10 +205,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
         // Top nav bar
-        notificationButton = findViewById(R.id.notification_icon);
-        notificationButton.setOnClickListener(v ->
-                startActivity(new Intent(EventDetailsActivity.this, NotificationsActivity.class))
-        );
+//        notificationButton = findViewById(R.id.notification_icon);
+//        notificationButton.setOnClickListener(v ->
+//                startActivity(new Intent(EventDetailsActivity.this, NotificationsActivity.class))
+//        );
 
     }
 
