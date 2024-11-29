@@ -5,9 +5,22 @@
     android:padding="8dp"
     android:background="@color/white">
 
-    <!-- Menu Button -->
+<!--    &lt;!&ndash; Menu Button &ndash;&gt;-->
+<!--    <ImageButton-->
+<!--        android:id="@+id/menu_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:background="@null"-->
+<!--        android:contentDescription="Back"-->
+<!--        android:src="@drawable/menu_icon" />-->
+
+    <!-- Back Button -->
     <ImageButton
-        android:id="@+id/menu_button"
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -16,7 +29,7 @@
         android:layout_marginTop="8dp"
         android:background="@null"
         android:contentDescription="Back"
-        android:src="@drawable/menu_icon" />
+        android:src="@drawable/back_arrow_icon" />
 
     <!-- Notification Icon -->
     <ImageButton

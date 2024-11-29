@@ -38,15 +38,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String eventTitle;
     private TextView eventHeader;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+//    private DrawerLayout drawerLayout;
+//    private NavigationView navigationView;
 
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
-    private ImageButton menuButton;
-    private ImageButton notificationButton;
+    private ImageButton backButton;
+//    private ImageButton notificationButton;
 
     // User fields
     private UserController userController;
@@ -64,14 +64,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_event_map);
 
         // Initialize DrawerLayout and NavigationView
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.navigation_view);
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        navigationView = findViewById(R.id.navigation_view);
 
         // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-        menuButton = findViewById(R.id.menu_button);
+        backButton = findViewById(R.id.back_button);
 
         eventController = new EventController();
         eventId = getIntent().getStringExtra("eventId");
@@ -81,10 +81,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         eventHeader.setText(eventTitle);
 
         // Top nav bar
-        notificationButton = findViewById(R.id.notification_icon);
-        notificationButton.setOnClickListener(v ->
-                startActivity(new Intent(MapActivity.this, NotificationsActivity.class))
-        );
+//        notificationButton = findViewById(R.id.notification_icon);
+//        notificationButton.setOnClickListener(v ->
+//                startActivity(new Intent(MapActivity.this, NotificationsActivity.class))
+//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
@@ -99,7 +99,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             startActivity(new Intent(MapActivity.this, ProfileActivity.class));
         });
 
-        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        backButton.setOnClickListener(v -> finish());
 
         // Fetch user profile and set up drawer
         initializeUserController();
@@ -159,7 +159,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-                    DrawerHelper.setupDrawer(MapActivity.this, drawerLayout, navigationView, userObj.getUserId());
+//                    DrawerHelper.setupDrawer(MapActivity.this, drawerLayout, navigationView, userObj.getUserId());
                 } else {
                     System.out.println("User information is null");
                 }

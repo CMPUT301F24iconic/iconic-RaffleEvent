@@ -25,7 +25,7 @@
         <!-- Top Navbar -->
         <include
             android:id="@+id/top_navbar"
-            layout="@layout/top_navbar"
+            layout="@layout/top_navbar_with_back"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 

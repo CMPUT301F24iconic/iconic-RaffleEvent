@@ -10,7 +10,7 @@
     <!-- Include Top Navbar -->
     <include
         android:id="@+id/top_navbar"
-        layout="@layout/top_navbar"
+        layout="@layout/top_navbar_with_back"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
@@ -51,16 +51,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Draw Replacement Button with Icon -->
-        <Button
-            android:id="@+id/drawReplacement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Draw Replacement"
-            android:textColor="@color/buttonTextColor"
-            android:textSize="@dimen/text_size_large"
-            android:backgroundTint="@color/buttonPrimary"
-            app:cornerRadius="@dimen/button_corner_radius" />
+<!--        &lt;!&ndash; Draw Replacement Button with Icon &ndash;&gt;-->
+<!--        <Button-->
+<!--            android:id="@+id/drawReplacement"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Draw Replacement"-->
+<!--            android:textColor="@color/buttonTextColor"-->
+<!--            android:textSize="@dimen/text_size_large"-->
+<!--            android:backgroundTint="@color/buttonPrimary"-->
+<!--            app:cornerRadius="@dimen/button_corner_radius" />-->
         <!-- Send Notification Button with Icon -->
         <Button
             android:id="@+id/sendNotification"

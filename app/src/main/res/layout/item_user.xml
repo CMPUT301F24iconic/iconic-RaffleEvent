@@ -34,10 +34,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@id/profileImageView"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/messageButton">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profileImageView"
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- User Name -->
             <TextView
@@ -59,17 +59,17 @@
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
 
-        <!-- Message Button -->
-        <ImageButton
-            android:id="@+id/messageButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/message_icon"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/buttonPrimary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+<!--        &lt;!&ndash; Message Button &ndash;&gt;-->
+<!--        <ImageButton-->
+<!--            android:id="@+id/messageButton"-->
+<!--            android:layout_width="36dp"-->
+<!--            android:layout_height="36dp"-->
+<!--            android:src="@drawable/message_icon"-->
+<!--            android:background="?attr/selectableItemBackgroundBorderless"-->
+<!--            app:tint="@color/buttonPrimary"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

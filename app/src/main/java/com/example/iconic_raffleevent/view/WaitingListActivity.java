@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.iconic_raffleevent.R;
@@ -66,10 +67,10 @@ public class WaitingListActivity extends AppCompatActivity {
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
-//    private ImageButton menuButton;
+    private ImageButton backButton;
 
     // Top Nav bar
-    private ImageButton notificationButton;
+//    private ImageButton notificationButton;
 
     /**
      * Called when the activity is starting. Sets up the layout, initializes components, and
@@ -92,8 +93,8 @@ public class WaitingListActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-        notificationButton = findViewById(R.id.notification_icon);
-//        menuButton = findViewById(R.id.menu_button);
+//        notificationButton = findViewById(R.id.notification_icon);
+        backButton = findViewById(R.id.back_button);
 
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
@@ -138,10 +139,10 @@ public class WaitingListActivity extends AppCompatActivity {
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
 
         // Top nav bar
-        notificationButton.setOnClickListener(v ->
-                startActivity(new Intent(WaitingListActivity.this, NotificationsActivity.class))
-        );
-//        menuButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+//        notificationButton.setOnClickListener(v ->
+//                startActivity(new Intent(WaitingListActivity.this, NotificationsActivity.class))
+//        );
+        backButton.setOnClickListener(v -> finish());
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
