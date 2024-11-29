@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This activity displays the map for a specific event, showing the locations of entrants on the map.
@@ -130,13 +131,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void addEntrantLocations(String eventId, @NonNull GoogleMap googleMap) {
         eventController.getEventMap(eventId, new EventController.EventMapCallback() {
             @Override
-            public void onEventMapFetched(ArrayList<GeoPoint> locations) {
-                for (int i = 0; i < locations.size(); i++) {
-                    LatLng location = new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude());
-                    googleMap.addMarker(new MarkerOptions().position(location));
+            public void onEventMapFetched(Map<String, Object> locations) {
+                GeoPoint firstLocation = null;
+                for (Map.Entry<String,Object> entry : locations.entrySet()) {
+                    GeoPoint geo = (GeoPoint) entry.getValue();
+                    if (firstLocation == null) {
+                        firstLocation = new GeoPoint(geo.getLatitude(), geo.getLongitude());
+                    }
+                    LatLng location = new LatLng(geo.getLatitude(), geo.getLongitude());
+                    googleMap.addMarker(new MarkerOptions().position(location).title(entry.getKey().substring(entry.getKey().indexOf("-") + 1)));
                 }
-                if (!locations.isEmpty()) {
-                    LatLng startingLocation = new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongitude());
+                if (firstLocation != null) {
+                    LatLng startingLocation = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startingLocation, 10));
                 }
             }

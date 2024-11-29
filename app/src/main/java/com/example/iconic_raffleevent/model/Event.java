@@ -9,6 +9,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an event within the raffle system.
@@ -33,7 +34,7 @@ public class Event {
     private String facilityId;
     private ArrayList<String> declinedList;
     private ArrayList<String> invitedList;
-    private ArrayList<GeoPoint> entrantLocations;
+    private Map<String, Object> locations;
 
     // Qrcode Url
     private String eventQrUrl;
@@ -46,7 +47,6 @@ public class Event {
         invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
-        entrantLocations = new ArrayList<>();
     }
 
     // Getters and setters
@@ -397,43 +397,6 @@ public class Event {
     }
 
     /**
-     * Gets the list of entrant locations.
-     * @return
-     * Return the entrant locations as an ArrayList of GeoPoint objects.
-     */
-    public ArrayList<GeoPoint> getEntrantLocations() {
-        return this.entrantLocations;
-    }
-
-    /**
-     * Adds a location for an entrant.
-     * @param entrantLocation
-     * This is the GeoPoint location to add for an entrant.
-     */
-    public void addEntrantLocation(GeoPoint entrantLocation) {
-        this.entrantLocations.add(entrantLocation);
-    }
-
-    /**
-     * Removes a location for an entrant.
-     * @param entrantLocation
-     * This is the GeoPoint location to remove from the entrant locations.
-     */
-    public void deleteEntrantLocation(GeoPoint entrantLocation) {
-        this.entrantLocations.remove(entrantLocation);
-    }
-
-    /**
-     * Sets the list of entrant locations.
-     * @param entrantLocations
-     * This is an ArrayList of GeoPoint objects representing entrant locations.
-     */
-    public void setEntrantLocations(ArrayList<GeoPoint> entrantLocations) {
-        this.entrantLocations.clear();
-        this.entrantLocations.addAll(entrantLocations);
-    }
-
-    /**
      * Set the facility ID for an event
      * @param facilityId
      * The facility ID for the event
@@ -449,5 +412,21 @@ public class Event {
      */
     public String getFacilityId() {
         return facilityId;
+    }
+
+    public Map<String, Object> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Map<String, Object> locations) {
+        this.locations = locations;
+    }
+
+    public void addLocation(String key, Object location) {
+        this.locations.put(key, location);
+    }
+
+    public Object getLocation(String key) {
+        return this.locations.get(key);
     }
 }

@@ -271,9 +271,9 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         }
 
-        if (event.isGeolocationRequired()) {
-            showGeolocationWarning();
-        }
+        //if (event.isGeolocationRequired()) {
+            //showGeolocationWarning();
+        //}
     }
 
     /**
@@ -281,9 +281,9 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Checks for valid email and phone number, and handles geolocation if required.
      */
     private void joinWaitingList() {
-        // Ensure user has valid email and phone number
-        if (userObj.getEmail().isEmpty() || userObj.getPhoneNo().isEmpty()) {
-            Toast.makeText(EventDetailsActivity.this, "You must have a valid email and phone number to join", Toast.LENGTH_SHORT).show();
+        // Ensure user has valid email and name
+        if (userObj.getEmail().isEmpty() || userObj.getName().isEmpty()) {
+            Toast.makeText(EventDetailsActivity.this, "You must have a valid name and email to join", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
         }
         // Check if event requires geolocation
@@ -315,7 +315,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void leaveWaitingList() {
         // Need to implement functionality to remove geolocation from entrantLocations if they leave event
-        eventController.leaveWaitingList(eventId, userObj.getUserId(), new EventController.LeaveWaitingListCallback() {
+        eventController.leaveWaitingList(eventObj, userObj, new EventController.LeaveWaitingListCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show();
@@ -415,10 +415,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     /**
      * Shows a warning message if the event requires geolocation.
      */
-    private void showGeolocationWarning() {
+    //private void showGeolocationWarning() {
         // Show a dialog or toast message to warn the user about geolocation requirement
-        Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
-    }
+        //Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
+    //}
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.
@@ -442,7 +442,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Adds the user to the waiting list using their location data.
      */
     private void joinWaitlist() {
-        eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
+        eventController.joinWaitingListWithLocation(eventId, userObj, userLocation, new EventController.JoinWaitingListCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
