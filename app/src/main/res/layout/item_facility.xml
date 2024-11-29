@@ -1,22 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_marginBottom="@dimen/small_margin"
+    android:layout_marginStart="@dimen/medium_margin"
+    android:layout_marginEnd="@dimen/medium_margin"
+    app:cardCornerRadius="@dimen/button_corner_radius"
+    android:padding="@dimen/small_padding"
+    app:cardElevation="@dimen/elevation_low"
+    app:cardBackgroundColor="@color/cardBackgroundColor">
 
-    <TextView
-        android:id="@+id/facility_name"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Facility Name"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:padding="@dimen/medium_padding">
 
-    <TextView
-        android:id="@+id/facility_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Facility Location"
-        android:textSize="14sp" />
-</LinearLayout>
+        <!-- Facility Info Layout -->
+        <LinearLayout
+            android:id="@+id/facilityInfoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Facility Name -->
+            <TextView
+                android:id="@+id/facilityNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Facility Name"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+
+            <!-- Facility Location -->
+            <TextView
+                android:id="@+id/facilityLocationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location: Facility Address"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="@dimen/text_size_small" />
+
+            <!-- Facility Creator -->
+            <TextView
+                android:id="@+id/facilityCreatorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created by: John Doe"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
