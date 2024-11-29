@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +31,9 @@ import java.io.IOException;
 public class EventQRViewActivity extends AppCompatActivity {
     private TextView eventTitle;
     private ImageView eventQrCodeView;
-    private Button backButton;
     private Button shareButton;
+
+    private ImageButton backButton;
 
     // Controllers and data related to objects
     private EventController eventController;
@@ -39,9 +41,6 @@ public class EventQRViewActivity extends AppCompatActivity {
     private Event eventObj;
 
     private Bitmap QrBitmap;
-
-
-
 
     /**
      * Called when the activity is starting. Sets up the layout, initializes components, and
@@ -67,9 +66,7 @@ public class EventQRViewActivity extends AppCompatActivity {
         fetchEventDetails();
 
         // Set click listeners for back and share button
-        backButton.setOnClickListener(v -> {
-            startActivity(new Intent(EventQRViewActivity.this, EventDetailsActivity.class));
-        });
+        backButton.setOnClickListener(v -> finish());
 
         shareButton.setOnClickListener(v -> {
             // Allow user to share qr code externally

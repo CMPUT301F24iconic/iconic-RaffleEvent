@@ -15,7 +15,7 @@
         <!-- Include Top Navbar -->
         <include
             android:id="@+id/top_navbar"
-            layout="@layout/top_navbar"
+            layout="@layout/top_navbar_with_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent" />
@@ -101,19 +101,19 @@
                 android:text="Save"
                 tools:ignore="HardcodedText" />
 
-            <Button
-                android:id="@+id/back_to_hub_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorOnPrimary"
-                android:backgroundTint="@color/buttonPrimary"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:layout_marginStart="@dimen/medium_margin"
-                android:layout_marginEnd="@dimen/medium_margin"
-                android:padding="10dp"
-                app:cornerRadius="@dimen/button_corner_radius"
-                android:text="Back"
-                tools:ignore="HardcodedText" />
+<!--            <Button-->
+<!--                android:id="@+id/back_to_hub_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/textColorOnPrimary"-->
+<!--                android:backgroundTint="@color/buttonPrimary"-->
+<!--                android:layout_marginTop="@dimen/medium_margin"-->
+<!--                android:layout_marginStart="@dimen/medium_margin"-->
+<!--                android:layout_marginEnd="@dimen/medium_margin"-->
+<!--                android:padding="10dp"-->
+<!--                app:cornerRadius="@dimen/button_corner_radius"-->
+<!--                android:text="Back"-->
+<!--                tools:ignore="HardcodedText" />-->
         </LinearLayout>
 
         <!-- Include Bottom Navbar -->
