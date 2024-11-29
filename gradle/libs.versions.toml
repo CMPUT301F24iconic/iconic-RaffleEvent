@@ -15,6 +15,7 @@ compiler = "4.15.0"
 constraintlayoutVersion = "2.2.0"
 core = "3.4.1"
 coreKtx = "1.15.0"
+dokkaGradlePlugin = "1.8.20"
 espressoCoreVersion = "3.5.1"
 firebaseBom = "33.5.1"
 firebaseFirestore = "25.1.1"
@@ -25,12 +26,18 @@ githubGlide = "4.12.0"
 glide = "4.16.0"
 googleMaterial = "1.8.0"
 googleServices = "4.4.2"
+jetbrainsKotlinStdlib = "1.9.23"
 junit = "4.13.2"
 junitJupiterApi = "5.9.1"
 junitJupiterEngineVersion = "5.8.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+kotlinAsJavaPlugin = "1.8.20"
+kotlinStdlib = "1.9.24"
+kotlinStdlibVersion = "1.9.0"
+kotlinxCoroutinesAndroid = "1.7.3"
+kotlinxCoroutinesCore = "1.7.3"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.1.4"
@@ -76,6 +83,7 @@ constraintlayout-v220 = { module = "androidx.constraintlayout:constraintlayout",
 core = { module = "com.google.zxing:core", version.ref = "core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 core-v150 = { module = "androidx.test:core", version.ref = "androidxCore" }
+dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokkaGradlePlugin" }
 espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
@@ -93,6 +101,12 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine-v582 = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngineVersion" }
 junit-v115 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+kotlin-as-java-plugin = { module = "org.jetbrains.dokka:kotlin-as-java-plugin", version.ref = "kotlinAsJavaPlugin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlin-stdlib-v190 = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlibVersion" }
+kotlin-stdlib-v1923 = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "jetbrainsKotlinStdlib" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }

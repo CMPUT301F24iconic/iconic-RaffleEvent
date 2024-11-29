@@ -241,6 +241,9 @@ public class ProfileActivity extends AppCompatActivity {
                 photoChanged = true;
                 updateSaveButtonVisibility();
 
+                // Show remove photo button when a photo is selected
+                removePhotoButton.setVisibility(View.VISIBLE);
+
                 // Display the selected image
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), currentImageUri);
                 profileImageView.setImageBitmap(bitmap);
@@ -353,10 +356,16 @@ public class ProfileActivity extends AppCompatActivity {
             public void onProfileImageRemoved() {
                 runOnUiThread(() -> {
                     profileImageView.setImageResource(R.drawable.default_profile);
+                    removePhotoButton.setVisibility(View.GONE);
                     Toast.makeText(ProfileActivity.this, "Profile picture removed", Toast.LENGTH_SHORT).show();
                     // Set photoChanged flag and update save button visibility
                     photoChanged = true;
                     updateSaveButtonVisibility();
+
+                    // Generate avatar after removal
+                    if (currentUser != null && currentUser.getName() != null) {
+                        generateAndSetAvatar(currentUser.getName());
+                    }
                 });
             }
 
@@ -497,7 +506,14 @@ public class ProfileActivity extends AppCompatActivity {
         profileChanged = false;
         photoChanged = false;
         updateSaveButtonVisibility();
+
         String profileImageUrl = user.getProfileImageUrl();
+
+        // Update remove photo button visibility
+        removePhotoButton.setVisibility(
+                profileImageUrl != null && !profileImageUrl.isEmpty() ?
+                        View.VISIBLE : View.GONE
+        );
 
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             // Load profile image from URL if available
