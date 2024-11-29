@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Facility Name -->
+        <TextView
+            android:id="@+id/facilityNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Facility Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <!-- Facility Location -->
+        <TextView
+            android:id="@+id/facilityLocationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Location: Facility Address"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center" />
+
+        <!-- Additional Info -->
+        <TextView
+            android:id="@+id/facilityAdditionalInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Additional Info: Details here"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center" />
+
+        <!-- Facility Creator -->
+        <TextView
+            android:id="@+id/facilityCreatorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Created by: John Doe"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="center" />
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- Cancel Button -->
+            <Button
+                android:id="@+id/cancelFacilityButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Cancel"
+                android:textColor="@color/buttonPrimary"
+                android:backgroundTint="@color/white"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+            <!-- Delete Facility Button -->
+            <Button
+                android:id="@+id/deleteFacilityButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Delete"
+                android:textColor="@color/buttonTextColor"
+                android:backgroundTint="@color/buttonPrimary"
+                app:cornerRadius="@dimen/button_corner_radius" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
