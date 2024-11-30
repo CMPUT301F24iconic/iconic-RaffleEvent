@@ -91,6 +91,7 @@ public class CreateEventActivity extends AppCompatActivity {
     // Objects
     User userObj;
     Event eventObj;
+    Facility facilityObj;
 
     // Input Error
     Boolean inputError;
@@ -154,6 +155,9 @@ public class CreateEventActivity extends AppCompatActivity {
         // Initialize views and controllers
         initializeControllers();
         initializeViews();
+
+        // Get facility details
+        fetchFacilityDetails();
 
         // Set up listeners for date and time pickers
         setupDateTimePickers();
@@ -439,6 +443,7 @@ public class CreateEventActivity extends AppCompatActivity {
             eventObj.setMaxAttendees(maxAttendees);
             eventObj.setQrCode(hashedQrData);
             eventObj.setFacilityId(userFacilityId);
+            eventObj.setEventLocation(facilityObj.getFacilityLocation());
 
             // Save event and event poster to the database
             saveEvent(imageUri, eventObj);
@@ -745,6 +750,20 @@ public class CreateEventActivity extends AppCompatActivity {
     // Public methods to invoke private methods
     public void invokeValidateAndSaveEvent() {
         validateAndSaveEvent();
+    }
+
+    public void fetchFacilityDetails() {
+        facilityController.getFacilityByUserId(getUserID(), new FacilityController.FacilityFetchCallback() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
+                facilityObj = facility;
+            }
+            @Override
+            public void onError(String message) {
+                Toast.makeText(CreateEventActivity.this, "User facility does not exist" + message, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
 }

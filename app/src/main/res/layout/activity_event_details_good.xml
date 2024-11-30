@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!-- Main Content -->
+
+    <!-- Navigation Drawer Menu -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor">
+
+        <!-- Include Top Navbar -->
+        <include
+            android:id="@+id/top_navbar"
+            layout="@layout/top_navbar_with_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Event Image with Rounded Corners -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/eventImageCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/top_navbar">
+
+            <ImageView
+                android:id="@+id/eventImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/event_image_height"
+                android:background="@drawable/sample_event_image_background"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sample_event_image" />
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Event Title -->
+        <TextView
+            android:id="@+id/eventTitle"
+            style="@style/TextTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="@string/sample_event_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventImageCard" />
+
+        <TextView
+            android:id="@+id/hosterTitle"
+            style="@style/TextTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="Organized by: Regan Dexter"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="@dimen/text_size_medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+        <!-- Event Date -->
+        <LinearLayout
+            android:id="@+id/eventDateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hosterTitle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/startTime"
+                    style="@style/TextBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:text="Start Time: "
+                    android:textSize="@dimen/text_size_large"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+
+                <TextView
+                    android:id="@+id/eventDateStart"
+                    style="@style/TextBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/medium_margin"
+                    android:text="2024/12/06 "
+                    android:textSize="@dimen/text_size_large"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/medium_margin">
+
+                <TextView
+                    android:id="@+id/endTime"
+                    style="@style/TextBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:text="End Time: "
+                    android:textSize="@dimen/text_size_large"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/eventDateEnd"
+                    style="@style/TextBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/medium_margin"
+                    android:text="2024/12/06 "
+                    android:textSize="@dimen/text_size_large"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Event Location -->
+        <LinearLayout
+            android:id="@+id/eventLocationLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/eventDateLayout" >
+
+            <TextView
+                android:id="@+id/eventLocation"
+                style="@style/TextBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:text="@string/sample_event_location"
+                android:textSize="@dimen/text_size_large"
+                android:drawablePadding="8dp"
+                app:drawableStartCompat="@drawable/location_icon_green"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+        <!-- Event Description -->
+        <TextView
+            android:id="@+id/eventDescription"
+            style="@style/TextBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:ellipsize="end"
+            android:text="@string/sample_event_description"
+            android:textSize="@dimen/text_size_large"
+            app:layout_constraintTop_toBottomOf="@id/eventLocationLayout"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <!-- Congratulatory Message -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/congratulations_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/white"
+            android:padding="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
+            tools:layout_editor_absoluteX="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Celebration Icon -->
+                <ImageView
+                    android:id="@+id/celebration_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Celebration Icon"
+                    android:src="@drawable/celebration_icon"
+                    app:tint="@color/buttonPrimary" />
+
+                <!-- Congratulatory Message Text -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/congratulations_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Congratulations!"
+                        android:textColor="@color/buttonPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/congratulations_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="You are successfully registered for this event."
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Join Waiting List Button -->
+        <!-- style="@style/ButtonPrimary" -->
+        <Button
+            android:id="@+id/joinWaitingListButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:backgroundTint="@color/buttonPrimary"
+            android:text="@string/join_waiting_list"
+            android:textColor="@color/textColorOnPrimary"
+            android:visibility="gone"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Leave Waiting List Button -->
+        <!-- style="@style/ButtonSecondary" -->
+        <Button
+            android:id="@+id/leaveWaitingListButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:backgroundTint="@color/buttonPrimary"
+            android:text="@string/leave_waiting_list"
+            android:textColor="@color/textColorOnPrimary"
+            android:visibility="gone"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/organizer_buttons_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Bottom Navigation Bar -->
+        <include
+            android:id="@+id/bottom_navbar"
+            layout="@layout/bottom_navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Organizer-specific Buttons -->
+        <LinearLayout
+            android:id="@+id/organizer_buttons_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:id="@+id/organizerOne"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/map_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/buttonPrimary"
+                    android:text="View Map"
+                    android:textColor="@color/textColorOnPrimary"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp" />
+
+                <Button
+                    android:id="@+id/edit_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/buttonPrimary"
+                    android:text="Edit Event"
+                    android:textColor="@color/textColorOnPrimary"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/organizerTwo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <!-- Manage Button -->
+                <Button
+                    android:id="@+id/manage_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/buttonPrimary"
+                    android:text="Manage Entrants"
+                    android:textColor="@color/textColorOnPrimary"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp" />
+
+                <Button
+                    android:id="@+id/share_button"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/buttonPrimary"
+                    android:text="View QR"
+                    android:textColor="@color/textColorOnPrimary"
+                    android:visibility="gone"
+                    app:cornerRadius="16dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/invited_attendee_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Decline Button -->
+            <Button
+                android:id="@+id/decline_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:text="Decline Invitation"
+                android:textColor="@color/buttonPrimary"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius" />
+
+            <!-- Accept Button -->
+            <Button
+                android:id="@+id/accept_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="Accept Invitation"
+                android:textColor="@color/textColorOnPrimary"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/button_corner_radius" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/white"
+        app:menu="@menu/drawer_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
