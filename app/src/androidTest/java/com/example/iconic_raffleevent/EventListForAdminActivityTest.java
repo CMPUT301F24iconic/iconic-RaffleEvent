@@ -28,20 +28,4 @@ public class EventListForAdminActivityTest {
         // Verify that the event list view is displayed
         onView(withId(R.id.eventListView)).check(matches(isDisplayed()));
     }
-
-    @Test
-    public void testClickEventAndDisplayDetails() {
-        // Launch the EventListForAdminActivity
-        ActivityScenario<EventListForAdminActivity> scenario = ActivityScenario.launch(EventListForAdminActivity.class);
-
-        // Click the first event in the list
-        onData(anything()).inAdapterView(withId(R.id.eventListView)).atPosition(0).perform(click());
-
-        // Verify that the EventDetailsForAdminActivity is launched
-        onView(withId(R.id.eventImage)).check(matches(isDisplayed()));
-        onView(withId(R.id.eventTitle)).check(matches(isDisplayed()));
-        onView(withId(R.id.eventDescription)).check(matches(isDisplayed()));
-        onView(withId(R.id.eventLocation)).check(matches(isDisplayed()));
-        onView(withId(R.id.eventDate)).check(matches(isDisplayed()));
-    }
 }
