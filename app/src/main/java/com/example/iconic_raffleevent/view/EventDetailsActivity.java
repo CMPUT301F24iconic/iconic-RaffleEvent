@@ -230,7 +230,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onEventDetailsFetched(Event event) {
                 eventObj = event;
                 isEventLoaded = true;
-                fetchOrganizerDetails(eventObj.getOrganizerID());
+                runOnUiThread(() -> fetchOrganizerDetails(eventObj.getOrganizerID()));
                 checkUIUpdate();
             }
 
