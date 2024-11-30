@@ -88,6 +88,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
 
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
+        usersObj = new ArrayList<>();
 
         loadEventDetails();
 
