@@ -247,7 +247,7 @@ public class WaitingListActivity extends AppCompatActivity {
                         userAdapter.notifyDataSetChanged();
                         usersObj.add(user);
                     } else {
-                        Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                     }
                 }
 

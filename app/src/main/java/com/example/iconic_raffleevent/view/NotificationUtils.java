@@ -18,6 +18,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NotificationUtils {
 
@@ -80,6 +82,9 @@ public class NotificationUtils {
         // Create necessary controllers
         NotificationController notificationController = new NotificationController();
 
+        AtomicBoolean allSentSuccessfully = new AtomicBoolean(true);
+        AtomicInteger pendingNotifications = new AtomicInteger(users.size());
+
         for (User user : users) {
             Notification selectedNotification = new Notification();
             selectedNotification.setNotificationType("General");
@@ -94,14 +99,26 @@ public class NotificationUtils {
                 @Override
                 public void onSuccess(Boolean success) {
                     // Successfully drew applicants
-                    if (success) {
-                        Toast.makeText(context, "Notification successfully sent to users", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
+                    if (!success) {
+                        allSentSuccessfully.set(false);
                     }
+                    checkCompletion();
                 }
                 @Override
                 public void onError(String message) {
-                    Toast.makeText(context, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    allSentSuccessfully.set(false);
+                    checkCompletion();
+                }
+
+                private void checkCompletion() {
+                    if (pendingNotifications.decrementAndGet() == 0) {
+                        if (allSentSuccessfully.get()) {
+                            Toast.makeText(context, "All notifications sent successfully.", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(context, "Some notifications failed to send.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             });
         }
