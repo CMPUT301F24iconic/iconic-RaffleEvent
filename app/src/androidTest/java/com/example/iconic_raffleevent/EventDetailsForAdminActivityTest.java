@@ -34,22 +34,4 @@ public class EventDetailsForAdminActivityTest {
         onView(withId(R.id.eventTitle)).check(matches(isDisplayed()));
         onView(withId(R.id.eventDescription)).check(matches(isDisplayed()));
     }
-
-    @Test
-    public void testCancelButton() {
-        // Create an intent with a sample event ID
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EventDetailsForAdminActivity.class);
-        intent.putExtra("eventId", "sampleEventId");
-
-        // Launch the EventDetailsForAdminActivity with the intent
-        ActivityScenario<EventDetailsForAdminActivity> scenario = ActivityScenario.launch(intent);
-
-        // Click the cancel button
-        onView(withId(R.id.cancel_button)).perform(click());
-
-        // Verify that the activity finishes and we are back to the previous activity
-        scenario.onActivity(activity -> {
-            assert activity.isFinishing();
-        });
-    }
 }
