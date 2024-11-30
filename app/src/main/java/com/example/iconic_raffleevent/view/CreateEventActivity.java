@@ -338,6 +338,9 @@ public class CreateEventActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (resultCode == RESULT_CANCELED) {
+            // Use the default poster if the user cancels the selection
+            posterPreviewImageView.setImageResource(R.drawable.default_image_poster);
         }
     }
 
@@ -398,13 +401,13 @@ public class CreateEventActivity extends AppCompatActivity {
         validateInputFields();
 
 
-        if (eventId == null){
-            // Check if a poster is uploaded
-            if (imageUri == null) {
-                Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
-                return; // Stop further processing
-            }
-        }
+//        if (eventId == null){
+//            // Check if a poster is uploaded
+//            if (imageUri == null) {
+//                Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
+//                return; // Stop further processing
+//            }
+//        }
 
         // Check if end time is later than start time
         if (!isEndTimeLaterThanStartTime()) {
@@ -548,7 +551,11 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(CreateEventActivity.this, "Please upload a poster before saving the event.", Toast.LENGTH_SHORT).show();
+            // Use default poster if no image is uploaded
+            eventObj.setEventImageUrl("android.resource://" + getPackageName() + "/" + R.drawable.default_image_poster);
+
+            // Save event with default poster
+            saveEventQR(eventObj);
         }
     }
 
@@ -576,8 +583,14 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             });
         } else {
-            // Update event with pre-existing poster image
+            // Set default poster if no new poster is uploaded
+            if (eventObj.getEventImageUrl() == null || eventObj.getEventImageUrl().isEmpty()) {
+                eventObj.setEventImageUrl("android.resource://" + getPackageName() + "/" + R.drawable.default_image_poster);
+            }
+
+            // Update event with existing or default poster
             eventController.updateEventDetails(eventObj);
+
             Intent intent = new Intent(CreateEventActivity.this, EventDetailsActivity.class);
             intent.putExtra("eventId", eventObj.getEventId());
             startActivity(intent);
@@ -667,11 +680,13 @@ public class CreateEventActivity extends AppCompatActivity {
             eventDescriptionText.setText(eventObj.getEventDescription());
             posterPreviewImageView.setVisibility(View.VISIBLE);
             posterLabel.setVisibility(View.VISIBLE);
-            // Load event image
+            // Load event poster or default poster
             Glide.with(this)
-                    .load(eventObj.getEventImageUrl())
+                    .load(eventObj.getEventImageUrl() != null ? eventObj.getEventImageUrl()
+                            : "android.resource://" + getPackageName() + "/" + R.drawable.default_image_poster)
                     .placeholder(R.drawable.placeholder_image)
                     .into(posterPreviewImageView);
+
             saveEventButton.setText("Update"); // Change button text to "Update"
             uploadPosterButton.setText("Change Poster");
         } else {
