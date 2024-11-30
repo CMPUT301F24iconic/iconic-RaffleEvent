@@ -1,10 +1,17 @@
 package com.example.iconic_raffleevent.view;
 
+import android.app.AlertDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
@@ -41,14 +48,24 @@ public class UserListActivity extends AppCompatActivity {
         userController = new UserController(userID, this);
 
         // Set item click listener to show user details and delete options
-        userAdapter.setOnItemClickListener(user -> {
-            EventListUtils.showUserDetailsDialog(
-                    UserListActivity.this,
-                    user,
-                    null, // No eventObj needed since this is a global user list
-                    null, // No FirebaseAttendee needed
-                    this::refreshUserList // Callback to refresh the list after deletion
-            );
+        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(User user) {
+                // Handle user details dialog
+                EventListUtils.showUserDetailsDialog(
+                        UserListActivity.this,
+                        user,
+                        null,
+                        null,
+                        UserListActivity.this::refreshUserList
+                );
+            }
+
+            @Override
+            public void onProfileImageClick(User user) {
+                // Show profile image dialog
+                showProfileImageDialog(user);
+            }
         });
 
         // Load and display all users
@@ -80,4 +97,30 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showProfileImageDialog(User user) {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);
+
+        // Find ImageView in the dialog layout
+        ImageView zoomedProfileImageView = dialogView.findViewById(R.id.zoomedProfileImageView);
+
+        // Set the profile image
+        if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+            Glide.with(this)
+                    .load(user.getProfileImageUrl())
+                    .circleCrop()
+                    .into(zoomedProfileImageView);
+        } else {
+            Bitmap avatarBitmap = AvatarGenerator.generateAvatar(user.getName(), 200);
+            zoomedProfileImageView.setImageBitmap(avatarBitmap);
+        }
+
+        // Create and show the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogTheme);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }

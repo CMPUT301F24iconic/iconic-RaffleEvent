@@ -1,14 +1,21 @@
 package com.example.iconic_raffleevent.view;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
@@ -85,14 +92,24 @@ public class InvitedListActivity extends AppCompatActivity {
         userRecyclerView.setAdapter(userAdapter);
 
         // Set item click listener for the user list
-        userAdapter.setOnItemClickListener(user -> {
-            com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
-                    InvitedListActivity.this,
-                    user,
-                    eventObj,
-                    firebaseAttendee,
-                    this::refreshInvitedList
-            );
+        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(User user) {
+                // Handle user details dialog
+                com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
+                        InvitedListActivity.this,
+                        user,
+                        eventObj,
+                        firebaseAttendee,
+                        InvitedListActivity.this::refreshInvitedList
+                );
+            }
+
+            @Override
+            public void onProfileImageClick(User user) {
+                // Show profile image dialog
+                showProfileImageDialog(user);
+            }
         });
 
         // Fetch and display waiting list
@@ -189,5 +206,30 @@ public class InvitedListActivity extends AppCompatActivity {
                 Toast.makeText(InvitedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showProfileImageDialog(User user) {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);
+
+        // Find ImageView in the dialog layout
+        ImageView zoomedProfileImageView = dialogView.findViewById(R.id.zoomedProfileImageView);
+
+        // Set the profile image
+        if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+            Glide.with(this)
+                    .load(user.getProfileImageUrl())
+                    .circleCrop()
+                    .into(zoomedProfileImageView);
+        } else {
+            Bitmap avatarBitmap = AvatarGenerator.generateAvatar(user.getName(), 200);
+            zoomedProfileImageView.setImageBitmap(avatarBitmap);
+        }
+
+        // Create and show the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogTheme);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
