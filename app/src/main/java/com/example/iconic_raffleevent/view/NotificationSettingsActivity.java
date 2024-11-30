@@ -1,7 +1,10 @@
 package com.example.iconic_raffleevent.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
@@ -162,6 +166,17 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         boolean winNotificationEnabled = winSwitch.isChecked();
         boolean loseNotificationEnabled = loseSwitch.isChecked();
         boolean notificationsEnabled = enableSwitch.isChecked();
+        if (notificationsEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Check for permission POST_NOTIFICATIONS
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Request the permission
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                    return; // Exit if permission is not granted yet
+                }
+            }
+        }
 
         try {
             userController.setWinNotificationsEnabled(userObj, winNotificationEnabled);

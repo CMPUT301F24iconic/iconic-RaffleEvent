@@ -60,10 +60,11 @@
         <activity android:name=".view.ProfileActivity" android:exported="false" />
         <activity android:name=".view.EventListActivity" android:exported="false" />
         <activity android:name=".view.EventDetailsActivity" android:exported="false" />
-        <activity
-
-            android:name=".view.NotificationSettingsActivity"
+        <activity android:name=".view.NotificationSettingsActivity"
             android:exported="false" />
+
+        <service android:name=".view.notificationservice.FirestoreListenerService"
+            android:exported="false"/>
 
         <activity
             android:name=".view.MapActivity"

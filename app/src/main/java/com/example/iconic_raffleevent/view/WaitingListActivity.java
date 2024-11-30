@@ -161,7 +161,7 @@ public class WaitingListActivity extends AppCompatActivity {
         setWaitlistLimitButton.setOnClickListener(v -> showWaitlistLimitDialog());
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
         notificationButton.setOnClickListener(v -> {
-            if (usersObj.isEmpty()) {
+            if (usersObj == null || usersObj.isEmpty()) {
                 // No users to send notification to
                 Toast.makeText(WaitingListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
 
@@ -193,10 +193,6 @@ public class WaitingListActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(WaitingListActivity.this, ProfileActivity.class));
         });
-    }
-
-    private void showNotifcationDialog() {
-        // Bring up notification dialog, send notification
     }
 
     private void showWaitlistLimitDialog() {

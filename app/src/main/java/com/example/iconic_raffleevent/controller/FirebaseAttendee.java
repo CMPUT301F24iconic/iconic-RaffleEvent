@@ -598,7 +598,13 @@ public class FirebaseAttendee {
     }
 
     public void sendGeneralNotification(Notification notification, NotificationController.SendNotificationCallback callback){
-        DocumentReference notificationRef = notificationsCollection.document(notification.getNotificationId());
+        DocumentReference notificationRef = notificationsCollection.document();
+
+        String notificationId = notificationRef.getId(); // Get the randomly generated ID
+
+        // Set the ID in the notification object
+        notification.setNotificationId(notificationId);
+
         notificationRef.set(notification)  // This will update the user document with all current fields
                 .addOnSuccessListener(aVoid -> callback.onSuccess(Boolean.TRUE))
                 .addOnFailureListener(e -> callback.onError("Error sending notification"));

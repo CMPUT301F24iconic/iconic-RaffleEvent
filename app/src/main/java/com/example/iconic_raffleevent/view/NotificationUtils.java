@@ -92,8 +92,6 @@ public class NotificationUtils {
             selectedNotification.setEventId(event.getEventId());
             selectedNotification.setUserId(user.getUserId());
             selectedNotification.setMessage(message);
-            String notificationID = event.getEventId() + "-" + user.getUserId() + "-general";
-            selectedNotification.setNotificationId(notificationID);
 
             notificationController.sendNotification(selectedNotification, new NotificationController.SendNotificationCallback() {
                 @Override

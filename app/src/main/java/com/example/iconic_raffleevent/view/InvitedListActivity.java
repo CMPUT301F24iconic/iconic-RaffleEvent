@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -46,6 +47,10 @@ public class InvitedListActivity extends AppCompatActivity {
     private ImageButton profileButton;
     private ImageButton backButton;
 
+    private Button notificationButton;
+
+    private ArrayList<User> usersObj;
+
     // Top Nav bar
 //    private ImageButton notificationButton;
 
@@ -72,6 +77,7 @@ public class InvitedListActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
 //        notificationButton = findViewById(R.id.notification_icon);
         backButton = findViewById(R.id.back_button);
+        notificationButton = findViewById(R.id.sendNotification);
 
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
@@ -133,6 +139,20 @@ public class InvitedListActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(InvitedListActivity.this, ProfileActivity.class));
         });
+
+        notificationButton.setOnClickListener(v -> {
+            if (usersObj == null || usersObj.isEmpty()) {
+                // No users to send notification to
+                Toast.makeText(InvitedListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
+
+            } else {
+                com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
+                        InvitedListActivity.this,
+                        usersObj,
+                        eventObj
+                );
+            }
+        });
     }
 
     /**
@@ -177,6 +197,7 @@ public class InvitedListActivity extends AppCompatActivity {
                     if (user != null) {
                         userAdapter.addUser(user);
                         userAdapter.notifyDataSetChanged();
+                        usersObj.add(user);
                     } else {
                         Toast.makeText(InvitedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                     }
