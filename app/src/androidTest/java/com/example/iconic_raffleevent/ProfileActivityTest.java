@@ -38,7 +38,6 @@ public class ProfileActivityTest {
         onView(withId(R.id.email_edit_text)).check(matches(isDisplayed()));
         onView(withId(R.id.phone_edit_text)).check(matches(isDisplayed()));
         onView(withId(R.id.notifications_switch)).check(matches(isDisplayed()));
-        onView(withId(R.id.back_to_hub_button)).check(matches(isDisplayed())); // Updated ID
         onView(withId(R.id.upload_photo_button)).check(matches(isDisplayed()));
     }
 
@@ -120,22 +119,17 @@ public class ProfileActivityTest {
         // Enter unsaved data
         onView(withId(R.id.name_edit_text)).perform(replaceText("Unsaved Name"));
 
-        // Press back button
-        onView(withId(R.id.back_to_hub_button)).perform(click());
-
-        // Verify the discard changes dialog is displayed
+        // Test home button
+        onView(withId(R.id.home_button)).perform(click());
         onView(withText("Discard changes?")).check(matches(isDisplayed()));
-    }
+        // Dismiss dialog
+        onView(withText("Cancel")).perform(click());
 
-    /**
-     * Test back button functionality without unsaved changes.
-     */
-    @Test
-    public void testBackButtonWithoutUnsavedChanges() {
-        // Ensure no changes are made
-        onView(withId(R.id.back_to_hub_button)).perform(click());
-
-        // Verify activity finishes (this is implicit if no dialog appears)
+        // Test QR button
+        onView(withId(R.id.qr_button)).perform(click());
+        onView(withText("Discard changes?")).check(matches(isDisplayed()));
+        // Dismiss dialog
+        onView(withText("Cancel")).perform(click());
     }
 
     /**
