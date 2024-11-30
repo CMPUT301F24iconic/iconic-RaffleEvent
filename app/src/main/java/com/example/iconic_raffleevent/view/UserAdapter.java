@@ -23,7 +23,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private OnItemClickListener itemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(User user);
+        void onItemClick(User user); // For card clicks
+        void onProfileImageClick(User user); // For profile image clicks
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -88,10 +89,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             holder.profileImageView.setImageBitmap(avatarBitmap);
         }
 
-        // Set click listener on the user item
+        // Set click listener for the entire card (user details)
         holder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(user);
+            }
+        });
+
+        // Set click listener specifically for the profile image
+        holder.profileImageView.setOnClickListener(v -> {
+            if (itemClickListener != null) {
+                itemClickListener.onProfileImageClick(user);
             }
         });
     }

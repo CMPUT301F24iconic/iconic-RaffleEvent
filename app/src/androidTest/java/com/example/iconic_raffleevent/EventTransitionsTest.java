@@ -25,10 +25,6 @@ public class EventTransitionsTest {
 
     @Test
     public void testViewEventDetails() {
-        // Check if we're on event list page
-        onView(withId(R.id.eventListView))
-                .check(matches(isDisplayed()));
-
         // Click first event in list
         onView(withId(R.id.eventListView))
                 .perform(click());

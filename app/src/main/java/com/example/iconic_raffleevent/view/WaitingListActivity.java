@@ -3,10 +3,12 @@ package com.example.iconic_raffleevent.view;
 import static java.lang.Math.min;
 
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
@@ -128,14 +134,24 @@ public class WaitingListActivity extends AppCompatActivity {
         userRecyclerView.setAdapter(userAdapter);
 
         // Set item click listener for the user list
-        userAdapter.setOnItemClickListener(user -> {
-            com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
-                    WaitingListActivity.this,
-                    user,
-                    eventObj,
-                    firebaseAttendee,
-                    this::refreshWaitingList
-            );
+        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(User user) {
+                // Handle user details dialog
+                com.example.iconic_raffleevent.view.EventListUtils.showUserDetailsDialog(
+                        WaitingListActivity.this,
+                        user,
+                        eventObj,
+                        firebaseAttendee,
+                        WaitingListActivity.this::refreshWaitingList
+                );
+            }
+
+            @Override
+            public void onProfileImageClick(User user) {
+                // Show profile image dialog
+                showProfileImageDialog(user);
+            }
         });
 
         // Fetch and display waiting list
@@ -559,5 +575,30 @@ public class WaitingListActivity extends AppCompatActivity {
                 nonSelectedUsersObj.add(user);
             }
         }
+    }
+
+    private void showProfileImageDialog(User user) {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);
+
+        // Find ImageView in the dialog layout
+        ImageView zoomedProfileImageView = dialogView.findViewById(R.id.zoomedProfileImageView);
+
+        // Set the profile image
+        if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+            Glide.with(this)
+                    .load(user.getProfileImageUrl())
+                    .circleCrop()
+                    .into(zoomedProfileImageView);
+        } else {
+            Bitmap avatarBitmap = AvatarGenerator.generateAvatar(user.getName(), 200);
+            zoomedProfileImageView.setImageBitmap(avatarBitmap);
+        }
+
+        // Create and show the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogTheme);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

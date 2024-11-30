@@ -156,6 +156,12 @@ dependencies {
     testImplementation (libs.mockito.core.v480)
     testImplementation (libs.mockito.inline)
 
+    testImplementation ("junit:junit:4.13.2")
+
+    androidTestImplementation ("androidx.test.uiautomator:uiautomator:2.2.0")
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.uiautomator.v230alpha03)
     // Firebase test dependencies
     testImplementation (libs.google.firebase.firestore)
 }

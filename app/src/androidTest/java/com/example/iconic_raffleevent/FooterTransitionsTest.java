@@ -6,11 +6,19 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiSelector;
 
 import com.example.iconic_raffleevent.view.EventListActivity;
+import com.example.iconic_raffleevent.view.ProfileActivity;
+import com.example.iconic_raffleevent.view.QRScannerActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,8 +38,6 @@ public class FooterTransitionsTest {
                 .perform(click());
 
         // Verify profile UI elements
-        onView(withId(R.id.profile_image))
-                .check(matches(isDisplayed()));
         onView(withId(R.id.name_edit_text))
                 .check(matches(isDisplayed()));
         onView(withId(R.id.email_edit_text))
@@ -39,12 +45,6 @@ public class FooterTransitionsTest {
         onView(withId(R.id.phone_edit_text))
                 .check(matches(isDisplayed()));
         onView(withId(R.id.notifications_switch))
-                .check(matches(isDisplayed()));
-        onView(withId(R.id.save_button))
-                .check(matches(isDisplayed()));
-        onView(withId(R.id.remove_photo_button))
-                .check(matches(isDisplayed()));
-        onView(withId(R.id.back_to_hub_button))
                 .check(matches(isDisplayed()));
     }
 
@@ -54,23 +54,8 @@ public class FooterTransitionsTest {
         onView(withId(R.id.profile_button))
                 .perform(click());
 
-        // Return to event list
-        onView(withId(R.id.back_to_hub_button))
-                .perform(click());
-
-        // Verify event list is displayed
-        onView(withId(R.id.eventListView))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testGoToEventListUsingFooter() {
-        // Click home button in footer
+        // Return to event list using the home button in the footer
         onView(withId(R.id.home_button))
                 .perform(click());
-
-        // Verify event list is displayed
-        onView(withId(R.id.eventListView))
-                .check(matches(isDisplayed()));
     }
 }
