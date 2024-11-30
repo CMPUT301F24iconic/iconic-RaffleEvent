@@ -133,17 +133,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onEventMapFetched(Map<String, Object> locations) {
                 GeoPoint firstLocation = null;
-                for (Map.Entry<String,Object> entry : locations.entrySet()) {
-                    GeoPoint geo = (GeoPoint) entry.getValue();
-                    if (firstLocation == null) {
-                        firstLocation = new GeoPoint(geo.getLatitude(), geo.getLongitude());
+                if (locations != null) {
+                    for (Map.Entry<String,Object> entry : locations.entrySet()) {
+                        GeoPoint geo = (GeoPoint) entry.getValue();
+                        if (firstLocation == null) {
+                            firstLocation = new GeoPoint(geo.getLatitude(), geo.getLongitude());
+                        }
+                        LatLng location = new LatLng(geo.getLatitude(), geo.getLongitude());
+                        googleMap.addMarker(new MarkerOptions().position(location).title(entry.getKey().substring(entry.getKey().indexOf("-") + 1)));
                     }
-                    LatLng location = new LatLng(geo.getLatitude(), geo.getLongitude());
-                    googleMap.addMarker(new MarkerOptions().position(location).title(entry.getKey().substring(entry.getKey().indexOf("-") + 1)));
-                }
-                if (firstLocation != null) {
-                    LatLng startingLocation = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startingLocation, 10));
+                    if (firstLocation != null) {
+                        LatLng startingLocation = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startingLocation, 10));
+                    }
                 }
             }
             @Override
