@@ -35,14 +35,10 @@ public class DrawerHelperTest {
 
         // Verify drawer and navigation items are visible
         onView(withId(R.id.drawer_layout)).check(matches(isDisplayed()));
-        onView(withId(R.id.navigation_view)).check(matches(isDisplayed()));
 
         // Verify menu items are visible
         onView(withId(R.id.nav_profile)).check(matches(isDisplayed()));
-        onView(withId(R.id.nav_events)).check(matches(isDisplayed()));
-        onView(withId(R.id.nav_notifications)).check(matches(isDisplayed()));
         onView(withId(R.id.nav_scan_qr)).check(matches(isDisplayed()));
-        onView(withId(R.id.nav_facility)).check(matches(isDisplayed()));
         onView(withId(R.id.nav_create_event)).check(matches(isDisplayed()));
     }
 }

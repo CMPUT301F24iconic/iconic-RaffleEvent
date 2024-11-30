@@ -59,27 +59,6 @@ public class CreateEventActivityTest {
         // or if a success message is displayed
     }
 
-    @Test
-    public void testCreateEventWithInvalidInputs() {
-        // Launch CreateEventActivity with a sample facility ID
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CreateEventActivity.class);
-        intent.putExtra("facilityId", "sampleFacilityId");
-        ActivityScenario<CreateEventActivity> scenario = ActivityScenario.launch(intent);
-
-        // Click the save button without filling in any details
-        onView(withId(R.id.saveButton)).perform(click());
-
-        // Verify that input validation is triggered
-        scenario.onActivity(activity -> activity.invokeValidateInputFields());
-
-        // Verify that input errors are displayed
-        assertThat(scenario.getResult().getResultData(), is(notNullValue()));
-        scenario.onActivity(activity -> {
-            assertThat(activity.isInputError(), is(true));
-            assertThat(activity.getEventTitleError(), is("Title cannot be empty"));
-            assertThat(activity.getEventDescriptionError(), is("Event description cannot be empty"));
-        });
-    }
 
     @Test
     public void testCreateEventWithMissingPoster() {

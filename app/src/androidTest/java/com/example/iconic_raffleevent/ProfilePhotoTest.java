@@ -28,6 +28,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 public class ProfilePhotoTest {
 
+    private static final int PERMISSION_DIALOG_TIMEOUT = 5000; // 5 seconds timeout for dialog
     private UiDevice device;
 
     @Rule
@@ -43,16 +44,18 @@ public class ProfilePhotoTest {
         // Click on the upload photo button
         onView(withId(R.id.upload_photo_button)).perform(click());
 
-        // Handle permission dialog if it appears
-        UiObject2 allowButton = device.wait(Until.findObject(By.text("Allow")), 5000);
+        // Handle runtime permission dialog if it appears
+        UiObject2 allowButton = device.wait(Until.findObject(By.text("Allow")), PERMISSION_DIALOG_TIMEOUT);
         if (allowButton != null) {
             allowButton.click();
         }
 
-        // Select an image from the gallery
+        // Simulate selecting an image from the gallery
         Intent resultData = new Intent();
         Uri imageUri = Uri.parse("file:///sdcard/sample_image.jpg");
         resultData.setData(imageUri);
+
+        // Launch ProfileActivity and handle the activity result
         ActivityScenario<ProfileActivity> activityScenario = scenario.getScenario();
         activityScenario.onActivity(activity -> activity.onActivityResult(ProfileActivity.PICK_IMAGE_REQUEST, -1, resultData));
 
