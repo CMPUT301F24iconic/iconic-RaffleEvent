@@ -52,7 +52,8 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
     private TextView eventLocationTextView;
     private TextView eventDateTextView;
     private TextView warningMessage;
-    private Button deleteEventButton, cancelButton;
+    private Button deleteEventButton, cancelButton, deleteEventPosterButton;
+
 
     // Controllers and data related to objects
     private EventController eventController;
@@ -88,6 +89,7 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         warningMessage = findViewById(R.id.warning_message);
         cancelButton = findViewById(R.id.cancel_button);
         deleteEventButton = findViewById(R.id.delete_event_button);
+        deleteEventPosterButton = findViewById(R.id.delete_event_poster_button);
 
         eventController = new EventController();
         eventId = getIntent().getStringExtra("eventId");
@@ -103,9 +105,64 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         });
 
         deleteEventButton.setOnClickListener(v -> {
-            // Handle event deletion
-            deleteEvent(eventObj);
+            if (eventObj != null) {
+                confirmAndDeleteEvent();
+            } else {
+                Toast.makeText(EventDetailsForAdminActivity.this, "Event not loaded yet.", Toast.LENGTH_SHORT).show();
+            }
         });
+
+        deleteEventPosterButton = findViewById(R.id.delete_event_poster_button);
+
+        deleteEventPosterButton.setOnClickListener(v -> {
+            if (eventObj != null) {
+                confirmAndDeletePoster();
+            } else {
+                Toast.makeText(EventDetailsForAdminActivity.this, "Event not loaded yet.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void confirmAndDeleteEvent() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Delete Event")
+                .setMessage("Are you sure you want to delete this event? This action cannot be undone.")
+                .setPositiveButton("Yes", (dialog, which) -> deleteEvent(eventObj))
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void confirmAndDeletePoster() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Delete Event Poster")
+                .setMessage("Are you sure you want to delete the event poster? This action will set a default poster.")
+                .setPositiveButton("Yes", (dialog, which) -> deletePoster())
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void deletePoster() {
+        if (eventObj != null) {
+            // Set the default poster URL
+            String defaultPosterUrl = "android.resource://" + getPackageName() + "/" + R.drawable.default_image_poster;
+
+            // Update the event object
+            eventObj.setEventImageUrl(defaultPosterUrl);
+
+            // Update event details in Firebase
+            eventController.updateEventDetails(eventObj);
+
+            // Notify the user and redirect to the updated Event Details page
+            Toast.makeText(this, "Event poster deleted and set to default.", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(EventDetailsForAdminActivity.this, EventDetailsForAdminActivity.class);
+            intent.putExtra("eventId", eventObj.getEventId());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Error: Event not found.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -138,7 +195,16 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         if (event != null) {
             Glide.with(this)
                     .load(event.getEventImageUrl())
+                    .placeholder(R.drawable.placeholder_image)
                     .into(eventImageView);
+
+            // Show "Delete Poster" button only if the current poster is not the default
+            String defaultPosterUrl = "android.resource://" + getPackageName() + "/" + R.drawable.default_image_poster;
+            if (event.getEventImageUrl().equals(defaultPosterUrl)) {
+                deleteEventPosterButton.setVisibility(View.GONE);
+            } else {
+                deleteEventPosterButton.setVisibility(View.VISIBLE);
+            }
         }
 
         eventTitleTextView.setText(event.getEventTitle());

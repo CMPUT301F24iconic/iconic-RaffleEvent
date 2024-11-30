@@ -47,6 +47,13 @@ public class EventListForAdminActivity extends AppCompatActivity {
         loadEventList();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the event list when the activity resumes
+        loadEventList();
+    }
+
     /**
      * Initializes the views for the activity, including navigation drawer, event list view,
      * and navigation buttons.
