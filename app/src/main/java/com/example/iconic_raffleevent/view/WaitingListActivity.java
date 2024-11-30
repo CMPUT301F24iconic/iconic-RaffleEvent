@@ -158,7 +158,7 @@ public class WaitingListActivity extends AppCompatActivity {
         loadWaitingList();
 
         // Set listener for sampling attendees
-        setWaitlistLimitButton.setOnClickListener(v -> showWaitlistLimitDialog());
+        //setWaitlistLimitButton.setOnClickListener(v -> showWaitlistLimitDialog());
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
         notificationButton.setOnClickListener(v -> {
             if (usersObj == null || usersObj.isEmpty()) {
@@ -194,10 +194,109 @@ public class WaitingListActivity extends AppCompatActivity {
             startActivity(new Intent(WaitingListActivity.this, ProfileActivity.class));
         });
     }
-
+/*
     private void showWaitlistLimitDialog() {
         // Bring up waitlist dialog, adjust waitlist limit based on organizer input
+        if (eventObj == null) {
+            Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> waitingList = eventObj.getWait
+        // Placeholder for max attendees. If it is null in system, then there's no limit to the number of attendees
+        int maxAttendees = 999999;
+        int remainingSlots;
+        if (eventObj.getMaxAttendees() != null) {
+            maxAttendees = eventObj.getMaxAttendees();
+        }
+
+        if (waitingList == null || waitingList.isEmpty()) {
+            Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Calculate remaining slots
+        int alreadyRegistered = registeredAttendees != null ? registeredAttendees.size() : 0;
+        int alreadyInvited = invitedList != null ? invitedList.size() : 0;
+
+        if (maxAttendees != 999999) {
+            remainingSlots = maxAttendees - (alreadyRegistered + alreadyInvited);
+        } else {
+            remainingSlots = 999999;
+        }
+
+        if (remainingSlots <= 0) {
+            Toast.makeText(this, "All slots have been filled. Cannot sample more attendees.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Inflate dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_sample_attendees, null);
+
+        // Get references to dialog elements
+        TextView infoText = dialogView.findViewById(R.id.info_text);
+        EditText attendeeCountInput = dialogView.findViewById(R.id.attendee_count_input);
+        CheckBox sampleAllCheckbox = dialogView.findViewById(R.id.sample_all_checkbox);
+
+        // Update info text dynamically
+        if (maxAttendees == 999999) {
+            infoText.setText(String.format("Waiting List: %d | Max Attendees: No Limit | Already Registered: %d | Remaining Slots: No Limit",
+                    waitingList.size(), alreadyRegistered));
+        } else {
+            infoText.setText(String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
+                    waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots));
+        }
+
+        // Set default attendee count to min(remaining slots, waiting list size)
+        int defaultSampleSize = Math.min(remainingSlots, waitingList.size());
+        attendeeCountInput.setText(String.valueOf(defaultSampleSize));
+
+        // Update checkbox text dynamically
+        sampleAllCheckbox.setText(String.format("Sample all remaining %d attendees", defaultSampleSize));
+
+        // Disable input field when "Sample all remaining" is checked
+        sampleAllCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                attendeeCountInput.setEnabled(false);
+                attendeeCountInput.setText(String.valueOf(defaultSampleSize));
+            } else {
+                attendeeCountInput.setEnabled(true);
+            }
+        });
+
+        // Build and display the dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // Set button listeners in the dialog
+        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.confirmButton).setOnClickListener(v -> {
+            // Parse attendee count from input
+            int sampleSize;
+            try {
+                sampleSize = Integer.parseInt(attendeeCountInput.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number entered.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validate sample size
+            if (sampleSize <= 0 || sampleSize > remainingSlots) {
+                Toast.makeText(this, "Invalid number of attendees to sample.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Perform sampling and update lists
+            sampleAttendees(sampleSize, dialog);
+        });
+
+        dialog.show();
     }
+
+ */
 
     /**
      * Refreshes the waiting list by clearing the adapter and reloading the list.
