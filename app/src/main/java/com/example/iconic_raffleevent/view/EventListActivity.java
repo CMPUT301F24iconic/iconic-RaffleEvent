@@ -21,6 +21,7 @@ import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -145,8 +146,14 @@ public class EventListActivity extends AppCompatActivity {
             @Override
             public void onEventsFetched(ArrayList<Event> events) {
                 runOnUiThread(() -> {
+                    HashSet<String> eventIds = new HashSet<>();
                     eventList.clear();
-                    eventList.addAll(events);
+                    for (Event event : events) {
+                        if (!eventIds.contains(event.getEventId())) {
+                            eventIds.add(event.getEventId());
+                            eventList.add(event);
+                        }
+                    }
                     eventAdapter.notifyDataSetChanged();
                 });
             }
