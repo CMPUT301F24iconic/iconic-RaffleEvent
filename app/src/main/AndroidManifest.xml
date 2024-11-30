@@ -60,10 +60,11 @@
         <activity android:name=".view.ProfileActivity" android:exported="false" />
         <activity android:name=".view.EventListActivity" android:exported="false" />
         <activity android:name=".view.EventDetailsActivity" android:exported="false" />
-        <activity
-
-            android:name=".view.NotificationSettingsActivity"
+        <activity android:name=".view.NotificationSettingsActivity"
             android:exported="false" />
+
+        <service android:name=".view.notificationservice.FirestoreListenerService"
+            android:exported="false"/>
 
         <activity
             android:name=".view.MapActivity"
@@ -117,7 +118,7 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_GOOGLE_MAPS_API_KEY_HERE" />
+            android:value="${MAPS_API_KEY}" />
 
     </application>
 
