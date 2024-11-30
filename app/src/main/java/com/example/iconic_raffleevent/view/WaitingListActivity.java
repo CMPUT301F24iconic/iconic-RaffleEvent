@@ -52,7 +52,11 @@ public class WaitingListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private String eventId;
     private Event eventObj;
+
+    private Button setWaitlistLimitButton;
     private Button sampleAttendeesButton;
+    private Button notificationButton;
+
     private ArrayList<User> usersObj;
     private ArrayList<User> selectedUsersObj;
     private ArrayList<User> nonSelectedUsersObj;
@@ -102,7 +106,9 @@ public class WaitingListActivity extends AppCompatActivity {
         userRecyclerView = findViewById(R.id.userRecyclerView);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        setWaitlistLimitButton = findViewById(R.id.setWaitingListLimitButton);
         sampleAttendeesButton = findViewById(R.id.sampleAttendeesButton);
+        notificationButton = findViewById(R.id.sendNotification);
 
         // Initialize FirebaseAttendee controller
         firebaseAttendee = new FirebaseAttendee();
@@ -136,7 +142,22 @@ public class WaitingListActivity extends AppCompatActivity {
         loadWaitingList();
 
         // Set listener for sampling attendees
+        setWaitlistLimitButton.setOnClickListener(v -> showWaitlistLimitDialog());
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
+        notificationButton.setOnClickListener(v -> {
+            if (usersObj.isEmpty()) {
+                // No users to send notification to
+                Toast.makeText(WaitingListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
+
+            } else {
+                com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
+                        WaitingListActivity.this,
+                        usersObj,
+                        eventObj
+                );
+            }
+        });
+
 
         // Top nav bar
 //        notificationButton.setOnClickListener(v ->
@@ -156,6 +177,14 @@ public class WaitingListActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(WaitingListActivity.this, ProfileActivity.class));
         });
+    }
+
+    private void showNotifcationDialog() {
+        // Bring up notification dialog, send notification
+    }
+
+    private void showWaitlistLimitDialog() {
+        // Bring up waitlist dialog, adjust waitlist limit based on organizer input
     }
 
     /**
@@ -470,7 +499,7 @@ public class WaitingListActivity extends AppCompatActivity {
         // Send notification to selected user
         for (User user : selectedUsersObj) {
             Notification selectedNotification = new Notification();
-            selectedNotification.setSelected(Boolean.TRUE);
+            selectedNotification.setNotificationType("Selected");
             selectedNotification.setEventTitle(eventObj.getEventTitle());
             selectedNotification.setEventId(eventObj.getEventId());
             selectedNotification.setUserId(user.getUserId());
@@ -494,7 +523,7 @@ public class WaitingListActivity extends AppCompatActivity {
         // Send notification to non-selected user
         for (User user : nonSelectedUsersObj) {
             Notification selectedNotification = new Notification();
-            selectedNotification.setSelected(Boolean.FALSE);
+            selectedNotification.setNotificationType("notSelected");
             selectedNotification.setEventTitle(eventObj.getEventTitle());
             selectedNotification.setEventId(eventObj.getEventId());
             selectedNotification.setUserId(user.getUserId());

@@ -51,7 +51,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventTitleTextView;
     private TextView eventDescriptionTextView;
     private TextView eventLocationTextView;
-    private TextView eventDateTextView;
+    private TextView eventStartDateTextView;
+    private TextView eventEndDateTextView;
+    private TextView hosterTextView;
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
     private Button declineInvitationButton;
@@ -75,13 +77,16 @@ public class EventDetailsActivity extends AppCompatActivity {
     private EventController eventController;
     private String eventId;
     private UserController userController;
+    private UserController organizerController;
     private User userObj;
+    private User eventOrganizer;
     private GeoPoint userLocation;
     private Event eventObj;
     private String orgFacility;
 
     private Boolean isUserLoaded;
     private Boolean isEventLoaded;
+    private Boolean isOrganizerLoaded;
 
     // Geolocation
     private FusedLocationProviderClient fusedLocationClient;
@@ -95,11 +100,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_details);
+        setContentView(R.layout.activity_event_details_good);
 
         // set async checks
         isUserLoaded = false;
         isEventLoaded = false;
+        isOrganizerLoaded = false;
 
         // Initialize DrawerLayout and NavigationView
 //        drawerLayout = findViewById(R.id.drawer_layout);
@@ -110,7 +116,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventTitleTextView = findViewById(R.id.eventTitle);
         eventDescriptionTextView = findViewById(R.id.eventDescription);
         eventLocationTextView = findViewById(R.id.eventLocation);
-        eventDateTextView = findViewById(R.id.eventDate);
+        eventStartDateTextView = findViewById(R.id.eventDateStart);
+        eventEndDateTextView = findViewById(R.id.eventDateEnd);
+        hosterTextView = findViewById(R.id.hosterTitle);
         congratsMessage = findViewById(R.id.congratulations_card);
 
         // Link map button
@@ -222,6 +230,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onEventDetailsFetched(Event event) {
                 eventObj = event;
                 isEventLoaded = true;
+                fetchOrganizerDetails(eventObj.getOrganizerID());
                 checkUIUpdate();
             }
 
@@ -247,8 +256,18 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventTitleTextView.setText(event.getEventTitle());
         eventDescriptionTextView.setText(event.getEventDescription());
-        eventLocationTextView.setText(event.getEventLocation());
-        eventDateTextView.setText(event.getEventStartDate());
+        String eventLocationText = event.getEventLocation();
+        eventLocationTextView.setText(eventLocationText);
+
+        // Format start date text
+        String startDate = event.getEventStartDate() + ", " + event.getEventStartTime();
+        String endDate = event.getEventEndDate() + ", " + event.getEventEndTime();
+
+        eventStartDateTextView.setText(startDate);
+        eventEndDateTextView.setText(endDate);
+
+        String organizerText = "Organized by: " + eventOrganizer.getName();
+        hosterTextView.setText(organizerText);
 
         // Check if the current user is the organizer
         if (event.getOrganizerID().equals(userObj.getUserId())) {
@@ -472,7 +491,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                     leaveWaitingListButton.setEnabled(true);
                     isUserLoaded = true;
                     orgFacility = userObj.getFacilityId();
-                    System.out.println(orgFacility);
                     checkUIUpdate();
                 } else {
                     System.out.println("User information is null");
@@ -490,7 +508,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Checks if both the event and user data have been loaded. If so, updates the UI with the event details.
      */
     private void checkUIUpdate() {
-        if (isEventLoaded && isUserLoaded) {
+        if (isEventLoaded && isUserLoaded && isOrganizerLoaded) {
             updateUI(eventObj);
         }
     }
@@ -515,5 +533,27 @@ public class EventDetailsActivity extends AppCompatActivity {
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
         return userController;
+    }
+
+    /**
+     * Fetches the organizer details for the event so we can display who is hosting the event
+     * @param organizerId The organizer we want to fetch
+     */
+    private void fetchOrganizerDetails(String organizerId) {
+        organizerController = new UserController(organizerId, this);
+        organizerController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                eventOrganizer = user;
+                isOrganizerLoaded = Boolean.TRUE;
+                checkUIUpdate();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 }
