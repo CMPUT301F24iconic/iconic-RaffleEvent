@@ -333,7 +333,6 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Leaves the user's name from the waiting list for the event.
      */
     private void leaveWaitingList() {
-        // Need to implement functionality to remove geolocation from entrantLocations if they leave event
         eventController.leaveWaitingList(eventObj, userObj, new EventController.LeaveWaitingListCallback() {
             @Override
             public void onSuccess() {
@@ -430,14 +429,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             dialog.dismiss();
         });
     }
-
-    /**
-     * Shows a warning message if the event requires geolocation.
-     */
-    //private void showGeolocationWarning() {
-        // Show a dialog or toast message to warn the user about geolocation requirement
-        //Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
-    //}
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.
@@ -556,4 +547,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    
 }
