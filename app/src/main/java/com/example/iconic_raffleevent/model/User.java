@@ -25,7 +25,6 @@ public class User {
     private boolean loseNotificationPref;
     private String facilityId;
     private List<String> roles;
-    private String fcm;
 
     /**
      * Default constructor initializing user with default values.
@@ -307,14 +306,6 @@ public class User {
      */
     public boolean checkAdminRole() {
         return this.roles.contains("admin");
-    }
-
-    public String getUserFCM() {
-        return this.fcm;
-    }
-
-    public void setUserFCM(String fcm) {
-        this.fcm = fcm;
     }
 
     // Utility methods
