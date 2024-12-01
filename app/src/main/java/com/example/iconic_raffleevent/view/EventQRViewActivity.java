@@ -30,8 +30,10 @@ import java.io.IOException;
 
 public class EventQRViewActivity extends AppCompatActivity {
     private TextView eventTitle;
+    private TextView emptyMessage;
     private ImageView eventQrCodeView;
     private Button shareButton;
+    private Button generateButton;
 
     private ImageButton backButton;
 
@@ -55,9 +57,11 @@ public class EventQRViewActivity extends AppCompatActivity {
 
         // Link UI
         eventTitle = findViewById(R.id.qrcode_title);
+        emptyMessage = findViewById(R.id.empty_message);
         eventQrCodeView = findViewById(R.id.qrcode_view);
         backButton = findViewById(R.id.back_button);
         shareButton = findViewById(R.id.share_button);
+        generateButton = findViewById(R.id.generate_button);
 
         eventController = new EventController();
         eventId = getIntent().getStringExtra("eventId");
@@ -71,6 +75,10 @@ public class EventQRViewActivity extends AppCompatActivity {
         shareButton.setOnClickListener(v -> {
             // Allow user to share qr code externally
             shareQrCode();
+        });
+
+        generateButton.setOnClickListener(v -> {
+            generateNewQRCode();
         });
     }
 
@@ -104,21 +112,51 @@ public class EventQRViewActivity extends AppCompatActivity {
         if (event != null) {
             String qrUrl = event.getEventQrUrl();
 
-            if (qrUrl != null) {
+            if (qrUrl != null && !qrUrl.isEmpty()) {
                 Glide.with(this)
                         .load(qrUrl)
                         .into(eventQrCodeView);
-                shareButton.setVisibility(View.VISIBLE); // Show the share button
+                shareButton.setVisibility(View.VISIBLE);
+                generateButton.setVisibility(View.INVISIBLE);
+                emptyMessage.setVisibility(View.INVISIBLE);
+                eventQrCodeView.setVisibility(View.VISIBLE);
             } else {
-                // Set a placeholder image when QR code is deleted
-                eventQrCodeView.setImageResource(R.drawable.placeholder_image); // Use your placeholder image
-                shareButton.setVisibility(View.GONE); // Hide the share button
+                // Set a placeholder text
+                eventQrCodeView.setVisibility(View.INVISIBLE);
+                shareButton.setVisibility(View.INVISIBLE);
+                emptyMessage.setVisibility(View.VISIBLE);
+                generateButton.setVisibility(View.VISIBLE);
                 Toast.makeText(this, "QR code not available for this event.", Toast.LENGTH_SHORT).show();
             }
 
             String eventTitleText = event.getEventTitle() + "'s QR Code";
             eventTitle.setText(eventTitleText);
         }
+    }
+
+    private void generateNewQRCode() {
+        // Create hashed qr code
+        String hashedQrData = "event_" + eventObj.getEventId();
+        eventObj.setQrCode(hashedQrData);
+
+        eventController.uploadEventQRCode(eventObj, new EventController.UploadEventQRCodeCallback() {
+            @Override
+            public void onSuccessfulQRUpload(String qrUrl) {
+                eventObj.setEventQrUrl(qrUrl);
+
+                if (qrUrl != null && !qrUrl.isEmpty()) {
+                    eventController.updateEventDetails(eventObj);
+                    recreate();
+                } else {
+                    Toast.makeText(EventQRViewActivity.this, "QR Code URL is missing!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventQRViewActivity.this, "QR Code generation failed: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void shareQrCode() {
@@ -132,7 +170,7 @@ public class EventQRViewActivity extends AppCompatActivity {
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, qrUri);
-        intent.putExtra(Intent.EXTRA_TEXT, "Share this QR code to get people interested in your event");
+        intent.putExtra(Intent.EXTRA_TEXT, "Scan this QR code to join the event waitlist. Feel free to share with others!");
         intent.putExtra(Intent.EXTRA_SUBJECT, "QR Code");
         intent.setType("image/jpeg");
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -140,7 +178,7 @@ public class EventQRViewActivity extends AppCompatActivity {
     }
 
     private Bitmap generateBitmap() {
-        // Create a new Bitmap object with the desired width and height
+        // Create a new Bitmap for the QR code so it can be shared
         QrBitmap = Bitmap.createBitmap(eventQrCodeView.getWidth(), eventQrCodeView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(QrBitmap);
         eventQrCodeView.draw(canvas);
