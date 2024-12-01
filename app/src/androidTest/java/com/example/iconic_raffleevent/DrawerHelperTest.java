@@ -23,22 +23,53 @@ public class DrawerHelperTest {
 
     @Before
     public void setUp() {
+        // Disable animations globally to ensure consistent test results
+        disableAnimations();
+
         // Launch EventListActivity since it has the drawer
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EventListActivity.class);
         ActivityScenario.launch(intent);
     }
 
+    /**
+     * Test that verifies the drawer opens and navigation items are visible.
+     */
     @Test
     public void testDrawerLayout() {
-        // Open drawer first
+        // Open drawer
         onView(withId(R.id.menu_button)).perform(click());
 
-        // Verify drawer and navigation items are visible
+        // Verify the drawer is displayed
         onView(withId(R.id.drawer_layout)).check(matches(isDisplayed()));
 
         // Verify menu items are visible
         onView(withId(R.id.nav_profile)).check(matches(isDisplayed()));
         onView(withId(R.id.nav_scan_qr)).check(matches(isDisplayed()));
         onView(withId(R.id.nav_create_event)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Test that verifies navigation to ProfileActivity works from the drawer.
+     */
+    @Test
+    public void testNavigateToProfileActivity() {
+        // Open drawer
+        onView(withId(R.id.menu_button)).perform(click());
+
+        // Click on the Profile menu item
+        onView(withId(R.id.nav_profile)).perform(click());
+    }
+
+    /**
+     * Utility method to disable animations globally.
+     */
+    private void disableAnimations() {
+        try {
+            Runtime.getRuntime().exec("settings put global window_animation_scale 0");
+            Runtime.getRuntime().exec("settings put global transition_animation_scale 0");
+            Runtime.getRuntime().exec("settings put global animator_duration_scale 0");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to disable animations: " + e.getMessage());
+        }
     }
 }

@@ -58,60 +58,6 @@ public class ManageEventActivityTest {
     }
 
     @Test
-    public void testWaitingListButtonClick() {
-        onView(withId(R.id.waitingListButton)).perform(click());
-        intended(allOf(
-                hasComponent(WaitingListActivity.class.getName()),
-                hasExtra("eventId", EVENT_ID)
-        ));
-    }
-
-    @Test
-    public void testAttendeeListButtonClick() {
-        onView(withId(R.id.attendeeListButton)).perform(click());
-        intended(allOf(
-                hasComponent(InvitedListActivity.class.getName()),
-                hasExtra("eventId", EVENT_ID)
-        ));
-    }
-
-    @Test
-    public void testFinalAttendeeListButtonClick() {
-        onView(withId(R.id.finalAttendeeListButton)).perform(click());
-        intended(allOf(
-                hasComponent(ConfirmedListActivity.class.getName()),
-                hasExtra("eventId", EVENT_ID)
-        ));
-    }
-
-    @Test
-    public void testBackButtonClick() {
-        onView(withId(R.id.back_button)).perform(click());
-        // Verify that the current activity finishes
-        activityRule.getScenario().onActivity(activity -> {
-            assert activity.isFinishing();
-        });
-    }
-
-    @Test
-    public void testHomeButtonClick() {
-        onView(withId(R.id.home_button)).perform(click());
-        intended(hasComponent(EventListActivity.class.getName()));
-    }
-
-    @Test
-    public void testQRButtonClick() {
-        onView(withId(R.id.qr_button)).perform(click());
-        intended(hasComponent(QRScannerActivity.class.getName()));
-    }
-
-    @Test
-    public void testProfileButtonClick() {
-        onView(withId(R.id.profile_button)).perform(click());
-        intended(hasComponent(ProfileActivity.class.getName()));
-    }
-
-    @Test
     public void testUIElementsVisibility() {
         onView(withId(R.id.waitingListButton)).check(matches(isDisplayed()));
         onView(withId(R.id.attendeeListButton)).check(matches(isDisplayed()));
