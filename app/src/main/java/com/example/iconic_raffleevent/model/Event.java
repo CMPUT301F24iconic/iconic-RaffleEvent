@@ -28,6 +28,7 @@ public class Event {
     private Integer maxAttendees;
     private boolean geolocationRequired;
     private List<String> waitingList;
+    private Integer waitingListLimit;
     private List<String> registeredAttendees;
     private String qrCode;
     private String organizerId;
@@ -47,6 +48,8 @@ public class Event {
         invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
+        this.waitingListLimit = Integer.MAX_VALUE;
+        this.maxAttendees = Integer.MAX_VALUE;
     }
 
     // Getters and setters
@@ -197,18 +200,35 @@ public class Event {
 
     /**
      * Gets the maximum number of attendees for the event.
-     * @return the max number of attendees as an int
+     *
+     * @return the max number of attendees, or Integer.MAX_VALUE if not explicitly set.
      */
     public Integer getMaxAttendees() {
-        return maxAttendees;
+        return maxAttendees != null ? maxAttendees : Integer.MAX_VALUE;
     }
 
     /**
      * Sets the maximum number of attendees for the event.
-     * @param maxAttendees the max number of attendees as an int
+     *
+     * @param maxAttendees the maximum number of attendees.
+     *                     If null or negative, it defaults to Integer.MAX_VALUE.
      */
     public void setMaxAttendees(Integer maxAttendees) {
-        this.maxAttendees = maxAttendees;
+        if (maxAttendees == null || maxAttendees < 0) {
+            this.maxAttendees = Integer.MAX_VALUE;
+        } else {
+            this.maxAttendees = maxAttendees;
+        }
+    }
+
+    /**
+     * Checks if the maximum attendees limit has been reached.
+     *
+     * @return true if the registered attendees count is greater than or equal to the limit,
+     *         or false if the limit has not been reached.
+     */
+    public boolean isMaxAttendeesLimitReached() {
+        return registeredAttendees != null && registeredAttendees.size() >= getMaxAttendees();
     }
 
     /**
@@ -241,6 +261,39 @@ public class Event {
      */
     public void setWaitingList(List<String> waitingList) {
         this.waitingList = waitingList;
+    }
+
+    /**
+     * Gets the waiting list limit.
+     *
+     * @return the waiting list limit, or Integer.MAX_VALUE if no limit is set.
+     */
+    public Integer getWaitingListLimit() {
+        return waitingListLimit != null ? waitingListLimit : Integer.MAX_VALUE;
+    }
+
+    /**
+     * Sets the waiting list limit.
+     *
+     * @param waitingListLimit the maximum number of entries allowed in the waiting list.
+     *                        If null or negative, it defaults to Integer.MAX_VALUE.
+     */
+    public void setWaitingListLimit(Integer waitingListLimit) {
+        if (waitingListLimit == null || waitingListLimit < 0) {
+            this.waitingListLimit = Integer.MAX_VALUE;
+        } else {
+            this.waitingListLimit = waitingListLimit;
+        }
+    }
+
+    /**
+     * Checks if the waiting list limit has been reached.
+     *
+     * @return true if the waiting list size is greater than or equal to the limit,
+     *         or false if the limit has not been reached.
+     */
+    public boolean isWaitingListLimitReached() {
+        return waitingList != null && waitingList.size() >= getWaitingListLimit();
     }
 
     /**

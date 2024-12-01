@@ -165,10 +165,17 @@ public class CreateFacilityActivity extends AppCompatActivity {
                 public void onFacilityCreated(String facilityId) {
                     Toast.makeText(CreateFacilityActivity.this, "Facility created successfully", Toast.LENGTH_SHORT).show();
 
-                    // Redirect back to the Create Event page
-                    Intent intent = new Intent(CreateFacilityActivity.this, CreateEventActivity.class);
-                    intent.putExtra("facilityId", facilityId); // Pass the facilityId
-                    intent.putExtra("userId", userId); // Pass the userId back
+                    boolean fromCreateEvent = getIntent().getBooleanExtra("fromCreateEvent", false);
+                    Intent intent;
+                    if (fromCreateEvent) {
+                        // Redirect to Create Event page
+                        intent = new Intent(CreateFacilityActivity.this, CreateEventActivity.class);
+                        intent.putExtra("facilityId", facilityId);
+                    } else {
+                        // Redirect to Home or Facility Access page
+                        intent = new Intent(CreateFacilityActivity.this, EventListActivity.class);
+                    }
+                    intent.putExtra("userId", userId);
                     startActivity(intent);
                     finish();
                 }

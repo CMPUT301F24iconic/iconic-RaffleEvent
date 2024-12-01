@@ -62,7 +62,20 @@ public class EventController {
     }
 
     /**
+     * Validates and sets the waiting list limit for an event.
+     * Ensures that the limit is greater than or equal to the current waiting list size.
+     *
+     * @param eventId          The ID of the event.
+     * @param waitingListLimit The new waiting list limit.
+     * @param callback         Callback to handle success or error.
+     */
+    public void setWaitingListLimit(String eventId, int waitingListLimit, UpdateEventCallback callback) {
+        firebaseAttendee.setWaitingListLimit(eventId, waitingListLimit, callback);
+    }
+
+    /**
      * Adds a user to the event's waiting list with their location.
+     * Checks if the waiting list limit has been reached before adding the user.
      *
      * @param eventId        The ID of the event.
      * @param user           The user.
@@ -75,6 +88,7 @@ public class EventController {
 
     /**
      * Adds a user to the event's waiting list without their location.
+     * Checks if the waiting list limit has been reached before adding the user.
      *
      * @param eventId   The ID of the event.
      * @param userId    The ID of the user.
@@ -255,6 +269,15 @@ public class EventController {
         void onEventsFetched(ArrayList<Event> events);
         void onError(String message);
     }
+
+    /**
+     * Callback interface for updating event details.
+     */
+    public interface UpdateEventCallback {
+        void onSuccess();
+        void onError(String message);
+    }
+
 
     /**
      * Callback interface for joining a waiting list.
