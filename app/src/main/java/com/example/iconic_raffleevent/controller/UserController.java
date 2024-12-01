@@ -55,12 +55,6 @@ public class UserController {
     // Regex pattern for validating phone numbers (US/international format)
     // private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
 
-
-
-    public void getUserFCM(GetUserFCMCallback callback) {
-        firebaseAttendee.getUserFCM(callback);
-    }
-
     /**
      * Adds a new user to the Firebase Firestore database.
      *
@@ -84,14 +78,6 @@ public class UserController {
      * @param callback The callback to notify the result of the update operation.
      */
     public void updateProfile(User user, String name, String email, String phoneNo, UpdateProfileCallback callback) {
-//        if (!phoneNo.isEmpty()) {
-//            if (!isValidPhoneNumber(phoneNo)) {
-//                Log.e(TAG, "Invalid phone number format");
-//                callback.onError("Invalid phone number format");
-//                return;
-//            }
-//        }
-
         user.setName(name);
         user.setEmail(email);
         user.setPhoneNo(phoneNo);
@@ -107,6 +93,7 @@ public class UserController {
             }
         });
     }
+
 //    /**
 //     * Validates the format of the phone number.
 //     *
@@ -200,7 +187,6 @@ public class UserController {
             callback.onError("No profile image to remove");
         }
     }
-
 
     /**
      * Sets the notification preference for the user.
@@ -361,7 +347,16 @@ public class UserController {
      * Callback interface for fetching a list of users from the Firestore database.
      */
     public interface UserListCallback {
+        /**
+         * Callback which contains a list of User objects
+         * @param users List of users
+         */
         void onUsersFetched(ArrayList<User> users);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -369,7 +364,16 @@ public class UserController {
      * Callback interface for profile image upload success or failure.
      */
     public interface ProfileImageUploadCallback {
+        /**
+         * Callback which contains the imageUrl for a users profile photo
+         * @param imageUrl Url of profile image
+         */
         void onProfileImageUploaded(String imageUrl);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -377,7 +381,15 @@ public class UserController {
      * Callback interface for profile image removal success or failure.
      */
     public interface ProfileImageRemovalCallback {
+        /**
+         * Callback which is called upon successful remove profile image operation
+         */
         void onProfileImageRemoved();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -385,7 +397,16 @@ public class UserController {
      * Callback interface for fetching user information.
      */
     public interface UserFetchCallback {
+        /**
+         * Callback which contains a User object
+         * @param user User that is fetched
+         */
         void onUserFetched(User user);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -393,7 +414,16 @@ public class UserController {
      * Callback interface for receiving location data.
      */
     public interface OnLocationReceivedCallback {
+        /**
+         * Callback which contains a geopoint locations
+         * @param location Geopoint coordinates of a user's location
+         */
         void onLocationReceived(GeoPoint location);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -401,7 +431,15 @@ public class UserController {
      * Callback interface for deleting a user from the Firestore database.
      */
     public interface DeleteUserCallback {
+        /**
+         * Callback which is called upon successful delete user operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -409,7 +447,15 @@ public class UserController {
      * Callback interface for adding a user.
      */
     public interface AddUserCallback {
+        /**
+         * Callback which is called upon successful add user operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -417,7 +463,15 @@ public class UserController {
      * Callback interface for updating a user.
      */
     public interface UpdateUserCallback {
+        /**
+         * Callback which is called upon successful update user operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -443,11 +497,11 @@ public class UserController {
      */
     public interface UpdateProfileCallback {
         void onProfileUpdated();
-        void onError(String message);
-    }
 
-    public interface GetUserFCMCallback {
-        void onFCMFetched(String fcm);
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }
