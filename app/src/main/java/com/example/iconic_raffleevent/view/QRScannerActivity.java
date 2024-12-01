@@ -113,6 +113,9 @@ public class QRScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Toggles phone flashlight on or off
+     */
     private void toggleFlashlight() {
         if (cameraSource != null) {
             if (isFlashlightOn) {
@@ -137,6 +140,12 @@ public class QRScannerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the device camera
+     *
+     * @param cameraSource camera source
+     * @return Instance of camera to be opened
+     */
     private Camera getCamera(CameraSource cameraSource) {
         Field[] declaredFields = CameraSource.class.getDeclaredFields();
 
@@ -288,6 +297,18 @@ public class QRScannerActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Scans a QR code if present and redirect user to event details page
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -322,6 +343,9 @@ public class QRScannerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Create scanning wave animation
+     */
     private void startScanningWaveAnimation() {
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.setDuration(1000); // Adjust the duration to make it move faster
@@ -336,10 +360,16 @@ public class QRScannerActivity extends AppCompatActivity {
         scanningWave.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Stop scanning wave animation
+     */
     private void stopScanningWaveAnimation() {
         scanningWave.setVisibility(View.GONE);
     }
 
+    /**
+     * Create a dialog to tell the user that a qr could not be found in the image they scanned
+     */
     private void showQRCodeNotFoundDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("QR Code Not Found")
@@ -355,6 +385,10 @@ public class QRScannerActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Create a dialog to show there was an error scanning the image
+     * @param message error message
+     */
     private void showErrorDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error")
@@ -368,12 +402,19 @@ public class QRScannerActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .show();
     }
+
+    /**
+     * Called when activity is resumed
+     */
     @Override
     protected void onResume() {
         super.onResume();
         startScanningWaveAnimation();
     }
 
+    /**
+     * Called when activity gets paused
+     */
     @Override
     protected void onPause() {
         super.onPause();

@@ -504,7 +504,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     /**
      * Retrieves the unique user ID for the device. This ID is based on the device's Android Secure Settings.
-     *
      * @return A unique string identifier for the device.
      */
     private String getUserID() {

@@ -230,6 +230,10 @@ public class InvitedListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Create a dialog showing the profile image for a specific user
+     * @param user User object of the profile image being displayed in dialog
+     */
     private void showProfileImageDialog(User user) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);

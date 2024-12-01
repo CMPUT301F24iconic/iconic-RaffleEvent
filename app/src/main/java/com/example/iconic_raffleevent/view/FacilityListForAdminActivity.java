@@ -66,6 +66,10 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Generates a dialog showing the details of a specific facility
+     * @param facility Facility who's details will be displayed
+     */
     private void showFacilityDetailsDialog(Facility facility) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_facility_details, null);
@@ -101,6 +105,10 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Deletes a facility from the database
+     * @param facilityId Facility ID of facility to be deleted
+     */
     private void deleteFacility(String facilityId) {
         facilityController.deleteFacility(facilityId, new FacilityController.DeleteFacilityCallback() {
             @Override

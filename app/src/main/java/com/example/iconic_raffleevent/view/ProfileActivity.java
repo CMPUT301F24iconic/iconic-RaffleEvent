@@ -193,6 +193,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * If any profile details have been changed, including the profile photo, display save button
+     */
     private void updateSaveButtonVisibility() {
         if (profileChanged || photoChanged) {
             saveButton.setVisibility(View.VISIBLE);
@@ -319,6 +322,11 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Handle discarded changes with profile details
+     *
+     * @param navigationAction action to called
+     */
     private void handleNavigationWithUnsavedChanges(Runnable navigationAction) {
         if (profileChanged || photoChanged) {
             new AlertDialog.Builder(this)
@@ -439,6 +447,9 @@ public class ProfileActivity extends AppCompatActivity {
         userController.setNotificationsEnabled(currentUser, notificationsEnabled);
     }
 
+    /**
+     * Checks for any changes in text inputs
+     */
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -527,7 +538,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // Handle back navigation with unsaved changes
+
+    /**
+     * Handles back navigation when profile changes are discarded
+     */
     private void handleBackNavigation() {
         if (profileChanged || photoChanged) {
             new AlertDialog.Builder(this)
@@ -546,6 +560,7 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
         }
     }
+
     /**
      * Generates an avatar based on the user's name and sets it as the profile image.
      *

@@ -467,18 +467,36 @@ public class Event {
         return facilityId;
     }
 
+    /**
+     * Gets a maps containing all the entrants who joined a waitlist and the locations they joined from
+     * @return Map<String, Object> The map of entrants and their locations
+     */
     public Map<String, Object> getLocations() {
         return locations;
     }
 
+    /**
+     * Sets a map containing entrants and their locations
+     * @param locations a map holding entrant IDs as the key and their location as the value
+     */
     public void setLocations(Map<String, Object> locations) {
         this.locations = locations;
     }
 
+    /**
+     * Adds a location to the locations map
+     * @param key user ID
+     * @param location Location user joined waitlist from
+     */
     public void addLocation(String key, Object location) {
         this.locations.put(key, location);
     }
 
+    /**
+     * Gets a location based on an entrant id
+     * @param key entrant id
+     * @return Object of users location
+     */
     public Object getLocation(String key) {
         return this.locations.get(key);
     }

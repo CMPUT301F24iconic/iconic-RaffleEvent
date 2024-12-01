@@ -21,8 +21,18 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Utility class for creating and sending notifications. Can be called from multiple activities,
+ * allowing organizers to send a custom notification to multiple users.
+ */
 public class NotificationUtils {
 
+    /**
+     * Generates a dialog allowing an organizer to type and send a custom notification
+     * @param context context dialog is being opened in
+     * @param users list of users to send the notification to
+     * @param event event related to notification
+     */
     public static void showNotificationDialog(
             Context context,
             ArrayList<User> users,
@@ -60,31 +70,48 @@ public class NotificationUtils {
         dialog.show();
     }
 
+    /**
+     * Ensure notification message is not empty
+     * @param notificationMessageLayout layout for the notification message
+     * @param notificationMessage notification message
+     * @return True if notification message is valid, False otherwise
+     */
     public static Boolean validateNotification(TextInputLayout notificationMessageLayout, TextInputEditText notificationMessage) {
         // Check if notification is valid
         if (notificationMessage == null || notificationMessage.getText().length() == 0) {
             notificationMessageLayout.setError("Notification cannot be empty");
 
-            // Return false to indicate notification is not valid
+            // message not valid
             return Boolean.FALSE;
         }
 
-        // Return true to indicate notification is valid
+        // message valid
         return Boolean.TRUE;
     }
 
+    /**
+     * Sends a notification to the specified list of users
+     *
+     * @param context context dialog exists in
+     * @param users lists of users notification is being sent too
+     * @param event event notification is related to
+     * @param message notification message
+     * @param dialog notification dialog
+     */
     public static void sendNotification(
             Context context,
             ArrayList<User> users,
             Event event,
             String message,
             AlertDialog dialog) {
+
         // Create necessary controllers
         NotificationController notificationController = new NotificationController();
 
         AtomicBoolean allSentSuccessfully = new AtomicBoolean(true);
         AtomicInteger pendingNotifications = new AtomicInteger(users.size());
 
+        // For each user in the list, generate a new notification and add it to the notifications database
         for (User user : users) {
             Notification selectedNotification = new Notification();
             selectedNotification.setNotificationType("General");
@@ -108,6 +135,9 @@ public class NotificationUtils {
                     checkCompletion();
                 }
 
+                /**
+                 * Check to see if all notifications were sent successfully
+                 */
                 private void checkCompletion() {
                     if (pendingNotifications.decrementAndGet() == 0) {
                         if (allSentSuccessfully.get()) {
