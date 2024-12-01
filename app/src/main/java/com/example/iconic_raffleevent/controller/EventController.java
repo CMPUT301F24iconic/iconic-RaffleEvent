@@ -267,7 +267,7 @@ public class EventController {
         void onEventMapFetched(Map<String, Object> locations);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -284,7 +284,7 @@ public class EventController {
         void onEventDetailsFetched(Event event);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -301,7 +301,7 @@ public class EventController {
         void onEventsFetched(ArrayList<Event> events);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -317,7 +317,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -334,7 +334,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -350,7 +350,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -366,7 +366,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -383,7 +383,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -400,7 +400,7 @@ public class EventController {
         void onEventFound(String eventId);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -417,7 +417,7 @@ public class EventController {
         void onSuccessfulUpload(String posterUrl);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -434,7 +434,7 @@ public class EventController {
         void onSuccessfulQRUpload(String qrUrl);
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -450,7 +450,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -466,7 +466,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
@@ -479,7 +479,7 @@ public class EventController {
         void onSuccess();
 
         /**
-         * Returns an error message
+         * Callback which contains an error message
          * @param message description of the error
          */
         void onError(String message);
