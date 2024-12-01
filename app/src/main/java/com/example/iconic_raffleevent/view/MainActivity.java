@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
+import com.example.iconic_raffleevent.view.notificationservice.FirestoreListenerService;
 
 /**
  * The main activity for the Iconic Raffle Event application.
@@ -85,8 +86,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "User not found. Redirecting to registration.");
                     navigateToActivity(NewUserActivity.class); // Direct new users to registration
                 } else if (user.checkAdminRole()) {
+                    Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
+                    startService(intent);
                     navigateToActivity(RoleSelectionActivity.class);
                 } else {
+                    Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
+                    startService(intent);
                     navigateToActivity(EventListActivity.class);
                 }
             }
@@ -106,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void navigateToActivity(Class<?> activityClass) {
         runOnUiThread(() -> {
-            Intent intent = new Intent(MainActivity.this, activityClass);
-            startActivity(intent);
+            Intent intent2 = new Intent(MainActivity.this, activityClass);
+            startActivity(intent2);
             finish(); // Close MainActivity after navigation
         });
     }

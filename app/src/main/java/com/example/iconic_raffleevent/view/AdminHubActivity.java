@@ -22,7 +22,6 @@ public class AdminHubActivity extends AppCompatActivity {
 
     private Button manageUsersButton;
     private Button manageEventsButton;
-    private Button manageImagesButton;
     private Button manageQRCodeButton;
     private Button manageFacilitiesButton;
     private Button backToRoleSelectionButton;
@@ -43,7 +42,6 @@ public class AdminHubActivity extends AppCompatActivity {
         // Initialize buttons
         manageUsersButton = findViewById(R.id.manage_users_button);
         manageEventsButton = findViewById(R.id.manage_events_button);
-        manageImagesButton = findViewById(R.id.manage_images_button);
         manageQRCodeButton = findViewById(R.id.manage_qr_code_button);
         manageFacilitiesButton = findViewById(R.id.manage_facilities_button);
         backToRoleSelectionButton = findViewById(R.id.back_to_role_selection_button);
@@ -62,12 +60,8 @@ public class AdminHubActivity extends AppCompatActivity {
             startActivity(new Intent(this, EventListForAdminActivity.class));
         });
 
-        manageImagesButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, ImageManagementActivity.class));
-        });
-
         manageQRCodeButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, QRCodeManagementActivity.class));
+            startActivity(new Intent(this, QRCodeGalleryActivity.class));
         });
 
         manageFacilitiesButton.setOnClickListener(v -> {

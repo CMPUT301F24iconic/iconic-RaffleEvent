@@ -11,12 +11,14 @@
     <color name="backgroundColor">#F5F5F5</color> <!-- Main background color for the app -->
     <color name="cardBackgroundColor">#FFFFFF</color> <!-- Background color for cards -->
     <color name="dividerColor">#E0E0E0</color> <!-- Color for dividers or separators -->
+    <color name="mapPlaceholder">#f0f0f0</color>
 
     <!-- Text Colors -->
     <color name="textColorPrimary">#212121</color> <!-- Primary text color -->
     <color name="textColorSecondary">#757575</color> <!-- Secondary text color for subtext -->
     <color name="textColorOnPrimary">#FFFFFF</color> <!-- Text color on primary color backgrounds -->
     <color name="textColorOnSecondary">#D129ED</color> <!-- Text color on secondary color backgrounds -->
+    <color name="locationIconColor">#41b498</color>
 
     <!-- Button Colors -->
     <color name="buttonTextColor">#FFFFFF</color> <!-- Text color for buttons with Dark theme background -->

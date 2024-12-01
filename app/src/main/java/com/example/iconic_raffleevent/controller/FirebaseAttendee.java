@@ -18,6 +18,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
@@ -245,7 +246,7 @@ public class FirebaseAttendee {
             if (task.isSuccessful()) {
                 Event event = task.getResult().toObject(Event.class);
                 if (event != null) {
-                    ArrayList<GeoPoint> locations = event.getEntrantLocations();
+                    Map<String, Object> locations = event.getLocations();
                     callback.onEventMapFetched(locations);
                 }
             } else {
@@ -279,58 +280,135 @@ public class FirebaseAttendee {
     }
 
     /**
-     * Adds the user to the event's waiting list along with their location.
-     * This method updates both the "waitingList" and "entrantLocations" fields of the event document.
+     * Updates the waiting list limit for a specific event.
+     * Validates and sets the new limit, ensuring it is not less than the current waiting list size.
      *
-     * @param eventId      The ID of the event to join.
-     * @param userId       The ID of the user joining the event.
-     * @param userLocation The location of the user.
-     * @param callback     The callback interface to notify the success or failure of the operation.
+     * @param eventId          The ID of the event.
+     * @param waitingListLimit The new waiting list limit.
+     * @param callback         Callback to notify success or failure.
      */
-    public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
-        DocumentReference eventRef = eventsCollection.document(eventId);
-        WriteBatch writebatch = FirebaseFirestore.getInstance().batch();
+    public void setWaitingListLimit(String eventId, int waitingListLimit, EventController.UpdateEventCallback callback) {
+        eventsCollection.document(eventId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        Event event = task.getResult().toObject(Event.class);
+                        if (event != null) {
+                            // Validate waiting list limit
+                            int minimumLimit = event.getWaitingList() != null ? event.getWaitingList().size() : 0;
 
-        writebatch.update(eventRef, "waitingList", FieldValue.arrayUnion(userId));
-        writebatch.update(eventRef, "entrantLocations", FieldValue.arrayUnion(userLocation));
+                            if (waitingListLimit >= minimumLimit) {
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("waitingListLimit", waitingListLimit);
 
-        writebatch.commit().addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to join waiting list"));
+                                eventsCollection.document(eventId).update(updates)
+                                        .addOnSuccessListener(aVoid -> callback.onSuccess())
+                                        .addOnFailureListener(e -> callback.onError("Failed to update waiting list limit: " + e.getMessage()));
+                            } else {
+                                callback.onError("Limit must be at least " + minimumLimit + ".");
+                            }
+                        } else {
+                            callback.onError("Event not found");
+                        }
+                    } else {
+                        callback.onError("Failed to fetch event details");
+                    }
+                });
     }
+
+  /**
+ * Adds a user to the event's waiting list with their location.
+ * Ensures the waiting list limit has not been reached before adding the user.
+ *
+ * @param eventId      The ID of the event.
+ * @param user         The user joining the event.
+ * @param userLocation The location of the user.
+ * @param callback     The callback to notify success or failure.
+ */
+public void joinWaitingListWithLocation(String eventId, User user, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
+    DocumentReference eventRef = eventsCollection.document(eventId);
+    eventRef.get().addOnCompleteListener(task -> {
+        if (task.isSuccessful() && task.getResult().exists()) {
+            Event event = task.getResult().toObject(Event.class);
+            if (event != null && !event.isWaitingListLimitReached()) {
+                WriteBatch writeBatch = db.batch();
+
+                // Add user ID to waitingList
+                writeBatch.update(eventRef, "waitingList", FieldValue.arrayUnion(user.getUserId()));
+
+                // Prepare location data with key as "userId-userName"
+                Map<String, Object> userPoint = new HashMap<>();
+                userPoint.put("locations." + user.getUserId() + "-" + user.getName(), userLocation);
+                writeBatch.update(eventRef, userPoint);
+
+                // Commit the batch
+                writeBatch.commit()
+                        .addOnSuccessListener(aVoid -> callback.onSuccess())
+                        .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
+            } else {
+                callback.onError("Waiting list limit reached or event not found");
+            }
+        } else {
+            callback.onError("Failed to fetch event details");
+        }
+    });
+}
 
     /**
      * Adds a user to the event's waiting list without including their location.
-     * This method updates the "waitingList" field of the event document by adding the user ID.
+     * Ensures the waiting list limit has not been reached before adding the user.
      *
      * @param eventId The ID of the event to which the user is joining the waiting list.
      * @param userId The ID of the user joining the waiting list.
      * @param callback The callback to notify the success or failure of the operation.
      */
     public void joinWaitingListWithoutLocation(String eventId, String userId, EventController.JoinWaitingListCallback callback) {
-        DocumentReference eventRef = eventsCollection.document(eventId);
-        eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
+        eventsCollection.document(eventId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        Event event = task.getResult().toObject(Event.class);
+                        if (event != null && !event.isWaitingListLimitReached()) {
+                            eventsCollection.document(eventId)
+                                    .update("waitingList", FieldValue.arrayUnion(userId))
+                                    .addOnSuccessListener(aVoid -> callback.onSuccess())
+                                    .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
+                        } else {
+                            callback.onError("Waiting list limit reached or event not found");
+                        }
+                    } else {
+                        callback.onError("Failed to fetch event details");
+                    }
+                });
     }
 
     /**
      * Removes a user from the event's waiting list.
      * This method updates the "waitingList" field of the event document by removing the user ID.
      *
-     * @param eventId The ID of the event from which the user is leaving the waiting list.
-     * @param userId The ID of the user leaving the waiting list.
+     * @param event The event we are removing the user from
+     * @param user The user leaving the waiting list.
      * @param callback The callback to notify the success or failure of the operation.
      */
-    public void leaveWaitingList(String eventId, String userId, EventController.LeaveWaitingListCallback callback) {
-        DocumentReference eventRef = eventsCollection.document(eventId);
-        eventRef.update("waitingList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
+    public void leaveWaitingList(Event event, User user, EventController.LeaveWaitingListCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        WriteBatch writeBatch = FirebaseFirestore.getInstance().batch();
+
+        writeBatch.update(eventRef, "waitingList", FieldValue.arrayRemove(user.getUserId()));
+
+        if (event.isGeolocationRequired() == Boolean.TRUE) {
+            writeBatch.update(eventRef, "locations." + user.getUserId() + "-" + user.getName(), FieldValue.delete());
+        }
+
+        writeBatch.commit()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
     }
 
     /**
-     * Accepts an event invitation for a user, adding them to the registered attendees list and removing from invitedList.
-     * This method updates the "registeredAttendees" and "invitedList" fields of the event document by adding the user ID.
+     * Accepts an event invitation for a user by adding them to the registered attendees list
+     * and removing them from the invited list. Validates the event capacity to ensure the
+     * maxAttendees limit is not exceeded.
      *
      * @param eventId The ID of the event to which the user is accepting the invitation.
      * @param userId The ID of the user accepting the invitation.
@@ -338,13 +416,27 @@ public class FirebaseAttendee {
      */
     public void acceptEventInvitation(String eventId, String userId, EventController.AcceptInvitationCallback callback) {
         DocumentReference eventRef = eventsCollection.document(eventId);
-        eventRef.update("registeredAttendees", com.google.firebase.firestore.FieldValue.arrayUnion(userId))
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
 
-        eventRef.update("invitedList", com.google.firebase.firestore.FieldValue.arrayRemove(userId))
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to accept invitation"));
+        db.runTransaction(transaction -> {
+            Event event = transaction.get(eventRef).toObject(Event.class);
+            if (event != null) {
+                if (!event.isMaxAttendeesLimitReached()) {
+                    // Add user to registeredAttendees
+                    transaction.update(eventRef, "registeredAttendees", FieldValue.arrayUnion(userId));
+                    // Remove user from invitedList
+                    transaction.update(eventRef, "invitedList", FieldValue.arrayRemove(userId));
+                } else {
+                    throw new FirebaseFirestoreException("Event is full. Cannot accept invitation.", FirebaseFirestoreException.Code.ABORTED);
+                }
+            } else {
+                throw new FirebaseFirestoreException("Event not found.", FirebaseFirestoreException.Code.NOT_FOUND);
+            }
+            return null;
+        }).addOnSuccessListener(aVoid -> {
+            callback.onSuccess();
+        }).addOnFailureListener(e -> {
+            callback.onError(e.getMessage());
+        });
     }
 
     /**
@@ -586,7 +678,18 @@ public class FirebaseAttendee {
                 .addOnFailureListener(e -> callback.onError("Error sending notification"));
     }
 
+    public void sendGeneralNotification(Notification notification, NotificationController.SendNotificationCallback callback){
+        DocumentReference notificationRef = notificationsCollection.document();
 
+        String notificationId = notificationRef.getId(); // Get the randomly generated ID
+
+        // Set the ID in the notification object
+        notification.setNotificationId(notificationId);
+
+        notificationRef.set(notification)  // This will update the user document with all current fields
+                .addOnSuccessListener(aVoid -> callback.onSuccess(Boolean.TRUE))
+                .addOnFailureListener(e -> callback.onError("Error sending notification"));
+    }
 
     /**
      * Callback interface for handling the result of fetching event details.

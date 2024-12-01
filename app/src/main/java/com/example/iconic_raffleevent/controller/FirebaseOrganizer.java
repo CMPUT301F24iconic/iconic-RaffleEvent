@@ -5,6 +5,7 @@ import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.ImageData;
 import com.example.iconic_raffleevent.model.QRCodeData;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -41,6 +42,10 @@ public class FirebaseOrganizer {
         String facilityId = db.collection("Facility").document().getId(); // Pre-generate ID
         facility.setId(facilityId); // Set the ID in the facility object
 
+        if (facility.getCreator() != null) {
+            facility.getCreator().setFacilityId(facilityId); // Update facilityId in the creator object
+        }
+
         db.collection("Facility").document(facilityId).set(facility)
                 .addOnSuccessListener(aVoid -> callback.onFacilityCreated(facilityId))
                 .addOnFailureListener(e -> callback.onError("Failed to create facility: " + e.getMessage()));
@@ -63,7 +68,21 @@ public class FirebaseOrganizer {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         db.collection("Facility").document(facilityId).set(facility)
-                                .addOnSuccessListener(aVoid -> callback.onFacilityUpdated())
+                                .addOnSuccessListener(aVoid -> {
+                                    db.collection("Event").whereEqualTo("facilityId", facilityId)
+                                            .get().addOnSuccessListener(querySnapshot -> {
+                                                if (!querySnapshot.isEmpty()) {
+                                                    for (DocumentSnapshot event : querySnapshot.getDocuments()) {
+                                                        event.getReference().update("eventLocation", facility.getFacilityName())
+                                                                .addOnFailureListener(e ->
+                                                                        callback.onError("Failed to update event with new facility ID"));
+                                                    }
+                                                    callback.onFacilityUpdated();
+                                                } else {
+                                                    callback.onFacilityUpdated();
+                                                }
+                                            });
+                                })
                                 .addOnFailureListener(e -> callback.onError("Failed to update facility: " + e.getMessage()));
                     } else {
                         callback.onError("Facility does not exist for update.");

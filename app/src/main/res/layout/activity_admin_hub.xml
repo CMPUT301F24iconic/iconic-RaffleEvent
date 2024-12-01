@@ -45,16 +45,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/manage_images_button"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:text="Manage Images"
-        app:cornerRadius="24dp"
-        android:backgroundTint="@color/buttonPrimary"
-        app:layout_constraintTop_toBottomOf="@id/manage_events_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/manage_images_button"-->
+<!--        android:layout_width="250dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Manage Images"-->
+<!--        app:cornerRadius="24dp"-->
+<!--        android:backgroundTint="@color/buttonPrimary"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/manage_events_button"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
     <Button
         android:id="@+id/manage_qr_code_button"
@@ -63,7 +63,7 @@
         android:text="Manage QR Codes"
         app:cornerRadius="24dp"
         android:backgroundTint="@color/buttonPrimary"
-        app:layout_constraintTop_toBottomOf="@id/manage_images_button"
+        app:layout_constraintTop_toBottomOf="@id/manage_events_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

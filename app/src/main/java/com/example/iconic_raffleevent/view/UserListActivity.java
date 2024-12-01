@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,6 +105,7 @@ public class UserListActivity extends AppCompatActivity {
 
         // Find ImageView in the dialog layout
         ImageView zoomedProfileImageView = dialogView.findViewById(R.id.zoomedProfileImageView);
+        Button deleteProfileImageButton = dialogView.findViewById(R.id.deleteProfileImageButton);
 
         // Set the profile image
         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
@@ -111,16 +113,51 @@ public class UserListActivity extends AppCompatActivity {
                     .load(user.getProfileImageUrl())
                     .circleCrop()
                     .into(zoomedProfileImageView);
+            // Show delete button for uploaded profile images
+            deleteProfileImageButton.setVisibility(View.VISIBLE);
         } else {
             Bitmap avatarBitmap = AvatarGenerator.generateAvatar(user.getName(), 200);
             zoomedProfileImageView.setImageBitmap(avatarBitmap);
+
+            // Hide delete button for randomly generated avatars
+            deleteProfileImageButton.setVisibility(View.GONE);
         }
 
-        // Create and show the dialog
+        // Create the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialogTheme);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
 
+        // Set delete button click listener
+        deleteProfileImageButton.setOnClickListener(v -> {
+            // Confirm deletion with an AlertDialog
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Profile Photo")
+                    .setMessage("Are you sure you want to delete this profile photo?")
+                    .setPositiveButton("Delete", (dialogInterface, i) -> {
+                        // Remove the profile image
+                        UserController userController = new UserController(user.getUserId(), this);
+                        userController.removeProfileImage(user, new UserController.ProfileImageRemovalCallback() {
+                            @Override
+                            public void onProfileImageRemoved() {
+                                Toast.makeText(UserListActivity.this, "Profile photo deleted successfully.", Toast.LENGTH_SHORT).show();
+
+                                // Dismiss the profile image dialog
+                                dialog.dismiss();
+
+                                // Refresh the user list
+                                refreshUserList();
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                Toast.makeText(UserListActivity.this, "Error deleting photo: " + message, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+    }
 }

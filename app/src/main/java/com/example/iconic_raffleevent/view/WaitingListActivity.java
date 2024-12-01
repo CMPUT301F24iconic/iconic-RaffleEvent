@@ -58,7 +58,11 @@ public class WaitingListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private String eventId;
     private Event eventObj;
+
+    private Button setWaitlistLimitButton;
     private Button sampleAttendeesButton;
+    private Button notificationButton;
+
     private ArrayList<User> usersObj;
     private ArrayList<User> selectedUsersObj;
     private ArrayList<User> nonSelectedUsersObj;
@@ -108,7 +112,11 @@ public class WaitingListActivity extends AppCompatActivity {
         userRecyclerView = findViewById(R.id.userRecyclerView);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        setWaitlistLimitButton = findViewById(R.id.setWaitingListLimitButton);
         sampleAttendeesButton = findViewById(R.id.sampleAttendeesButton);
+        notificationButton = findViewById(R.id.sendNotification);
+
+        Button setWaitingListLimitButton = findViewById(R.id.setWaitingListLimitButton);
 
         // Initialize FirebaseAttendee controller
         firebaseAttendee = new FirebaseAttendee();
@@ -152,7 +160,25 @@ public class WaitingListActivity extends AppCompatActivity {
         loadWaitingList();
 
         // Set listener for sampling attendees
+        //setWaitlistLimitButton.setOnClickListener(v -> showWaitlistLimitDialog());
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
+        notificationButton.setOnClickListener(v -> {
+            if (usersObj == null || usersObj.isEmpty()) {
+                // No users to send notification to
+                Toast.makeText(WaitingListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
+
+            } else {
+                com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
+                        WaitingListActivity.this,
+                        usersObj,
+                        eventObj
+                );
+            }
+        });
+
+
+        // Set listener for setting waiting list limit
+        setWaitingListLimitButton.setOnClickListener(v -> showSetWaitingListLimitDialog());
 
         // Top nav bar
 //        notificationButton.setOnClickListener(v ->
@@ -173,93 +199,15 @@ public class WaitingListActivity extends AppCompatActivity {
             startActivity(new Intent(WaitingListActivity.this, ProfileActivity.class));
         });
     }
-
-    /**
-     * Refreshes the waiting list by clearing the adapter and reloading the list.
-     */
-    private void refreshWaitingList() {
-        // Clear the user adapter to reset the displayed list
-        userAdapter.clearUsers();
-        // Reload the waiting list from Firestore or backend
-        loadWaitingList();
-    }
-
-    /**
-     * Loads the waiting list for the event by fetching the event details.
-     * Retrieves the list of user IDs on the waiting list and starts the process of fetching each user's details.
-     */
-    public void loadWaitingList() {
-        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
-            @Override
-            public void onEventDetailsFetched(Event event) {
-                List<String> waitingListIds = event.getWaitingList();
-                fetchUsersFromWaitingList(waitingListIds);
-            }
-            @Override
-            public void onError(String message) {
-                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * Fetches user details for each user ID in the waiting list and updates the RecyclerView adapter.
-     * Displays a toast message if user data fails to load.
-     *
-     * @param userIds the list of user IDs on the event's waiting list.
-     */
-    private void fetchUsersFromWaitingList(List<String> userIds) {
-        for (String userId : userIds) {
-            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-                @Override
-                public void onUserFetched(User user) {
-                    if (user != null) {
-                        userAdapter.addUser(user);
-                        userAdapter.notifyDataSetChanged();
-                        usersObj.add(user);
-                    } else {
-                        Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    /**
-     * Loads the event details, including waiting list information and capacity.
-     * Stores the event object in the activity.
-     */
-    private void loadEventDetails() {
-        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
-            @Override
-            public void onEventDetailsFetched(Event event) {
-                eventObj = event;
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * Displays a dialog to specify the number of attendees to sample.
-     */
-    private void showSamplingDialog() {
+/*
+    private void showWaitlistLimitDialog() {
+        // Bring up waitlist dialog, adjust waitlist limit based on organizer input
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        List<String> waitingList = eventObj.getWaitingList();
-        List<String> invitedList = eventObj.getInvitedList();
-        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
+        List<String> waitingList = eventObj.getWait
         // Placeholder for max attendees. If it is null in system, then there's no limit to the number of attendees
         int maxAttendees = 999999;
         int remainingSlots;
@@ -353,6 +301,270 @@ public class WaitingListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+ */
+
+    /**
+     * Refreshes the waiting list by clearing the adapter and reloading the list.
+     */
+    private void refreshWaitingList() {
+        // Clear the user adapter to reset the displayed list
+        userAdapter.clearUsers();
+        // Reload the waiting list from Firestore or backend
+        loadWaitingList();
+    }
+
+    /**
+     * Loads the waiting list for the event by fetching the event details.
+     * Retrieves the list of user IDs on the waiting list and starts the process of fetching each user's details.
+     */
+    public void loadWaitingList() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                List<String> waitingListIds = event.getWaitingList();
+                fetchUsersFromWaitingList(waitingListIds);
+            }
+            @Override
+            public void onError(String message) {
+                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Fetches user details for each user ID in the waiting list and updates the RecyclerView adapter.
+     * Displays a toast message if user data fails to load.
+     *
+     * @param userIds the list of user IDs on the event's waiting list.
+     */
+    private void fetchUsersFromWaitingList(List<String> userIds) {
+        for (String userId : userIds) {
+            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
+                @Override
+                public void onUserFetched(User user) {
+                    if (user != null) {
+                        userAdapter.addUser(user);
+                        userAdapter.notifyDataSetChanged();
+                        usersObj.add(user);
+                    } else {
+                        // Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    /**
+     * Loads the event details, including waiting list information and capacity.
+     * Stores the event object in the activity.
+     */
+    private void loadEventDetails() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private String calculateInfoText(Event event, List<String> waitingList) {
+        int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
+        int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
+        int alreadyInvited = event.getInvitedList() != null ? event.getInvitedList().size() : 0;
+        int remainingSlots = maxAttendees == Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : maxAttendees - (alreadyRegistered + alreadyInvited);
+
+        if (maxAttendees == Integer.MAX_VALUE) {
+            return String.format("Waiting List: %d | Max Attendees: No Limit | Already Registered: %d | Remaining Slots: No Limit",
+                    waitingList.size(), alreadyRegistered);
+        } else {
+            return String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
+                    waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots);
+        }
+    }
+
+    private int calculateRemainingSlots(Event event) {
+        int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
+        int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
+        int alreadyInvited = event.getInvitedList() != null ? event.getInvitedList().size() : 0;
+        return maxAttendees == Integer.MAX_VALUE ? Integer.MAX_VALUE : maxAttendees - (alreadyRegistered + alreadyInvited);
+    }
+
+    /**
+     * Displays a dialog to specify the number of attendees to sample.
+     */
+    private void showSamplingDialog() {
+        if (eventObj == null) {
+            Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> waitingList = eventObj.getWaitingList();
+        if (waitingList == null || waitingList.isEmpty()) {
+            Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int remainingSlots = calculateRemainingSlots(eventObj);
+        if (remainingSlots <= 0) {
+            Toast.makeText(this, "All slots have been filled. Cannot sample more attendees.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Inflate dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_sample_attendees, null);
+
+        // Get references to dialog elements
+        TextView infoText = dialogView.findViewById(R.id.info_text);
+        EditText attendeeCountInput = dialogView.findViewById(R.id.attendee_count_input);
+        CheckBox sampleAllCheckbox = dialogView.findViewById(R.id.sample_all_checkbox);
+
+        infoText.setText(calculateInfoText(eventObj, waitingList));
+
+        // Set default attendee count to min(remaining slots, waiting list size)
+        int defaultSampleSize = Math.min(remainingSlots, waitingList.size());
+        attendeeCountInput.setText(String.valueOf(defaultSampleSize));
+
+        // Update checkbox text dynamically
+        sampleAllCheckbox.setText(String.format("Sample all remaining %d attendees", defaultSampleSize));
+
+        // Disable input field when "Sample all remaining" is checked
+        sampleAllCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                attendeeCountInput.setEnabled(false);
+                attendeeCountInput.setText(String.valueOf(defaultSampleSize));
+            } else {
+                attendeeCountInput.setEnabled(true);
+            }
+        });
+
+        // Build and display the dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // Set button listeners in the dialog
+        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.confirmButton).setOnClickListener(v -> {
+            // Parse attendee count from input
+            int sampleSize;
+            try {
+                sampleSize = Integer.parseInt(attendeeCountInput.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number entered.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validate sample size
+            if (sampleSize <= 0 || sampleSize > remainingSlots) {
+                Toast.makeText(this, "Invalid number of attendees to sample.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Perform sampling and update lists
+            sampleAttendees(sampleSize, dialog);
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * Displays a dialog to set the waiting list limit for the event.
+     */
+    private void showSetWaitingListLimitDialog() {
+        if (eventObj == null) {
+            Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Inflate dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_waiting_list_limit, null);
+
+        // Get references to dialog elements
+        TextView infoText = dialogView.findViewById(R.id.info_text);
+        EditText waitingListLimitInput = dialogView.findViewById(R.id.waiting_list_limit_input);
+        CheckBox noLimitCheckbox = dialogView.findViewById(R.id.no_limit_checkbox);
+
+        // Populate info text
+        infoText.setText(calculateInfoText(eventObj, eventObj.getWaitingList()));
+
+        // Set initial input value and checkbox state
+        int currentLimit = eventObj.getWaitingListLimit();
+        if (currentLimit == Integer.MAX_VALUE) {
+            noLimitCheckbox.setChecked(true);
+            waitingListLimitInput.setEnabled(false);
+        } else {
+            noLimitCheckbox.setChecked(false);
+            waitingListLimitInput.setText(String.valueOf(currentLimit));
+        }
+
+        noLimitCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            waitingListLimitInput.setEnabled(!isChecked);
+            if (isChecked) waitingListLimitInput.setText("");
+        });
+
+        // Build dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // Handle cancel action
+        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.dismiss());
+
+        // Handle confirm action
+        dialogView.findViewById(R.id.confirmButton).setOnClickListener(v -> {
+            int newLimit;
+            if (noLimitCheckbox.isChecked()) {
+                newLimit = Integer.MAX_VALUE;
+            } else {
+                try {
+                    newLimit = Integer.parseInt(waitingListLimitInput.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Invalid limit entered.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            // Validate new limit before updating
+            int currentWaitingListSize = eventObj.getWaitingList() != null ? eventObj.getWaitingList().size() : 0;
+            if (newLimit != Integer.MAX_VALUE && newLimit < currentWaitingListSize) {
+                Toast.makeText(this, "Limit must be at least " + currentWaitingListSize + ".", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            eventController.setWaitingListLimit(eventId, newLimit, new EventController.UpdateEventCallback() {
+                @Override
+                public void onSuccess() {
+                    eventObj.setWaitingListLimit(newLimit);
+                    Toast.makeText(WaitingListActivity.this, "Waiting list limit updated successfully.", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(WaitingListActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        dialog.show();
+    }
+
     private void sampleAttendees(int sampleSize, AlertDialog dialog) {
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
@@ -360,16 +572,15 @@ public class WaitingListActivity extends AppCompatActivity {
         }
 
         List<String> waitingList = eventObj.getWaitingList();
-        List<String> invitedList = eventObj.getInvitedList();
-        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
-
-        if (invitedList == null) invitedList = new ArrayList<>();
-        if (registeredAttendees == null) registeredAttendees = new ArrayList<>();
-
         if (waitingList == null || waitingList.isEmpty()) {
             Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        List<String> invitedList = eventObj.getInvitedList();
+        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
+        if (invitedList == null) invitedList = new ArrayList<>();
+        if (registeredAttendees == null) registeredAttendees = new ArrayList<>();
 
         // Shuffle the waiting list for randomness
         Collections.shuffle(waitingList);
@@ -486,7 +697,7 @@ public class WaitingListActivity extends AppCompatActivity {
         // Send notification to selected user
         for (User user : selectedUsersObj) {
             Notification selectedNotification = new Notification();
-            selectedNotification.setSelected(Boolean.TRUE);
+            selectedNotification.setNotificationType("Selected");
             selectedNotification.setEventTitle(eventObj.getEventTitle());
             selectedNotification.setEventId(eventObj.getEventId());
             selectedNotification.setUserId(user.getUserId());
@@ -510,7 +721,7 @@ public class WaitingListActivity extends AppCompatActivity {
         // Send notification to non-selected user
         for (User user : nonSelectedUsersObj) {
             Notification selectedNotification = new Notification();
-            selectedNotification.setSelected(Boolean.FALSE);
+            selectedNotification.setNotificationType("notSelected");
             selectedNotification.setEventTitle(eventObj.getEventTitle());
             selectedNotification.setEventId(eventObj.getEventId());
             selectedNotification.setUserId(user.getUserId());

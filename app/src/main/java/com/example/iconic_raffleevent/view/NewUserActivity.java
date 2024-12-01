@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
+import com.example.iconic_raffleevent.view.notificationservice.FirestoreListenerService;
 
 /**
  * NewUserActivity is responsible for handling the creation of a new user within the application.
@@ -81,30 +82,20 @@ public class NewUserActivity extends AppCompatActivity {
         newUser.setName(name);
         newUser.setUserId(getUserId());
 
-        userController.getUserFCM(new UserController.GetUserFCMCallback() {
-            @Override
-            public void onFCMFetched(String fcm) {
-                newUser.setUserFCM(fcm);
-
                 // Now add user to database
-                userController.addUser(newUser, new UserController.AddUserCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(NewUserActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
-                        navigateToEventList();
-                    }
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(NewUserActivity.this, "Error creating account: " + message, Toast.LENGTH_SHORT).show();
-                    }
-                });
+        userController.addUser(newUser, new UserController.AddUserCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(NewUserActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                navigateToEventList();
             }
             @Override
             public void onError(String message) {
-                Toast.makeText(NewUserActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewUserActivity.this, "Error creating account: " + message, Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     /**
      * Retrieves the unique device ID used as the user ID.
@@ -118,9 +109,11 @@ public class NewUserActivity extends AppCompatActivity {
      * Navigates to the Event List screen and clears the back stack to prevent returning to this screen.
      */
     private void navigateToEventList() {
-        Intent intent = new Intent(NewUserActivity.this, EventListActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        Intent intent = new Intent(NewUserActivity.this, FirestoreListenerService.class);
+        startService(intent);
+        Intent intent2 = new Intent(NewUserActivity.this, EventListActivity.class);
+        intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent2);
         finish();
     }
 
