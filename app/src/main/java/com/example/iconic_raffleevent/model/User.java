@@ -48,8 +48,6 @@ public class User {
         this.roles.add("entrant");
     }
 
-    // Getters and Setters
-
     /**
      * Gets the unique user ID.
      * @return The user ID as a String.
@@ -306,21 +304,6 @@ public class User {
      */
     public boolean checkAdminRole() {
         return this.roles.contains("admin");
-    }
-
-    // Utility methods
-
-    /**
-     * Updates user information with provided name, email, and phone number.
-     * Typically called during event sign-up.
-     * @param name    User's name.
-     * @param email   User's email address.
-     * @param phoneNo User's phone number.
-     */
-    public void signUpForEvent(String name, String email, String phoneNo) {
-        this.name = name;
-        this.email = email;
-        this.phoneNo = phoneNo;
     }
 }
 
