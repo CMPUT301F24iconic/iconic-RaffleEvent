@@ -321,32 +321,37 @@ public class FirebaseAttendee {
      * Ensures the waiting list limit has not been reached before adding the user.
      *
      * @param eventId      The ID of the event.
-     * @param userId       The ID of the user.
+     * @param user         The user joining the event.
      * @param userLocation The location of the user.
      * @param callback     The callback to notify success or failure.
      */
-    public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
-        eventsCollection.document(eventId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult().exists()) {
-                        Event event = task.getResult().toObject(Event.class);
-                        if (event != null && !event.isWaitingListLimitReached()) {
-                            WriteBatch batch = db.batch();
+    public void joinWaitingListWithLocation(String eventId, User user, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(eventId);
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                Event event = task.getResult().toObject(Event.class);
+                if (event != null && !event.isWaitingListLimitReached()) {
+                    WriteBatch writeBatch = db.batch();
 
-                            batch.update(eventsCollection.document(eventId), "waitingList", FieldValue.arrayUnion(userId));
-                            batch.update(eventsCollection.document(eventId), "entrantLocations", FieldValue.arrayUnion(userLocation));
+                    // Add user ID to waitingList
+                    writeBatch.update(eventRef, "waitingList", FieldValue.arrayUnion(user.getUserId()));
 
-                            batch.commit()
-                                    .addOnSuccessListener(aVoid -> callback.onSuccess())
-                                    .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
-                        } else {
-                            callback.onError("Waiting list limit reached or event not found");
-                        }
-                    } else {
-                        callback.onError("Failed to fetch event details");
-                    }
-                });
+                    // Prepare location data with key as "userId-userName"
+                    Map<String, Object> userPoint = new HashMap<>();
+                    userPoint.put("locations." + user.getUserId() + "-" + user.getName(), userLocation);
+                    writeBatch.update(eventRef, userPoint);
+
+                    // Commit the batch
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
+                } else {
+                    callback.onError("Waiting list limit reached or event not found");
+                }
+            } else {
+                callback.onError("Failed to fetch event details");
+            }
+        });
     }
 
     /**

@@ -77,12 +77,12 @@ public class EventController {
      * Checks if the waiting list limit has been reached before adding the user.
      *
      * @param eventId        The ID of the event.
-     * @param userId         The ID of the user.
+     * @param user         The ID of the user.
      * @param userLocation   The location of the user.
      * @param callback       The callback to handle success or error.
      */
-    public void joinWaitingListWithLocation(String eventId, String userId, GeoPoint userLocation, JoinWaitingListCallback callback) {
-        firebaseAttendee.joinWaitingListWithLocation(eventId, userId, userLocation, callback);
+    public void joinWaitingListWithLocation(String eventId, User user, GeoPoint userLocation, JoinWaitingListCallback callback) {
+        firebaseAttendee.joinWaitingListWithLocation(eventId, user, userLocation, callback);
     }
 
     /**

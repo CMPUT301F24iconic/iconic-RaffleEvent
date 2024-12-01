@@ -442,7 +442,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Adds the user to the waiting list using their location data.
      */
     private void joinWaitlist() {
-        eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
+        eventController.joinWaitingListWithLocation(eventId, userObj, userLocation, new EventController.JoinWaitingListCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
