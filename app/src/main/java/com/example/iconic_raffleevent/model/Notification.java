@@ -109,18 +109,34 @@ public class Notification {
         this.read = read;
     }
 
+    /**
+     * Sets the eventTitle for the notification
+     * @param eventTitle Title of the event the notification relates to
+     */
     public void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
     }
 
+    /**
+     * Gets the title of the event that the notification relates to
+     * @return String title of event
+     */
     public String getEventTitle() {
         return this.eventTitle;
     }
 
+    /**
+     * Gets the type of notification
+     * @return String type of the notification
+     */
     public String getNotificationType() {
         return notificationType;
     }
 
+    /**
+     * Sets the notification type
+     * @param notificationType type of notification
+     */
     public void setNotificationType(String notificationType) {
         this.notificationType = notificationType;
     }

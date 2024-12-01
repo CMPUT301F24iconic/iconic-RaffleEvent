@@ -348,6 +348,11 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a dialog which will show the user a preview of the poster they just uploaded.
+     * If they save it, it will be added to the database, if they cancel, the changes will be reverted.
+     * @param posterBitmap Bitmap of the poster to be shown
+     */
     private void showPosterPreviewDialog(Bitmap posterBitmap) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Poster Preview");
@@ -403,15 +408,6 @@ public class CreateEventActivity extends AppCompatActivity {
         saveEventButton.setEnabled(true);
 
         validateInputFields();
-
-
-//        if (eventId == null){
-//            // Check if a poster is uploaded
-//            if (imageUri == null) {
-//                Toast.makeText(this, "Please upload a poster for the event.", Toast.LENGTH_SHORT).show();
-//                return; // Stop further processing
-//            }
-//        }
 
         // Check if end time is later than start time
         if (!isEndTimeLaterThanStartTime()) {
@@ -520,7 +516,6 @@ public class CreateEventActivity extends AppCompatActivity {
         saveEventButton.setEnabled(true);
     }
 
-
     /**
      * Checks if a TextInputEditText field is empty or null.
      *
@@ -564,13 +559,18 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update an existing event with user input
+     * @param imageUri image URI of the new event poster if a user uploaded a new poster or deleted the existing one
+     * @param eventObj updated event object to be uploaded to firebase
+     */
     private void updateEvent(Uri imageUri, Event eventObj) {
-        // Need to implement functionality to delete only image from firebase storage
-        // For now just focus on adding new image to firebase storage
         if (imageUri != null) {
+            // upload new event poster if image URI isn't null
             eventController.uploadEventPoster(imageUri, eventObj, new EventController.UploadEventPosterCallback() {
                 @Override
                 public void onSuccessfulUpload(String posterUrl) {
+                    // After successful poster upload, set the url to that poster
                     eventObj.setEventImageUrl(posterUrl);
 
                     // Show a success toast for the poster upload
@@ -640,6 +640,11 @@ public class CreateEventActivity extends AppCompatActivity {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Checks if an event id was passed to the activity. If no event id was passed
+     * then user is creating a new event and not updating an existing one.
+     * @return Boolean True if event id was passed, False if not
+     */
     private Boolean checkEventExists() {
         System.out.println(getIntent().getStringExtra("eventId"));
         if (getIntent().getStringExtra("eventId") != null) {
@@ -699,59 +704,16 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
 
-    public void setEventTitle(String title) {
-        this.eventTitleText.setText(title);
-    }
-
-    public void setStartDate(String date) {
-        this.startDateText.setText(date);
-    }
-
-    public void setStartTime(String time) {
-        this.startTimeText.setText(time);
-    }
-
-    public void setEndDate(String date) {
-        this.endDateText.setText(date);
-    }
-
-    public void setEndTime(String time) {
-        this.endTimeText.setText(time);
-    }
-
-    public void setEventDescription(String description) {
-        this.eventDescriptionText.setText(description);
-    }
-
-    public void invokeValidateInputFields() {
-        validateInputFields();
-    }
-
-    public boolean isInputError() {
-        return inputError;
-    }
-
-    public String getEventTitleError() {
-        return eventTitleLayout.getError() != null ? eventTitleLayout.getError().toString() : null;
-    }
-
-    public String getEventDescriptionError() {
-        return eventDescriptionLayout.getError() != null ? eventDescriptionLayout.getError().toString() : null;
-    }
-
-    public void setImageUri(Uri uri) {
-        this.imageUri = uri;
-    }
-
-    public void setEventController(EventController controller) {
-        this.eventController = controller;
-    }
-
-    // Public methods to invoke private methods
+    /**
+     * Public method that invokes the private validate and save event method
+     */
     public void invokeValidateAndSaveEvent() {
         validateAndSaveEvent();
     }
 
+    /**
+     * Fetches the facility details for an event
+     */
     public void fetchFacilityDetails() {
         facilityController.getFacilityByUserId(getUserID(), new FacilityController.FacilityFetchCallback() {
             @Override
@@ -765,5 +727,4 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
     }
-
 }

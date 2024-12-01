@@ -27,11 +27,30 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * A background service that listens to Firestore updates for notifications.
+ * It monitors changes to the "Notification" collection in Firestore and generates
+ * system notifications for the device for changes in notifications relating to the device ID
+ */
 public class FirestoreListenerService extends Service {
     private static final String CHANNEL_ID = "RAFFLE_EVENTS";
     private FirebaseFirestore db;
     private ListenerRegistration listenerRegistration;
 
+    /**
+     * Called when the service is started. Initializes firestore and places a listener to check for
+     * any updates in the Notification collection
+     *
+     * @param intent The Intent supplied to {@link android.content.Context#startService},
+     * as given.  This may be null if the service is being restarted after
+     * its process has gone away, and it had previously returned anything
+     * except {@link #START_STICKY_COMPATIBILITY}.
+     * @param flags Additional data about this start request.
+     * @param startId A unique integer representing this specific request to
+     * start.  Use with {@link #stopSelfResult(int)}.
+     *
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         AtomicReference<Boolean> initialAppLoad = new AtomicReference<>(Boolean.TRUE);
@@ -71,6 +90,12 @@ public class FirestoreListenerService extends Service {
         return START_STICKY;
     }
 
+    /**
+     * Create an android notification to be shown on device
+     *
+     * @param notification notification to be displayed
+     * @param notiID ID of the system notification
+     */
     private void generateSystemNotification(HashMap<String, Object> notification, AtomicInteger notiID) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -99,6 +124,9 @@ public class FirestoreListenerService extends Service {
         notiID.set(notiID.get() + 1);
     }
 
+    /**
+     * Creates a notification channel for the app notifications if the sdk is 35 or higher
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "AppNotification";

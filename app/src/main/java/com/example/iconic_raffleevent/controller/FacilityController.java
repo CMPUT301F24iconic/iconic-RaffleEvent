@@ -89,18 +89,6 @@ public class FacilityController {
                 callback.onError("Error checking user facility: " + message);
             }
         });
-
-//        firebaseOrganizer.createFacility(facility, new FirebaseOrganizer.FacilityCreationCallback() {
-//            @Override
-//            public void onFacilityCreated(String facilityId) {
-//                callback.onFacilityCreated(facilityId);
-//            }
-//
-//            @Override
-//            public void onError(String message) {
-//                callback.onError(message);
-//            }
-//        });
     }
 
     /**
@@ -207,13 +195,20 @@ public class FacilityController {
         });
     }
 
-    // Callback interfaces for facility operations
-
     /**
      * Callback interface for retrieving a list of facilities.
      */
     public interface FacilityListCallback {
+        /**
+         * Callback which contains a list of Facility objects
+         * @param facilities List of facilities
+         */
         void onFacilitiesFetched(ArrayList<Facility> facilities);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -221,7 +216,15 @@ public class FacilityController {
      * Callback interface for deleting a facility.
      */
     public interface DeleteFacilityCallback {
+        /**
+         * Callback which is called upon successful delete facility operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -229,7 +232,16 @@ public class FacilityController {
      * Callback interface for facility creation.
      */
     public interface FacilityCreationCallback {
+        /**
+         * Callback which contains the id of a created facility
+         * @param facilityId String representing facilityId
+         */
         void onFacilityCreated(String facilityId);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -237,7 +249,16 @@ public class FacilityController {
      * Callback interface for fetching a specific facility.
      */
     public interface FacilityFetchCallback {
+        /**
+         * Callback which contains a Facility object upon successful fetch facility operation
+         * @param facility
+         */
         void onFacilityFetched(Facility facility);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -245,7 +266,15 @@ public class FacilityController {
      * Callback interface for facility updates.
      */
     public interface FacilityUpdateCallback {
+        /**
+         * Callback which is called after a successful update facility operation
+         */
         void onFacilityUpdated();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -253,8 +282,21 @@ public class FacilityController {
      * Callback interface for checking if a facility exists for a user.
      */
     public interface FacilityCheckCallback {
+        /**
+         * Callback which contains the id of a facility upon successful facility exists operation
+         * @param facilityId
+         */
         void onFacilityExists(String facilityId);
+
+        /**
+         * Callback which is called when a facility does not exist
+         */
         void onFacilityNotExists();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }

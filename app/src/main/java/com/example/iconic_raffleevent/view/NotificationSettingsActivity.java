@@ -49,7 +49,6 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
 
-
     /**
      * Called when the activity is created.
      * Initializes views, controller, and listeners, and loads the user's notification preferences.
@@ -262,6 +261,5 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Clean up any resources if needed
     }
 }
