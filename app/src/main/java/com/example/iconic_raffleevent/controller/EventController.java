@@ -15,6 +15,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * EventController handles the logic related to event creation, modification, and management.
@@ -77,7 +78,7 @@ public class EventController {
      * Checks if the waiting list limit has been reached before adding the user.
      *
      * @param eventId        The ID of the event.
-     * @param user         The ID of the user.
+     * @param user           The user.
      * @param userLocation   The location of the user.
      * @param callback       The callback to handle success or error.
      */
@@ -100,12 +101,12 @@ public class EventController {
     /**
      * Removes a user from the event's waiting list.
      *
-     * @param eventId   The ID of the event.
-     * @param userId    The ID of the user.
+     * @param event     The event we are removing the user from
+     * @param user      The user.
      * @param callback  The callback to handle success or error.
      */
-    public void leaveWaitingList(String eventId, String userId, LeaveWaitingListCallback callback) {
-        firebaseAttendee.leaveWaitingList(eventId, userId, callback);
+    public void leaveWaitingList(Event event, User user, LeaveWaitingListCallback callback) {
+        firebaseAttendee.leaveWaitingList(event, user, callback);
     }
 
     /**
@@ -247,7 +248,7 @@ public class EventController {
      * Callback interface for event map fetch operations.
      */
     public interface EventMapCallback {
-        void onEventMapFetched(ArrayList<GeoPoint> locations);
+        void onEventMapFetched(Map<String, Object> locations);
 
         void onError(String message);
     }

@@ -26,6 +26,10 @@ public class NotificationController {
         firebaseAttendee = new FirebaseAttendee();
     }
 
+    public void sendNotification(Notification notification, NotificationController.SendNotificationCallback callback) {
+        firebaseAttendee.sendGeneralNotification(notification, callback);
+    }
+
     /**
      * Retrieves the notifications for a specified user.
      *
@@ -62,6 +66,11 @@ public class NotificationController {
      */
     public interface MarkNotificationAsReadCallback {
         void onSuccess();
+        void onError(String message);
+    }
+
+    public interface SendNotificationCallback {
+        void onSuccess(Boolean success);
         void onError(String message);
     }
 }

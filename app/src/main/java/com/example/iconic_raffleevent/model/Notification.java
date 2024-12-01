@@ -11,7 +11,7 @@ public class Notification {
     private String eventTitle;
     private String message;
     private boolean read;
-    private boolean selected;
+    private String notificationType;
 
     /**
      * Default constructor for creating an empty Notification object.
@@ -117,11 +117,11 @@ public class Notification {
         return this.eventTitle;
     }
 
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
+    public String getNotificationType() {
+        return notificationType;
     }
 
-    public boolean getSelected() {
-        return this.selected;
+    public void setNotificationType(String notificationType) {
+        this.notificationType = notificationType;
     }
 }

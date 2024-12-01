@@ -17,6 +17,7 @@
     <color name="textColorSecondary">#757575</color> <!-- Secondary text color for subtext -->
     <color name="textColorOnPrimary">#FFFFFF</color> <!-- Text color on primary color backgrounds -->
     <color name="textColorOnSecondary">#D129ED</color> <!-- Text color on secondary color backgrounds -->
+    <color name="locationIconColor">#41b498</color>
 
     <!-- Button Colors -->
     <color name="buttonTextColor">#FFFFFF</color> <!-- Text color for buttons with Dark theme background -->
