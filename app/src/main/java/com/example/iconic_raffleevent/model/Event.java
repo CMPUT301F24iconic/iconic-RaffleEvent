@@ -48,7 +48,6 @@ public class Event {
         invitedList = new ArrayList<>();
         waitingList = new ArrayList<>();
         registeredAttendees = new ArrayList<>();
-        entrantLocations = new ArrayList<>();
         this.waitingListLimit = Integer.MAX_VALUE;
         this.maxAttendees = Integer.MAX_VALUE;
     }
