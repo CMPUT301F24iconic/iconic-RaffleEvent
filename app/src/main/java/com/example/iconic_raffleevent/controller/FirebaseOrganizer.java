@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * such as creating, deleting, and fetching data related to users, facilities, events, images, and QR codes.
  */
 public class FirebaseOrganizer {
-
     private FirebaseFirestore db;
 
     /**
@@ -208,6 +207,12 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Failed to delete facility: " + e.getMessage()));
     }
 
+    /**
+     * Updates the facility ID linked to a user
+     * @param userId ID of the related user
+     * @param facilityId ID of the related facility
+     * @param callback The callback interface for handling success or error responses.
+     */
     public void updateUserFacilityId(String userId, String facilityId, UserUpdateCallback callback) {
         db.collection("User").document(userId).update("facilityId", facilityId)
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
@@ -300,84 +305,257 @@ public class FirebaseOrganizer {
                 .addOnFailureListener(e -> callback.onError("Failed to delete QR code: " + e.getMessage()));
     }
 
-    // Callback interfaces for facility operations
+    /**
+     * Callback interface for handling the result of facility creation.
+     */
     public interface FacilityCreationCallback {
+        /**
+         * Callback which is called upon successful creation of a facility.
+         * @param facilityId The ID of the created facility.
+         */
         void onFacilityCreated(String facilityId);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for handling the result of updating a facility.
+     */
     public interface FacilityUpdateCallback {
+        /**
+         * Callback which is called upon successful update of a facility.
+         */
         void onFacilityUpdated();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for checking the existence of a facility.
+     */
     public interface FacilityCheckCallback {
+        /**
+         * Callback which is called when a facility exists.
+         * @param facilityId The ID of the existing facility.
+         */
         void onFacilityExists(String facilityId);
+
+        /**
+         * Callback which is called when a facility does not exist.
+         */
         void onFacilityNotExists();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for fetching a facility.
+     */
     public interface FacilityFetchCallback {
+        /**
+         * Callback which contains a Facility object.
+         * @param facility The fetched facility.
+         */
         void onFacilityFetched(Facility facility);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for fetching multiple facilities.
+     */
     public interface GetFacilitiesCallback {
+        /**
+         * Callback which contains a list of Facility objects.
+         * @param facilities The list of fetched facilities.
+         */
         void onFacilitiesFetched(ArrayList<Facility> facilities);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting a facility.
+     */
     public interface DeleteFacilityCallback {
+        /**
+         * Callback which is called upon successful deletion of a facility.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for updating user details.
+     */
     public interface UserUpdateCallback {
+        /**
+         * Callback which is called upon successful user update.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
-    // Callback interfaces for event operations
+    /**
+     * Callback interface for fetching events.
+     */
     public interface GetEventsCallback {
+        /**
+         * Callback which contains a list of Event objects.
+         * @param events The list of fetched events.
+         */
         void onEventsFetched(ArrayList<Event> events);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting an event.
+     */
     public interface DeleteEventCallback {
+        /**
+         * Callback which is called upon successful deletion of an event.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
-    // Callback interfaces for image operations
+    /**
+     * Callback interface for fetching images.
+     */
     public interface GetImagesCallback {
+        /**
+         * Callback which contains a list of ImageData objects.
+         * @param images The list of fetched images.
+         */
         void onImagesFetched(ArrayList<ImageData> images);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting an image.
+     */
     public interface DeleteImageCallback {
+        /**
+         * Callback which is called upon successful deletion of an image.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
-    // Callback interfaces for QR code operations
+    /**
+     * Callback interface for fetching QR codes.
+     */
     public interface GetQRCodesCallback {
+        /**
+         * Callback which contains a list of QRCodeData objects.
+         * @param qrCodes The list of fetched QR codes.
+         */
         void onQRCodesFetched(ArrayList<QRCodeData> qrCodes);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting a QR code.
+     */
     public interface DeleteQRCodeCallback {
+        /**
+         * Callback which is called upon successful deletion of a QR code.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
-    // Callback interfaces for user operations
+    /**
+     * Callback interface for fetching users.
+     */
     public interface GetUsersCallback {
+        /**
+         * Callback which contains a list of User objects.
+         * @param users The list of fetched users.
+         */
         void onUsersFetched(ArrayList<User> users);
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
 
+    /**
+     * Callback interface for deleting a user.
+     */
     public interface DeleteUserCallback {
+        /**
+         * Callback which is called upon successful deletion of a user.
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message.
+         * @param message Description of the error.
+         */
         void onError(String message);
     }
+
 }
