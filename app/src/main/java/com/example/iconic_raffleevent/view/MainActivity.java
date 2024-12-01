@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Initializes the user controller using the device's unique ID.
-     *
      * @return True if the user controller was successfully initialized, false otherwise.
      */
     public boolean initializeUserController() {

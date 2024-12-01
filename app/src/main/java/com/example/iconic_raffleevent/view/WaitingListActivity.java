@@ -377,6 +377,14 @@ public class WaitingListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Calculates various aspects of the waitlist and displays the info to the organizer
+     *
+     * @param event Event wishlist exists in
+     * @param waitingList List of all entrants in waitlist
+     *
+     * @return String Text to be displayed
+     */
     private String calculateInfoText(Event event, List<String> waitingList) {
         int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
         int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
@@ -394,6 +402,13 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Calculates remaining spaces available in the waitlist
+     *
+     * @param event Event that the waitlist belongs to
+     *
+     * @return int number of people that can join waitlist
+     */
     private int calculateRemainingSlots(Event event) {
         int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
         int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
@@ -565,6 +580,12 @@ public class WaitingListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Samples a given number of entrants from the waitlist and places them in the invited list
+     *
+     * @param sampleSize Number of entrants to be sampled
+     * @param dialog Dialog for sampling
+     */
     private void sampleAttendees(int sampleSize, AlertDialog dialog) {
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
@@ -600,19 +621,21 @@ public class WaitingListActivity extends AppCompatActivity {
         // Remove selected users from waitlist
         waitingList.removeAll(selectedAttendees);
 
-        // Send push notification to selected and non-selected users
-        sendPushNotifications(selectedUsersObj, nonSelectedUsersObj);
-
         // Add notification to database for selected and non-selected users
         sendInAppNotification(selectedUsersObj, nonSelectedUsersObj);
-
-
-
 
         // Update Firestore with the new lists
         updateEventListsInFirestore(invitedList, waitingList, registeredAttendees, dialog);
     }
 
+    /**
+     * Updates event related lists for a specific event in firestore
+     *
+     * @param invitedList List of all invited entrants
+     * @param waitingList List of all entrants in waiting list
+     * @param registeredAttendees List of all entrants who accepted their invite
+     * @param dialog Sample attendees dialog
+     */
     private void updateEventListsInFirestore(List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, AlertDialog dialog) {
         firebaseAttendee.updateEventLists(eventObj.getEventId(), invitedList, waitingList, registeredAttendees, new FirebaseAttendee.UpdateCallback() {
             @Override
@@ -639,60 +662,12 @@ public class WaitingListActivity extends AppCompatActivity {
         });
     }
 
-    private void sendPushNotifications(ArrayList<User> selectedUsersObj, ArrayList<User> nonSelectedUsersObj) {
-        // Send notification to selected users
-        // Get fcm for users
-        //ArrayList<String> selectedFCMs = new ArrayList<>();
-        //for (User user : selectedUsersObj) {
-          //  selectedFCMs.add(user.getUserFCM());
-        //}
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
-                .setSmallIcon(R.drawable.celebration_icon)
-                .setContentTitle("Congratulations! You have been selected")
-                .setContentText("Congratulations! You have been selected to join the: '" + eventObj.getEventTitle() + "' event.")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
-
-        // Check if the device is running Android Oreo or higher
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create a notification channel
-            NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Draw Notifications");
-            // Register the channel with the system
-            notificationManager.createNotificationChannel(channel);
-        }
-        // To see the message in logcat
-        Log.i("Notify","$builder");
-        // Issue the notification
-        notificationManager.notify(1, builder.build());
-
-
-
-
-        // Send notification to non-selected users
-        NotificationCompat.Builder builder2 = new NotificationCompat.Builder(this, "channel_id")
-                .setSmallIcon(R.drawable.warning_icon)
-                .setContentTitle("We regret to inform you that you have not been selected.")
-                .setContentText("We are sorry to inform you that you have not been selected to join the: '" + eventObj.getEventTitle() + "' event. We will keep your name for any future draws of the event.")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManager notificationManager2 = (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
-
-        // Check if the device is running Android Oreo or higher
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create a notification channel
-            NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Draw Notifications");
-            // Register the channel with the system
-            notificationManager.createNotificationChannel(channel);
-        }
-        // To see the message in logcat
-        Log.i("Notify","$builder");
-        // Issue the notification
-        notificationManager2.notify(1, builder2.build());
-    }
-
+    /**
+     * Creates a notification and adds it to the firestore database for each selected and non selected users
+     *
+     * @param selectedUsersObj list of chosen users
+     * @param nonSelectedUsersObj list of users who were not selected
+     */
     private void sendInAppNotification(ArrayList<User> selectedUsersObj, ArrayList<User> nonSelectedUsersObj) {
         // Send notification to selected user
         for (User user : selectedUsersObj) {
@@ -716,7 +691,6 @@ public class WaitingListActivity extends AppCompatActivity {
                 }
             });
         }
-
 
         // Send notification to non-selected user
         for (User user : nonSelectedUsersObj) {
@@ -743,6 +717,11 @@ public class WaitingListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Update selected attendees list
+     *
+     * @param selectedAttendees list of ids of selected users
+     */
     private void updateSelectedUsersObj(List<String> selectedAttendees) {
         for (User user : usersObj) {
             if (selectedAttendees.contains(user.getUserId())) {
@@ -751,6 +730,11 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update non-selected attendees list
+     *
+     * @param nonSelectedAttendees list of ids of non-selected users
+     */
     private void updateNonSelectedUsersObj(List<String> nonSelectedAttendees) {
         for (User user : usersObj) {
             if (nonSelectedAttendees.contains(user.getUserId())) {
@@ -759,6 +743,11 @@ public class WaitingListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a dialog displaying a users profile image
+     *
+     * @param user User who's profile image is being displayed
+     */
     private void showProfileImageDialog(User user) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);

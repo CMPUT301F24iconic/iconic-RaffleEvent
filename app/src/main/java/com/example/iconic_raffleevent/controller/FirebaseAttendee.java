@@ -68,15 +68,6 @@ public class FirebaseAttendee {
 
     // User-related methods
 
-    public void getUserFCM(UserController.GetUserFCMCallback callback) {
-        firebaseMessaging.getToken()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        callback.onFCMFetched(task.getResult());
-                    }
-                });
-    }
-
     /**
      * Updates a user's profile in Firebase Firestore.
      *
@@ -316,43 +307,43 @@ public class FirebaseAttendee {
                 });
     }
 
-  /**
- * Adds a user to the event's waiting list with their location.
- * Ensures the waiting list limit has not been reached before adding the user.
- *
- * @param eventId      The ID of the event.
- * @param user         The user joining the event.
- * @param userLocation The location of the user.
- * @param callback     The callback to notify success or failure.
- */
-public void joinWaitingListWithLocation(String eventId, User user, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
-    DocumentReference eventRef = eventsCollection.document(eventId);
-    eventRef.get().addOnCompleteListener(task -> {
-        if (task.isSuccessful() && task.getResult().exists()) {
-            Event event = task.getResult().toObject(Event.class);
-            if (event != null && !event.isWaitingListLimitReached()) {
-                WriteBatch writeBatch = db.batch();
+    /**
+     * Adds a user to the event's waiting list with their location.
+     * Ensures the waiting list limit has not been reached before adding the user.
+     *
+     * @param eventId      The ID of the event.
+     * @param user         The user joining the event.
+     * @param userLocation The location of the user.
+     * @param callback     The callback to notify success or failure.
+     */
+    public void joinWaitingListWithLocation(String eventId, User user, GeoPoint userLocation, EventController.JoinWaitingListCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(eventId);
+        eventRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                Event event = task.getResult().toObject(Event.class);
+                if (event != null && !event.isWaitingListLimitReached()) {
+                    WriteBatch writeBatch = db.batch();
 
-                // Add user ID to waitingList
-                writeBatch.update(eventRef, "waitingList", FieldValue.arrayUnion(user.getUserId()));
+                    // Add user ID to waitingList
+                    writeBatch.update(eventRef, "waitingList", FieldValue.arrayUnion(user.getUserId()));
 
-                // Prepare location data with key as "userId-userName"
-                Map<String, Object> userPoint = new HashMap<>();
-                userPoint.put("locations." + user.getUserId() + "-" + user.getName(), userLocation);
-                writeBatch.update(eventRef, userPoint);
+                    // Prepare location data with key as "userId-userName"
+                    Map<String, Object> userPoint = new HashMap<>();
+                    userPoint.put("locations." + user.getUserId() + "-" + user.getName(), userLocation);
+                    writeBatch.update(eventRef, userPoint);
 
-                // Commit the batch
-                writeBatch.commit()
-                        .addOnSuccessListener(aVoid -> callback.onSuccess())
-                        .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
+                    // Commit the batch
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to join waiting list: " + e.getMessage()));
+                } else {
+                    callback.onError("Waiting list limit reached or event not found");
+                }
             } else {
-                callback.onError("Waiting list limit reached or event not found");
+                callback.onError("Failed to fetch event details");
             }
-        } else {
-            callback.onError("Failed to fetch event details");
-        }
-    });
-}
+        });
+    }
 
     /**
      * Adds a user to the event's waiting list without including their location.
@@ -671,6 +662,12 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
 
 
     // --- Sending/Receiving notification --- //
+
+    /**
+     * Uploads a notification to firebase telling the user if they have been drawn
+     * @param notification Notification to be uploaded
+     * @param callback The callback interface to notify the success or failure of the upload.
+     */
     public void sendDrawNotification(Notification notification, EventController.SendDrawNotificationCallback callback){
         DocumentReference notificationRef = notificationsCollection.document(notification.getNotificationId());
         notificationRef.set(notification)  // This will update the user document with all current fields
@@ -678,10 +675,14 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
                 .addOnFailureListener(e -> callback.onError("Error sending notification"));
     }
 
+    /**
+     * Uploads a notification to firebase which is a general notification sent by an organizer
+     * @param notification Notification to be uploaded
+     * @param callback The callback interface to notify the success or failure of the upload.
+     */
     public void sendGeneralNotification(Notification notification, NotificationController.SendNotificationCallback callback){
         DocumentReference notificationRef = notificationsCollection.document();
-
-        String notificationId = notificationRef.getId(); // Get the randomly generated ID
+        String notificationId = notificationRef.getId();
 
         // Set the ID in the notification object
         notification.setNotificationId(notificationId);
@@ -695,7 +696,16 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
      * Callback interface for handling the result of fetching event details.
      */
     public interface EventDetailsCallback {
+        /**
+         * Callback which contains an Event object
+         * @param event The event fetched
+         */
         void onEventDetailsFetched(Event event);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -703,7 +713,16 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
      * Callback interface for handling the result of fetching user details.
      */
     public interface UserFetchCallback {
+        /**
+         * Callback which contains a User object
+         * @param user The user fetched
+         */
         void onUserFetched(User user);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -711,7 +730,15 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
      * Callback interface for handling success or failure of an update operation.
      */
     public interface UpdateCallback {
+        /**
+         * Callback which is called upon successful update operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -719,7 +746,15 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
      * Callback interface for handling success or failure of an event deletion operation.
      */
     public interface DeleteEventCallback {
+        /**
+         * Callback which is called upon successful delete event operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -727,6 +762,10 @@ public void joinWaitingListWithLocation(String eventId, User user, GeoPoint user
      * Callback interface for handling the result of a user deletion operation.
      */
     public interface DeleteUserCallback {
+        /**
+         * Callback which contains a Boolean reflecting the success of the delete user operation
+         * @param success Boolean value regarding delete user success
+         */
         void onUserDeleted(boolean success);
     }
 }
