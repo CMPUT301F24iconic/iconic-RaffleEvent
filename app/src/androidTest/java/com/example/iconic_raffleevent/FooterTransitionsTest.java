@@ -33,6 +33,8 @@ public class FooterTransitionsTest {
 
     @Test
     public void testGoToProfile() {
+//        // Disable animations globally to ensure consistent test results
+//        disableAnimations();
         // Click profile button
         onView(withId(R.id.profile_button))
                 .perform(click());
@@ -44,12 +46,12 @@ public class FooterTransitionsTest {
 //                .check(matches(isDisplayed()));
 //        onView(withId(R.id.phone_edit_text))
 //                .check(matches(isDisplayed()));
-//        onView(withId(R.id.notifications_switch))
-//                .check(matches(isDisplayed()));
     }
 
     @Test
     public void testGoToEventList() {
+//        // Disable animations globally to ensure consistent test results
+//        disableAnimations();
         // Go to profile first
         onView(withId(R.id.profile_button))
                 .perform(click());
@@ -57,5 +59,20 @@ public class FooterTransitionsTest {
         // Return to event list using the home button in the footer
         onView(withId(R.id.home_button))
                 .perform(click());
+    }
+
+    /**
+     * Utility method to disable animations globally.
+     */
+    private void disableAnimations() {
+        // Disable animations globally to ensure consistent test results
+        disableAnimations();
+        try {
+            Runtime.getRuntime().exec("settings put global window_animation_scale 0");
+            Runtime.getRuntime().exec("settings put global transition_animation_scale 0");
+            Runtime.getRuntime().exec("settings put global animator_duration_scale 0");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to disable animations: " + e.getMessage());
+        }
     }
 }
