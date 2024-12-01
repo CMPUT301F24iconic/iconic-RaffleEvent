@@ -1,13 +1,13 @@
 package com.example.iconic_raffleevent.controller;
 
+import com.example.iconic_raffleevent.model.QRCodeData;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
 /**
- * Controller class responsible for managing QR code data and interacting with Firebase Firestore.
- * Provides methods to fetch and delete QR code data.
+ * Controller class to manage QR code data from the Event collection.
  */
 public class QRCodeController {
 
@@ -21,21 +21,32 @@ public class QRCodeController {
     }
 
     /**
-     * Retrieves all QR code data from the Firestore collection.
+     * Retrieves all QR code data from the Event collection in Firestore.
      *
      * @param callback The callback interface to handle the fetched QR code data or error.
      */
     public void getAllQRCodeData(GetQRCodeDataCallback callback) {
-        db.collection("qr_codes").get().addOnCompleteListener(task -> {
+        db.collection("Event").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
-                ArrayList<String> qrCodes = new ArrayList<>();
+                ArrayList<QRCodeData> qrCodeDataList = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String qrData = document.getString("data");
-                    if (qrData != null) {
-                        qrCodes.add(qrData);
+                    // Fetch the QR code URL and name
+                    String qrCodeUrl = document.getString("eventQrUrl");
+                    String qrCodeName = document.getString("eventTitle");
+                    String eventId = document.getId();
+
+                    if (qrCodeUrl != null && qrCodeName != null) {
+                        qrCodeDataList.add(new QRCodeData(eventId, qrCodeName, qrCodeUrl));
+                    } else {
+                        System.out.println("Missing QR Code data for event: " + eventId);
                     }
                 }
-                callback.onQRCodeDataFetched(qrCodes);
+
+                if (qrCodeDataList.isEmpty()) {
+                    callback.onError("No QR codes found.");
+                } else {
+                    callback.onQRCodeDataFetched(qrCodeDataList);
+                }
             } else {
                 callback.onError("Failed to fetch QR code data: " +
                         (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
@@ -44,45 +55,36 @@ public class QRCodeController {
     }
 
     /**
-     * Deletes QR code data from Firestore based on the provided QR code data.
+     * Deletes the QR code data from the specified event in Firestore.
      *
-     * @param qrCodeData The QR code data to be deleted.
-     * @param callback   The callback interface to handle success or error responses.
+     * @param eventId  The ID of the event to update.
+     * @param callback The callback interface to handle success or error responses.
      */
-    public void deleteQRCodeData(String qrCodeData, DeleteQRCodeDataCallback callback) {
-        db.collection("qr_codes").whereEqualTo("data", qrCodeData).get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        ArrayList<String> deleteFailures = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            db.collection("qr_codes").document(doc.getId()).delete()
-                                    .addOnFailureListener(e -> deleteFailures.add(doc.getId()));
-                        }
-                        if (deleteFailures.isEmpty()) {
-                            callback.onSuccess();
-                        } else {
-                            callback.onError("Failed to delete some QR codes: " + deleteFailures.toString());
-                        }
-                    } else {
-                        callback.onError("QR code data not found");
-                    }
+    public void deleteQRCodeFromEvent(String eventId, FirestoreUpdateCallback callback) {
+        db.collection("Event").document(eventId)
+                .update("eventQrUrl", null, "qrCode", null) // Clear the QR code fields
+                .addOnSuccessListener(aVoid -> {
+                    callback.onSuccess();
                 })
-                .addOnFailureListener(e -> callback.onError("Error deleting QR code data: " + e.getMessage()));
+                .addOnFailureListener(e -> {
+                    callback.onError("Failed to delete QR code: " + e.getMessage());
+                });
+    }
+
+    /**
+     * Callback interface for Firestore updates.
+     */
+    public interface FirestoreUpdateCallback {
+        void onSuccess();
+
+        void onError(String message);
     }
 
     /**
      * Callback interface for fetching QR code data.
      */
     public interface GetQRCodeDataCallback {
-        void onQRCodeDataFetched(ArrayList<String> qrCodes);
-        void onError(String message);
-    }
-
-    /**
-     * Callback interface for deleting QR code data.
-     */
-    public interface DeleteQRCodeDataCallback {
-        void onSuccess();
+        void onQRCodeDataFetched(ArrayList<QRCodeData> qrCodes);
         void onError(String message);
     }
 }
