@@ -102,9 +102,20 @@ public class EventQRViewActivity extends AppCompatActivity {
      */
     private void updateUI(Event event) {
         if (event != null) {
-            Glide.with(this)
-                    .load(event.getEventQrUrl())
-                    .into(eventQrCodeView);
+            String qrUrl = event.getEventQrUrl();
+
+            if (qrUrl != null) {
+                Glide.with(this)
+                        .load(qrUrl)
+                        .into(eventQrCodeView);
+                shareButton.setVisibility(View.VISIBLE); // Show the share button
+            } else {
+                // Set a placeholder image when QR code is deleted
+                eventQrCodeView.setImageResource(R.drawable.placeholder_image); // Use your placeholder image
+                shareButton.setVisibility(View.GONE); // Hide the share button
+                Toast.makeText(this, "QR code not available for this event.", Toast.LENGTH_SHORT).show();
+            }
+
             String eventTitleText = event.getEventTitle() + "'s QR Code";
             eventTitle.setText(eventTitleText);
         }
