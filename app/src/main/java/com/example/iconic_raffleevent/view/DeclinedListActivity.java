@@ -2,6 +2,7 @@ package com.example.iconic_raffleevent.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,8 +38,13 @@ public class DeclinedListActivity extends AppCompatActivity {
     private ImageButton profileButton;
     private ImageButton backButton;
 
+    private ArrayList<User> usersObj;
+    private Event eventObj;
+
     // Top Nav bar
 //    private ImageButton notificationButton;
+
+    private Button notificationButton;
 
     /**
      * Called when the activity is first created.
@@ -61,8 +67,8 @@ public class DeclinedListActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-//        notificationButton = findViewById(R.id.notification_icon);
         backButton = findViewById(R.id.back_button);
+        notificationButton = findViewById(R.id.sendNotification);
 
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
@@ -75,6 +81,11 @@ public class DeclinedListActivity extends AppCompatActivity {
 
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
+
+        loadEventDetails();
+
+        // Initialize lists
+        usersObj = new ArrayList<>();
 
         // Initialize adapter and set it to RecyclerView
         userAdapter = new UserAdapter(new ArrayList<>());
@@ -100,6 +111,20 @@ public class DeclinedListActivity extends AppCompatActivity {
 
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(DeclinedListActivity.this, ProfileActivity.class));
+        });
+
+        notificationButton.setOnClickListener(v -> {
+            if (usersObj == null || usersObj.isEmpty()) {
+                // No users to send notification to
+                Toast.makeText(DeclinedListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
+
+            } else {
+                com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
+                        DeclinedListActivity.this,
+                        usersObj,
+                        eventObj
+                );
+            }
         });
     }
 
@@ -135,6 +160,7 @@ public class DeclinedListActivity extends AppCompatActivity {
                     if (user != null) {
                         userAdapter.addUser(user);
                         userAdapter.notifyDataSetChanged();
+                        usersObj.add(user);
                     } else {
                         Toast.makeText(DeclinedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                     }
@@ -148,5 +174,21 @@ public class DeclinedListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the event details, including waiting list information and capacity.
+     * Stores the event object in the activity.
+     */
+    private void loadEventDetails() {
+        firebaseAttendee.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+            }
 
+            @Override
+            public void onError(String message) {
+                Toast.makeText(DeclinedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

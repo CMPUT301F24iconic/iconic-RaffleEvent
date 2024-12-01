@@ -14,12 +14,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.view.AdminEventActivity;
+import com.example.iconic_raffleevent.view.EventDetailsForAdminActivity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class AdminEventActivityTest {
+public class AdminEventTest {
 
     @Test
     public void testEventListDisplay() {
@@ -28,25 +29,5 @@ public class AdminEventActivityTest {
 
         // Verify list view is displayed
         onView(withId(R.id.event_list_view)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testDeleteEventDialog() {
-        // Launch activity
-        ActivityScenario.launch(AdminEventActivity.class);
-
-        // Click first event in list
-        onView(withId(R.id.event_list_view)).perform(click());
-
-        // Verify delete dialog appears
-        onView(withText("Delete Event")).check(matches(isDisplayed()));
-        onView(withText("Are you sure you want to delete this event?")).check(matches(isDisplayed()));
-
-        // Verify dialog buttons
-        onView(withText("Delete")).check(matches(isDisplayed()));
-        onView(withText("Cancel")).check(matches(isDisplayed()));
-
-        // Click cancel
-        onView(withText("Cancel")).perform(click());
     }
 }

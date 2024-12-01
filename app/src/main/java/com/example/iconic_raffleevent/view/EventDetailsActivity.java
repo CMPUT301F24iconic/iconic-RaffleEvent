@@ -51,7 +51,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView eventTitleTextView;
     private TextView eventDescriptionTextView;
     private TextView eventLocationTextView;
-    private TextView eventDateTextView;
+    private TextView eventStartDateTextView;
+    private TextView eventEndDateTextView;
+    private TextView hosterTextView;
     private Button joinWaitingListButton;
     private Button leaveWaitingListButton;
     private Button declineInvitationButton;
@@ -75,13 +77,16 @@ public class EventDetailsActivity extends AppCompatActivity {
     private EventController eventController;
     private String eventId;
     private UserController userController;
+    private UserController organizerController;
     private User userObj;
+    private User eventOrganizer;
     private GeoPoint userLocation;
     private Event eventObj;
     private String orgFacility;
 
     private Boolean isUserLoaded;
     private Boolean isEventLoaded;
+    private Boolean isOrganizerLoaded;
 
     // Geolocation
     private FusedLocationProviderClient fusedLocationClient;
@@ -95,11 +100,12 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_details);
+        setContentView(R.layout.activity_event_details_good);
 
         // set async checks
         isUserLoaded = false;
         isEventLoaded = false;
+        isOrganizerLoaded = false;
 
         // Initialize DrawerLayout and NavigationView
 //        drawerLayout = findViewById(R.id.drawer_layout);
@@ -110,7 +116,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventTitleTextView = findViewById(R.id.eventTitle);
         eventDescriptionTextView = findViewById(R.id.eventDescription);
         eventLocationTextView = findViewById(R.id.eventLocation);
-        eventDateTextView = findViewById(R.id.eventDate);
+        eventStartDateTextView = findViewById(R.id.eventDateStart);
+        eventEndDateTextView = findViewById(R.id.eventDateEnd);
+        hosterTextView = findViewById(R.id.hosterTitle);
         congratsMessage = findViewById(R.id.congratulations_card);
 
         // Link map button
@@ -222,6 +230,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             public void onEventDetailsFetched(Event event) {
                 eventObj = event;
                 isEventLoaded = true;
+                runOnUiThread(() -> fetchOrganizerDetails(eventObj.getOrganizerID()));
                 checkUIUpdate();
             }
 
@@ -247,8 +256,18 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventTitleTextView.setText(event.getEventTitle());
         eventDescriptionTextView.setText(event.getEventDescription());
-        eventLocationTextView.setText(event.getEventLocation());
-        eventDateTextView.setText(event.getEventStartDate());
+        String eventLocationText = event.getEventLocation();
+        eventLocationTextView.setText(eventLocationText);
+
+        // Format start date text
+        String startDate = event.getEventStartDate() + ", " + event.getEventStartTime();
+        String endDate = event.getEventEndDate() + ", " + event.getEventEndTime();
+
+        eventStartDateTextView.setText(startDate);
+        eventEndDateTextView.setText(endDate);
+
+        String organizerText = "Organized by: " + eventOrganizer.getName();
+        hosterTextView.setText(organizerText);
 
         // Check if the current user is the organizer
         if (event.getOrganizerID().equals(userObj.getUserId())) {
@@ -271,9 +290,9 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         }
 
-        if (event.isGeolocationRequired()) {
-            showGeolocationWarning();
-        }
+        //if (event.isGeolocationRequired()) {
+            //showGeolocationWarning();
+        //}
     }
 
     /**
@@ -281,9 +300,9 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Checks for valid email and phone number, and handles geolocation if required.
      */
     private void joinWaitingList() {
-        // Ensure user has valid email and phone number
-        if (userObj.getEmail().isEmpty() || userObj.getPhoneNo().isEmpty()) {
-            Toast.makeText(EventDetailsActivity.this, "You must have a valid email and phone number to join", Toast.LENGTH_SHORT).show();
+        // Ensure user has valid email and name
+        if (userObj.getEmail().isEmpty() || userObj.getName().isEmpty()) {
+            Toast.makeText(EventDetailsActivity.this, "You must have a valid name and email to join", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
         }
         // Check if event requires geolocation
@@ -315,7 +334,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void leaveWaitingList() {
         // Need to implement functionality to remove geolocation from entrantLocations if they leave event
-        eventController.leaveWaitingList(eventId, userObj.getUserId(), new EventController.LeaveWaitingListCallback() {
+        eventController.leaveWaitingList(eventObj, userObj, new EventController.LeaveWaitingListCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Left waiting list", Toast.LENGTH_SHORT).show();
@@ -415,10 +434,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     /**
      * Shows a warning message if the event requires geolocation.
      */
-    private void showGeolocationWarning() {
+    //private void showGeolocationWarning() {
         // Show a dialog or toast message to warn the user about geolocation requirement
-        Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
-    }
+        //Toast.makeText(this, "This event requires geolocation", Toast.LENGTH_LONG).show();
+    //}
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.
@@ -442,7 +461,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Adds the user to the waiting list using their location data.
      */
     private void joinWaitlist() {
-        eventController.joinWaitingListWithLocation(eventId, userObj.getUserId(), userLocation, new EventController.JoinWaitingListCallback() {
+        eventController.joinWaitingListWithLocation(eventId, userObj, userLocation, new EventController.JoinWaitingListCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDetailsActivity.this, "Joined waiting list", Toast.LENGTH_SHORT).show();
@@ -472,7 +491,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                     leaveWaitingListButton.setEnabled(true);
                     isUserLoaded = true;
                     orgFacility = userObj.getFacilityId();
-                    System.out.println(orgFacility);
                     checkUIUpdate();
                 } else {
                     System.out.println("User information is null");
@@ -490,7 +508,7 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Checks if both the event and user data have been loaded. If so, updates the UI with the event details.
      */
     private void checkUIUpdate() {
-        if (isEventLoaded && isUserLoaded) {
+        if (isEventLoaded && isUserLoaded && isOrganizerLoaded) {
             updateUI(eventObj);
         }
     }
@@ -515,5 +533,27 @@ public class EventDetailsActivity extends AppCompatActivity {
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
         return userController;
+    }
+
+    /**
+     * Fetches the organizer details for the event so we can display who is hosting the event
+     * @param organizerId The organizer we want to fetch
+     */
+    private void fetchOrganizerDetails(String organizerId) {
+        organizerController = new UserController(organizerId, this);
+        organizerController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                eventOrganizer = user;
+                isOrganizerLoaded = Boolean.TRUE;
+                checkUIUpdate();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(EventDetailsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 }

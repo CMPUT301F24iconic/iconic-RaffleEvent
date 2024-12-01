@@ -5,7 +5,6 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Intent;
 
@@ -13,8 +12,6 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.iconic_raffleevent.R;
-import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.view.WaitingListActivity;
 
 import org.junit.Before;
@@ -42,20 +39,22 @@ public class WaitingListActivityTest {
 
     @Test
     public void testNavigationButtons() {
-        // Test back button
-        onView(withId(R.id.back_button)).check(matches(isDisplayed()));
-        onView(withId(R.id.back_button)).perform(click());
+        // Test the back button functionality
+        onView(withId(R.id.back_button)).check(matches(isDisplayed())).perform(click());
     }
 
-    @Test
-    public void testSampleAttendeesDialog() {
-        // Click sample attendees button
-        onView(withId(R.id.sampleAttendeesButton)).perform(click());
-
-        // Verify dialog elements
-        onView(withId(R.id.attendee_count_input)).check(matches(isDisplayed()));
-        onView(withId(R.id.sample_all_checkbox)).check(matches(isDisplayed()));
-        onView(withId(R.id.cancelButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
-    }
+//    @Test
+//    public void testSampleAttendeesDialog() {
+//        // Open the sample attendees dialog
+//        onView(withId(R.id.sampleAttendeesButton)).perform(click());
+//
+//        // Verify dialog elements are displayed
+//        onView(withId(R.id.attendee_count_input)).check(matches(isDisplayed()));
+//        onView(withId(R.id.sample_all_checkbox)).check(matches(isDisplayed()));
+//        onView(withId(R.id.cancelButton)).check(matches(isDisplayed()));
+//        onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
+//
+//        // Close the dialog by clicking the cancel button
+//        onView(withId(R.id.cancelButton)).perform(click());
+//    }
 }

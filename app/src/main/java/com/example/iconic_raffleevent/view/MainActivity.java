@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.User;
+import com.example.iconic_raffleevent.view.notificationservice.FirestoreListenerService;
 
 /**
  * The main activity for the Iconic Raffle Event application.
@@ -105,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
      * @param activityClass The class of the activity to navigate to.
      */
     private void navigateToActivity(Class<?> activityClass) {
+        Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
+        startService(intent);
         runOnUiThread(() -> {
-            Intent intent = new Intent(MainActivity.this, activityClass);
-            startActivity(intent);
+            Intent intent2 = new Intent(MainActivity.this, activityClass);
+            startActivity(intent2);
             finish(); // Close MainActivity after navigation
         });
     }

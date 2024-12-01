@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -35,6 +36,8 @@ public class ConfirmedListActivity extends AppCompatActivity {
     private String eventId;
     private Event eventObj;
 
+    private ArrayList<User> usersObj;
+
     // Navigation UI
 //    private DrawerLayout drawerLayout;
 //    private NavigationView navigationView;
@@ -44,6 +47,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton backButton;
+    private Button notificationButton;
 
     // Top Nav bar
 //    private ImageButton notificationButton;
@@ -71,6 +75,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
 //        notificationButton = findViewById(R.id.notification_icon);
         backButton = findViewById(R.id.back_button);
+        notificationButton = findViewById(R.id.sendNotification);
 
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
@@ -83,6 +88,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
 
         // Get the event ID passed from the previous activity
         eventId = getIntent().getStringExtra("eventId");
+        usersObj = new ArrayList<>();
 
         loadEventDetails();
 
@@ -133,6 +139,20 @@ public class ConfirmedListActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(ConfirmedListActivity.this, ProfileActivity.class));
         });
+
+        notificationButton.setOnClickListener(v -> {
+            if (usersObj == null || usersObj.isEmpty()) {
+                // No users to send notification to
+                Toast.makeText(ConfirmedListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
+
+            } else {
+                com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
+                        ConfirmedListActivity.this,
+                        usersObj,
+                        eventObj
+                );
+            }
+        });
     }
 
     /**
@@ -178,6 +198,7 @@ public class ConfirmedListActivity extends AppCompatActivity {
                     if (user != null) {
                         userAdapter.addUser(user);
                         userAdapter.notifyDataSetChanged();
+                        usersObj.add(user);
                     } else {
                         Toast.makeText(ConfirmedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                     }

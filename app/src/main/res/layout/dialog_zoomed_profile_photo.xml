@@ -26,4 +26,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:clipToOutline="true" />
 
+    <!-- Delete Profile Picture Button -->
+    <Button
+        android:id="@+id/deleteProfileImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Profile Photo"
+        android:visibility="gone"
+        android:backgroundTint="@color/buttonPrimary"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/zoomedProfileImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="@dimen/button_corner_radius"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

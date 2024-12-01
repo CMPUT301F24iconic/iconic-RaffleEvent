@@ -3,14 +3,9 @@ package com.example.iconic_raffleevent.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
@@ -18,7 +13,6 @@ import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.User;
-import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +44,13 @@ public class EventListForAdminActivity extends AppCompatActivity {
         initializeViews();
         initializeControllers();
         setupListeners();
+        loadEventList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the event list when the activity resumes
         loadEventList();
     }
 
