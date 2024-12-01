@@ -44,6 +44,7 @@ public class DrawerHelper {
             } else if (id == R.id.nav_facility) {
                 Intent intent = new Intent(context, CreateFacilityActivity.class);
                 intent.putExtra("userId", userId); // Pass the userId from the DrawerHelper setup
+                intent.putExtra("fromCreateEvent", false); // Default to false when directly accessing the facility
                 context.startActivity(intent);
             } else if (id == R.id.nav_create_event) {
                 // Check if the user has a facility before redirecting
@@ -63,6 +64,7 @@ public class DrawerHelper {
                         Toast.makeText(context, "You must create a facility before creating an event.", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(context, CreateFacilityActivity.class);
                         intent.putExtra("userId", userId); // Pass the user ID
+                        intent.putExtra("fromCreateEvent", true); // Indicate navigation from Create Event
                         context.startActivity(intent);
                     }
 

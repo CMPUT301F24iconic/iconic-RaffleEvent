@@ -110,6 +110,8 @@ public class WaitingListActivity extends AppCompatActivity {
 
         sampleAttendeesButton = findViewById(R.id.sampleAttendeesButton);
 
+        Button setWaitingListLimitButton = findViewById(R.id.setWaitingListLimitButton);
+
         // Initialize FirebaseAttendee controller
         firebaseAttendee = new FirebaseAttendee();
 
@@ -153,6 +155,9 @@ public class WaitingListActivity extends AppCompatActivity {
 
         // Set listener for sampling attendees
         sampleAttendeesButton.setOnClickListener(v -> showSamplingDialog());
+
+        // Set listener for setting waiting list limit
+        setWaitingListLimitButton.setOnClickListener(v -> showSetWaitingListLimitDialog());
 
         // Top nav bar
 //        notificationButton.setOnClickListener(v ->
@@ -248,6 +253,30 @@ public class WaitingListActivity extends AppCompatActivity {
         });
     }
 
+    private String calculateInfoText(Event event, List<String> waitingList) {
+        int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
+        int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
+        int alreadyInvited = event.getInvitedList() != null ? event.getInvitedList().size() : 0;
+        int remainingSlots = maxAttendees == Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : maxAttendees - (alreadyRegistered + alreadyInvited);
+
+        if (maxAttendees == Integer.MAX_VALUE) {
+            return String.format("Waiting List: %d | Max Attendees: No Limit | Already Registered: %d | Remaining Slots: No Limit",
+                    waitingList.size(), alreadyRegistered);
+        } else {
+            return String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
+                    waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots);
+        }
+    }
+
+    private int calculateRemainingSlots(Event event) {
+        int maxAttendees = event.getMaxAttendees() != null ? event.getMaxAttendees() : Integer.MAX_VALUE;
+        int alreadyRegistered = event.getRegisteredAttendees() != null ? event.getRegisteredAttendees().size() : 0;
+        int alreadyInvited = event.getInvitedList() != null ? event.getInvitedList().size() : 0;
+        return maxAttendees == Integer.MAX_VALUE ? Integer.MAX_VALUE : maxAttendees - (alreadyRegistered + alreadyInvited);
+    }
+
     /**
      * Displays a dialog to specify the number of attendees to sample.
      */
@@ -258,30 +287,12 @@ public class WaitingListActivity extends AppCompatActivity {
         }
 
         List<String> waitingList = eventObj.getWaitingList();
-        List<String> invitedList = eventObj.getInvitedList();
-        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
-        // Placeholder for max attendees. If it is null in system, then there's no limit to the number of attendees
-        int maxAttendees = 999999;
-        int remainingSlots;
-        if (eventObj.getMaxAttendees() != null) {
-            maxAttendees = eventObj.getMaxAttendees();
-        }
-
         if (waitingList == null || waitingList.isEmpty()) {
             Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Calculate remaining slots
-        int alreadyRegistered = registeredAttendees != null ? registeredAttendees.size() : 0;
-        int alreadyInvited = invitedList != null ? invitedList.size() : 0;
-
-        if (maxAttendees != 999999) {
-            remainingSlots = maxAttendees - (alreadyRegistered + alreadyInvited);
-        } else {
-            remainingSlots = 999999;
-        }
-
+        int remainingSlots = calculateRemainingSlots(eventObj);
         if (remainingSlots <= 0) {
             Toast.makeText(this, "All slots have been filled. Cannot sample more attendees.", Toast.LENGTH_SHORT).show();
             return;
@@ -296,14 +307,7 @@ public class WaitingListActivity extends AppCompatActivity {
         EditText attendeeCountInput = dialogView.findViewById(R.id.attendee_count_input);
         CheckBox sampleAllCheckbox = dialogView.findViewById(R.id.sample_all_checkbox);
 
-        // Update info text dynamically
-        if (maxAttendees == 999999) {
-            infoText.setText(String.format("Waiting List: %d | Max Attendees: No Limit | Already Registered: %d | Remaining Slots: No Limit",
-                    waitingList.size(), alreadyRegistered));
-        } else {
-            infoText.setText(String.format("Waiting List: %d | Max Attendees: %d | Already Registered: %d | Remaining Slots: %d",
-                    waitingList.size(), maxAttendees, alreadyRegistered, remainingSlots));
-        }
+        infoText.setText(calculateInfoText(eventObj, waitingList));
 
         // Set default attendee count to min(remaining slots, waiting list size)
         int defaultSampleSize = Math.min(remainingSlots, waitingList.size());
@@ -353,6 +357,90 @@ public class WaitingListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Displays a dialog to set the waiting list limit for the event.
+     */
+    private void showSetWaitingListLimitDialog() {
+        if (eventObj == null) {
+            Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Inflate dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_waiting_list_limit, null);
+
+        // Get references to dialog elements
+        TextView infoText = dialogView.findViewById(R.id.info_text);
+        EditText waitingListLimitInput = dialogView.findViewById(R.id.waiting_list_limit_input);
+        CheckBox noLimitCheckbox = dialogView.findViewById(R.id.no_limit_checkbox);
+
+        // Populate info text
+        infoText.setText(calculateInfoText(eventObj, eventObj.getWaitingList()));
+
+        // Set initial input value and checkbox state
+        int currentLimit = eventObj.getWaitingListLimit();
+        if (currentLimit == Integer.MAX_VALUE) {
+            noLimitCheckbox.setChecked(true);
+            waitingListLimitInput.setEnabled(false);
+        } else {
+            noLimitCheckbox.setChecked(false);
+            waitingListLimitInput.setText(String.valueOf(currentLimit));
+        }
+
+        noLimitCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            waitingListLimitInput.setEnabled(!isChecked);
+            if (isChecked) waitingListLimitInput.setText("");
+        });
+
+        // Build dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        // Handle cancel action
+        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.dismiss());
+
+        // Handle confirm action
+        dialogView.findViewById(R.id.confirmButton).setOnClickListener(v -> {
+            int newLimit;
+            if (noLimitCheckbox.isChecked()) {
+                newLimit = Integer.MAX_VALUE;
+            } else {
+                try {
+                    newLimit = Integer.parseInt(waitingListLimitInput.getText().toString());
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Invalid limit entered.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            // Validate new limit before updating
+            int currentWaitingListSize = eventObj.getWaitingList() != null ? eventObj.getWaitingList().size() : 0;
+            if (newLimit != Integer.MAX_VALUE && newLimit < currentWaitingListSize) {
+                Toast.makeText(this, "Limit must be at least " + currentWaitingListSize + ".", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            eventController.setWaitingListLimit(eventId, newLimit, new EventController.UpdateEventCallback() {
+                @Override
+                public void onSuccess() {
+                    eventObj.setWaitingListLimit(newLimit);
+                    Toast.makeText(WaitingListActivity.this, "Waiting list limit updated successfully.", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(WaitingListActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        dialog.show();
+    }
+
     private void sampleAttendees(int sampleSize, AlertDialog dialog) {
         if (eventObj == null) {
             Toast.makeText(this, "Event data not loaded.", Toast.LENGTH_SHORT).show();
@@ -360,16 +448,15 @@ public class WaitingListActivity extends AppCompatActivity {
         }
 
         List<String> waitingList = eventObj.getWaitingList();
-        List<String> invitedList = eventObj.getInvitedList();
-        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
-
-        if (invitedList == null) invitedList = new ArrayList<>();
-        if (registeredAttendees == null) registeredAttendees = new ArrayList<>();
-
         if (waitingList == null || waitingList.isEmpty()) {
             Toast.makeText(this, "No users in waiting list.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        List<String> invitedList = eventObj.getInvitedList();
+        List<String> registeredAttendees = eventObj.getRegisteredAttendees();
+        if (invitedList == null) invitedList = new ArrayList<>();
+        if (registeredAttendees == null) registeredAttendees = new ArrayList<>();
 
         // Shuffle the waiting list for randomness
         Collections.shuffle(waitingList);

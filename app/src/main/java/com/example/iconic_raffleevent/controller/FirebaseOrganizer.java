@@ -41,6 +41,10 @@ public class FirebaseOrganizer {
         String facilityId = db.collection("Facility").document().getId(); // Pre-generate ID
         facility.setId(facilityId); // Set the ID in the facility object
 
+        if (facility.getCreator() != null) {
+            facility.getCreator().setFacilityId(facilityId); // Update facilityId in the creator object
+        }
+
         db.collection("Facility").document(facilityId).set(facility)
                 .addOnSuccessListener(aVoid -> callback.onFacilityCreated(facilityId))
                 .addOnFailureListener(e -> callback.onError("Failed to create facility: " + e.getMessage()));

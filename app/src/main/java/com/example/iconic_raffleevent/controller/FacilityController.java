@@ -56,6 +56,9 @@ public class FacilityController {
 
             @Override
             public void onFacilityNotExists() {
+                // Ensure creator field is updated properly before creation
+                facility.getCreator().setFacilityId(facility.getId());
+
                 // Create a new facility
                 firebaseOrganizer.createFacility(facility, new FirebaseOrganizer.FacilityCreationCallback() {
                     @Override
