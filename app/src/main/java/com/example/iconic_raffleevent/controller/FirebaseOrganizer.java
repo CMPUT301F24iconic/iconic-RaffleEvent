@@ -5,6 +5,7 @@ import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.ImageData;
 import com.example.iconic_raffleevent.model.QRCodeData;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -63,7 +64,21 @@ public class FirebaseOrganizer {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         db.collection("Facility").document(facilityId).set(facility)
-                                .addOnSuccessListener(aVoid -> callback.onFacilityUpdated())
+                                .addOnSuccessListener(aVoid -> {
+                                    db.collection("Event").whereEqualTo("facilityId", facilityId)
+                                            .get().addOnSuccessListener(querySnapshot -> {
+                                                if (!querySnapshot.isEmpty()) {
+                                                    for (DocumentSnapshot event : querySnapshot.getDocuments()) {
+                                                        event.getReference().update("eventLocation", facility.getFacilityName())
+                                                                .addOnFailureListener(e ->
+                                                                        callback.onError("Failed to update event with new facility ID"));
+                                                    }
+                                                    callback.onFacilityUpdated();
+                                                } else {
+                                                    callback.onFacilityUpdated();
+                                                }
+                                            });
+                                })
                                 .addOnFailureListener(e -> callback.onError("Failed to update facility: " + e.getMessage()));
                     } else {
                         callback.onError("Facility does not exist for update.");

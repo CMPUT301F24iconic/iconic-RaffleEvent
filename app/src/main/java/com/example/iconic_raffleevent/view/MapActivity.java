@@ -79,7 +79,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         eventTitle = getIntent().getStringExtra("eventTitle");
 
         eventHeader = findViewById(R.id.event_header);
-        eventHeader.setText(eventTitle);
+        String mapHeaderText = eventTitle + "'s Waitlist Locations";
+        eventHeader.setText(mapHeaderText);
 
         // Top nav bar
 //        notificationButton = findViewById(R.id.notification_icon);
