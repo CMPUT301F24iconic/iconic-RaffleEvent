@@ -496,6 +496,9 @@ public class UserController {
      * Callback interface for updating a user's profile.
      */
     public interface UpdateProfileCallback {
+        /**
+         * Callback which is called upon successful update profile operation
+         */
         void onProfileUpdated();
 
         /**
