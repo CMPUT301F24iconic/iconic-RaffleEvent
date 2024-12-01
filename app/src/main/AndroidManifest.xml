@@ -103,6 +103,8 @@
         <activity android:name=".view.ProfileManagementActivity" android:exported="false" />
         <activity android:name=".view.EventDetailsForAdminActivity" android:exported="false" />
         <activity android:name=".view.FacilityListForAdminActivity" android:exported="false" />
+        <activity android:name=".view.QRCodeGalleryActivity" android:exported="false"/>
+
 
         <!-- Firebase and Notification Configuration (uncomment when adding Firebase setup) -->
         <!--
