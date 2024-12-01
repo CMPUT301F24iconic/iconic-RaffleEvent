@@ -141,7 +141,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             firstLocation = new GeoPoint(geo.getLatitude(), geo.getLongitude());
                         }
                         LatLng location = new LatLng(geo.getLatitude(), geo.getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(location).title(entry.getKey().substring(entry.getKey().indexOf("-") + 1)));
+                        Integer substringIndex = entry.getKey().indexOf("-") + 1;
+                        String markerTitle = entry.getKey().substring(substringIndex);
+                        googleMap.addMarker(new MarkerOptions().position(location).title(markerTitle));
                     }
                     if (firstLocation != null) {
                         LatLng startingLocation = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());

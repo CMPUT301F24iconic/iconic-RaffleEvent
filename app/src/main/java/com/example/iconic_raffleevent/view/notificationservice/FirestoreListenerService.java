@@ -71,8 +71,6 @@ public class FirestoreListenerService extends Service {
         return START_STICKY;
     }
 
-
-
     private void generateSystemNotification(HashMap<String, Object> notification, AtomicInteger notiID) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
