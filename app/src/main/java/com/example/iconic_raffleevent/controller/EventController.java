@@ -186,6 +186,10 @@ public class EventController {
         firebaseAttendee.addEventQRCode(eventObj, callback);
     }
 
+    /**
+     * Update an existing events information in the database
+     * @param eventObj event being updated
+     */
     public void updateEventDetails(Event eventObj) {
         firebaseAttendee.updateEventDetails(eventObj);
     }
@@ -240,6 +244,13 @@ public class EventController {
         });
     }
 
+    /**
+     * Creates a notification in the Notification collection indicates if a user was selected for an
+     * event
+     *
+     * @param notification notification to be created
+     * @param callback The callback to handle success or error
+     */
     public void sendNotification(Notification notification, SendDrawNotificationCallback callback) {
         firebaseAttendee.sendDrawNotification(notification, callback);
     }
@@ -248,8 +259,17 @@ public class EventController {
      * Callback interface for event map fetch operations.
      */
     public interface EventMapCallback {
+        /**
+         * Returns a map containing all the entrants and their locations when they joined
+         * an event waitlist
+         * @param locations map to be returned
+         */
         void onEventMapFetched(Map<String, Object> locations);
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -257,8 +277,16 @@ public class EventController {
      * Callback interface for event details fetch operations.
      */
     public interface EventDetailsCallback {
+        /**
+         * Returns the event being fetched
+         * @param event Event that was fetched
+         */
         void onEventDetailsFetched(Event event);
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -266,7 +294,16 @@ public class EventController {
      * Callback interface for fetching all events.
      */
     public interface EventListCallback {
+        /**
+         * Returns a list of events
+         * @param events List of Event objects
+         */
         void onEventsFetched(ArrayList<Event> events);
+
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -274,7 +311,15 @@ public class EventController {
      * Callback interface for updating event details.
      */
     public interface UpdateEventCallback {
+        /**
+         * Called when update event operation is successful
+         */
         void onSuccess();
+
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -283,8 +328,15 @@ public class EventController {
      * Callback interface for joining a waiting list.
      */
     public interface JoinWaitingListCallback {
+        /**
+         * Called when join waiting list operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -292,8 +344,15 @@ public class EventController {
      * Callback interface for leaving a waiting list.
      */
     public interface LeaveWaitingListCallback {
+        /**
+         * Called when leave waitlist operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -301,8 +360,15 @@ public class EventController {
      * Callback interface for accepting an event invitation.
      */
     public interface AcceptInvitationCallback {
+        /**
+         * Called when accept invitation operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -311,8 +377,15 @@ public class EventController {
      */
 
     public interface DeclineInvitationCallback {
+        /**
+         * Called when decline invite operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -320,8 +393,16 @@ public class EventController {
      * Callback interface for scanning a QR code.
      */
     public interface ScanQRCodeCallback {
+        /**
+         * Callback which contains the event id that the qr code links to
+         * @param eventId Id of the event
+         */
         void onEventFound(String eventId);
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -329,8 +410,16 @@ public class EventController {
      * Callback interface for uploading an event poster.
      */
     public interface UploadEventPosterCallback {
+        /**
+         * Callback which contains the posterUrl after a successful event poster upload
+         * @param posterUrl Url of event poster
+         */
         void onSuccessfulUpload(String posterUrl);
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -338,8 +427,16 @@ public class EventController {
      * Callback interface for uploading an event QR code.
      */
     public interface UploadEventQRCodeCallback {
+        /**
+         * Callback which contains the qr url after a successful event qr code upload
+         * @param qrUrl Url of qr code
+         */
         void onSuccessfulQRUpload(String qrUrl);
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -347,8 +444,15 @@ public class EventController {
      * Callback interface for deleting an event.
      */
     public interface DeleteEventCallback {
+        /**
+         * Called when delete event operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -356,14 +460,28 @@ public class EventController {
      * Callback interface for retrieving a waitlist
      */
     public interface GetWaitlistCallback {
+        /**
+         * Called when get waitlist operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
     public interface SendDrawNotificationCallback {
+        /**
+         * Called when send draw notification operation is successful
+         */
         void onSuccess();
 
+        /**
+         * Returns an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }
