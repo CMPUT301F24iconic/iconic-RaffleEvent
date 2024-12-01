@@ -11,7 +11,6 @@ import java.util.List;
  * Provides methods to retrieve notifications and mark them as read.
  */
 public class NotificationController {
-
     public FirebaseFirestore db;
     public CollectionReference notificationsCollection;
     public FirebaseAttendee firebaseAttendee;
@@ -26,6 +25,11 @@ public class NotificationController {
         firebaseAttendee = new FirebaseAttendee();
     }
 
+    /**
+     * Uploads a new notification to the Notification collection in firebase
+     * @param notification Notification to be uploaded
+     * @param callback The callback interface to handle the uploaded notifications or error
+     */
     public void sendNotification(Notification notification, NotificationController.SendNotificationCallback callback) {
         firebaseAttendee.sendGeneralNotification(notification, callback);
     }
@@ -57,7 +61,16 @@ public class NotificationController {
      * Callback interface for retrieving notifications for a user.
      */
     public interface GetNotificationsCallback {
+        /**
+         * Callback which contains a list of notifications
+         * @param notifications List of notifications
+         */
         void onNotificationsFetched(List<Notification> notifications);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -65,12 +78,28 @@ public class NotificationController {
      * Callback interface for marking a notification as read.
      */
     public interface MarkNotificationAsReadCallback {
+        /**
+         * Callback which is called upon successful mark notification as read operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
     public interface SendNotificationCallback {
+        /**
+         * Callback which is called upon successful send notification operation
+         */
         void onSuccess(Boolean success);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }
