@@ -3,6 +3,7 @@ package com.example.iconic_raffleevent.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This activity displays the map for a specific event, showing the locations of entrants on the map.
@@ -38,6 +40,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String eventId;
     private String eventTitle;
     private TextView eventHeader;
+    private Boolean geolocationEnabled;
+    private SupportMapFragment mapFragment;
+    private TextView placeholderText;
 
 //    private DrawerLayout drawerLayout;
 //    private NavigationView navigationView;
@@ -49,9 +54,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ImageButton backButton;
 //    private ImageButton notificationButton;
 
-    // User fields
-    private UserController userController;
-    private User userObj;
 
     /**
      * Initializes the activity, setting up the UI elements, navigation drawer, and map.
@@ -77,10 +79,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         eventController = new EventController();
         eventId = getIntent().getStringExtra("eventId");
         eventTitle = getIntent().getStringExtra("eventTitle");
+        geolocationEnabled = getIntent().getBooleanExtra("geolocation", Boolean.FALSE);
+
 
         eventHeader = findViewById(R.id.event_header);
         String mapHeaderText = eventTitle + "'s Waitlist Locations";
         eventHeader.setText(mapHeaderText);
+        placeholderText = findViewById(R.id.empty_message);
 
         // Top nav bar
 //        notificationButton = findViewById(R.id.notification_icon);
@@ -103,14 +108,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         backButton.setOnClickListener(v -> finish());
 
-        // Fetch user profile and set up drawer
-        initializeUserController();
-        loadUserProfile();
+        // Load user UI including map
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        // Delay visibility changes until the view is ready
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this); // Triggers onMapReady when the map is initialized
+        }
 
+        loadMapDetails(geolocationEnabled);
     }
+
+    public void loadMapDetails(Boolean geolocationEnabled) {
+        if (!geolocationEnabled) {
+            String text = "Geolocation for event is currently disabled. Enable geolocation to gain access";
+            placeholderText.setText(text);
+            placeholderText.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     /**
      * Called when the map is ready to be used.
@@ -134,7 +150,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onEventMapFetched(Map<String, Object> locations) {
                 GeoPoint firstLocation = null;
-                if (locations != null) {
+                if (locations != null && !locations.isEmpty()) {
+                    // Toggle map visibility
+                    placeholderText.setVisibility(View.INVISIBLE);
+                    System.out.println(mapFragment.getView());
+                    mapFragment.getView().setVisibility(View.VISIBLE);
+                    System.out.println("Here");
+
                     for (Map.Entry<String,Object> entry : locations.entrySet()) {
                         GeoPoint geo = (GeoPoint) entry.getValue();
                         if (firstLocation == null) {
@@ -149,6 +171,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         LatLng startingLocation = new LatLng(firstLocation.getLatitude(), firstLocation.getLongitude());
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startingLocation, 10));
                     }
+                } else {
+                    mapFragment.getView().setVisibility(View.INVISIBLE);
+                    String text = "There are currently no entrants in your waitlist. Once people join, their locations will be shown here.";
+                    // Set text saying no entrant in waitlist
+                    placeholderText.setText(text);
+                    placeholderText.setVisibility(View.VISIBLE);
+                    System.out.println("Here2");
                 }
             }
             @Override
@@ -158,32 +187,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    private void initializeUserController() {
-        UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
-        userControllerViewModel.setUserController(getUserID(), getApplicationContext());
-        userController = userControllerViewModel.getUserController();
-    }
-
-    private void loadUserProfile() {
-        userController.getUserInformation(new UserController.UserFetchCallback() {
-            @Override
-            public void onUserFetched(User user) {
-                if (user != null) {
-                    userObj = user;
-//                    DrawerHelper.setupDrawer(MapActivity.this, drawerLayout, navigationView, userObj.getUserId());
-                } else {
-                    System.out.println("User information is null");
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                System.out.println("Cannot fetch user information: " + message);
-            }
-        });
-    }
-
-    private String getUserID() {
-        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-    }
 }

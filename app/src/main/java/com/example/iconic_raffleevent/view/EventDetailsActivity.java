@@ -195,6 +195,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             Intent intent = new Intent(EventDetailsActivity.this, MapActivity.class);
             intent.putExtra("eventId", eventId);
             intent.putExtra("eventTitle", eventObj.getEventTitle());
+            intent.putExtra("geolocation", eventObj.isGeolocationRequired());
             startActivity(intent);
         });
 
@@ -289,10 +290,6 @@ public class EventDetailsActivity extends AppCompatActivity {
                 joinWaitingListButton.setVisibility(View.VISIBLE);
             }
         }
-
-        //if (event.isGeolocationRequired()) {
-            //showGeolocationWarning();
-        //}
     }
 
     /**
@@ -304,6 +301,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         if (userObj.getEmail().isEmpty() || userObj.getName().isEmpty()) {
             Toast.makeText(EventDetailsActivity.this, "You must have a valid name and email to join", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
+            finish();
         }
         // Check if event requires geolocation
         else if (eventObj.isGeolocationRequired()) {
@@ -547,6 +545,4 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
-    
 }
