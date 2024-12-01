@@ -25,6 +25,7 @@ public class WaitingListActivityTest {
 
     @Before
     public void setUp() {
+        // Launch the activity with a mock intent
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), WaitingListActivity.class);
         intent.putExtra("eventId", TEST_EVENT_ID);
         ActivityScenario.launch(intent);
@@ -32,7 +33,7 @@ public class WaitingListActivityTest {
 
     @Test
     public void testInitialUIElements() {
-        // Verify basic UI elements are displayed
+        // Verify that RecyclerView and sample attendees button are displayed
         onView(withId(R.id.userRecyclerView)).check(matches(isDisplayed()));
         onView(withId(R.id.sampleAttendeesButton)).check(matches(isDisplayed()));
     }
@@ -43,18 +44,18 @@ public class WaitingListActivityTest {
         onView(withId(R.id.back_button)).check(matches(isDisplayed())).perform(click());
     }
 
-//    @Test
-//    public void testSampleAttendeesDialog() {
-//        // Open the sample attendees dialog
-//        onView(withId(R.id.sampleAttendeesButton)).perform(click());
-//
-//        // Verify dialog elements are displayed
-//        onView(withId(R.id.attendee_count_input)).check(matches(isDisplayed()));
-//        onView(withId(R.id.sample_all_checkbox)).check(matches(isDisplayed()));
-//        onView(withId(R.id.cancelButton)).check(matches(isDisplayed()));
-//        onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
-//
-//        // Close the dialog by clicking the cancel button
-//        onView(withId(R.id.cancelButton)).perform(click());
-//    }
+    @Test
+    public void testSampleAttendeesDialog() {
+        // Click the sample attendees button
+        onView(withId(R.id.sampleAttendeesButton)).perform(click());
+
+        // Verify dialog elements are displayed
+        onView(withId(R.id.attendee_count_input)).check(matches(isDisplayed()));
+        onView(withId(R.id.sample_all_checkbox)).check(matches(isDisplayed()));
+        onView(withId(R.id.cancelButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.confirmButton)).check(matches(isDisplayed()));
+
+        // Close the dialog by clicking the cancel button
+        onView(withId(R.id.cancelButton)).perform(click());
+    }
 }
