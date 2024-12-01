@@ -123,6 +123,10 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Generates dialog prompting the admin to delete an event
+     * Deletes an event if confirmed, does nothing otherwise
+     */
     private void confirmAndDeleteEvent() {
         new android.app.AlertDialog.Builder(this)
                 .setTitle("Delete Event")
@@ -132,6 +136,10 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Generates dialog prompting the admin to delete a poster
+     * Deletes a poster if confirmed, does nothing otherwise
+     */
     private void confirmAndDeletePoster() {
         new android.app.AlertDialog.Builder(this)
                 .setTitle("Delete Event Poster")
@@ -141,6 +149,9 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Delete an event poster from the database and replace it with a generic one so event does not crash
+     */
     private void deletePoster() {
         if (eventObj != null) {
             // Set the default poster URL

@@ -116,17 +116,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mapFragment.getMapAsync(this); // Triggers onMapReady when the map is initialized
         }
 
-        loadMapDetails(geolocationEnabled);
+        checkGeolocationEnabled(geolocationEnabled);
     }
 
-    public void loadMapDetails(Boolean geolocationEnabled) {
+    /**
+     * Checks if geolocation is enabled for an event and updates the UI accordingly
+     *
+     * @param geolocationEnabled Boolean value reflecting if the event geolocation is enabled
+     */
+    public void checkGeolocationEnabled(Boolean geolocationEnabled) {
         if (!geolocationEnabled) {
             String text = "Geolocation for event is currently disabled. Enable geolocation to gain access";
             placeholderText.setText(text);
             placeholderText.setVisibility(View.VISIBLE);
         }
     }
-
 
     /**
      * Called when the map is ready to be used.

@@ -96,7 +96,6 @@ public class NewUserActivity extends AppCompatActivity {
         });
     }
 
-
     /**
      * Retrieves the unique device ID used as the user ID.
      * @return a String representing the device ID.

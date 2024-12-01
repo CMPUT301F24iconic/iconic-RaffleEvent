@@ -144,7 +144,6 @@ public class ConfirmedListActivity extends AppCompatActivity {
             if (usersObj == null || usersObj.isEmpty()) {
                 // No users to send notification to
                 Toast.makeText(ConfirmedListActivity.this, "No users to send notification to", Toast.LENGTH_SHORT).show();
-
             } else {
                 com.example.iconic_raffleevent.view.NotificationUtils.showNotificationDialog(
                         ConfirmedListActivity.this,
@@ -230,9 +229,10 @@ public class ConfirmedListActivity extends AppCompatActivity {
         });
     }
 
-    public void setFirebaseAttendee(FirebaseAttendee firebaseAttendee) {
-        this.firebaseAttendee = firebaseAttendee;
-    }
+    /**
+     * Create a dialog showing the profile image for a specific user
+     * @param user User object of the profile image being displayed in dialog
+     */
     private void showProfileImageDialog(User user) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);
@@ -257,6 +257,4 @@ public class ConfirmedListActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-
 }

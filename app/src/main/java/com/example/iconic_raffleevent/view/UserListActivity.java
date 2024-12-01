@@ -99,6 +99,11 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Create a dialog showing the profile image of a user
+     *
+     * @param user User who's profile image is being displayed
+     */
     private void showProfileImageDialog(User user) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);

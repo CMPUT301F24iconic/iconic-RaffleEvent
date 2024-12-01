@@ -1,5 +1,6 @@
 package com.example.iconic_raffleevent.view;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,6 +23,13 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
     public EventController eventController;
     public Event event;
 
+    /**
+     * Initializes the activity when it is created. Sets up the layout, initializes
+     * user and event controllers, and sets listeners for any click elements on screen.
+     *
+     * @param savedInstanceState If the activity is re-initialized after previously
+     *                           being shut down, it will pull any cached data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +67,9 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Load user profile information by fetching from firebase
+     */
     public void loadUserProfile() {
         /* Aiden Teal code with user info from database */
         userController.getUserInformation(new UserController.UserFetchCallback() {
@@ -70,7 +81,6 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
                     System.out.println("User information is null");
                 }
             }
-
             @Override
             public void onError(String message) {
                 System.out.println("Cannot fetch user information");
@@ -78,13 +88,18 @@ public class DisplayQRCodeActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    Aiden Teal function to get userID
+    /**
+     * Get device id from settings
+     * @return String device id
      */
+    @SuppressLint("HardwareIds")
     public String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    /**
+     * Initialize user controller with user ID
+     */
     public void getUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(),getApplicationContext());
