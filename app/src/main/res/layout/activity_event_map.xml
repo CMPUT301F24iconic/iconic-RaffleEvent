@@ -43,6 +43,22 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
             tools:context=".MapsActivity" />
 
+        <!-- Overlay Message TextView -->
+        <TextView
+            android:id="@+id/empty_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="No entrants in waitlist or geolocation is not enabled. Please enable or wait for entrants to join before seeing their location."
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="16dp"
+            app:layout_constraintTop_toBottomOf="@id/event_header"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <include
             android:id="@+id/bottom_navbar"
             layout="@layout/bottom_navbar"
