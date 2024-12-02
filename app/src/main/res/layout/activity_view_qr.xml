@@ -28,41 +28,53 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/qrcode_title"
-                    style="@style/TextHeading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:textColor="@color/textColorPrimary"
-                    android:text="Sample Text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/top_navbar"/>
+            <TextView
+                android:id="@+id/qrcode_title"
+                style="@style/TextHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/textColorPrimary"
+                android:text="Sample Text"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_navbar"
+                app:layout_constraintBottom_toTopOf="@id/event_qr_cardview"/>
 
-            <ImageView
-                android:id="@+id/qrcode_view"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/event_qr_cardview"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:layout_marginTop="32dp"
+                android:layout_margin="16dp"
+                app:cardBackgroundColor="@color/mapPlaceholder"
+                app:cardCornerRadius="12dp"
+                app:layout_constraintBottom_toTopOf="@+id/share_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/qrcode_title"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintTop_toBottomOf="@id/qrcode_title">
 
-<!--            <Button-->
-<!--                android:id="@+id/back_button"-->
-<!--                android:layout_width="150dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="32dp"-->
-<!--                android:layout_marginTop="32dp"-->
-<!--                android:backgroundTint="@color/buttonPrimary"-->
-<!--                android:text="Back"-->
-<!--                android:textColor="@color/buttonTextColor"-->
-<!--                app:cornerRadius="@dimen/button_corner_radius"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/qrcode_view" />-->
+                <!-- Overlay Message TextView -->
+                <TextView
+                    android:id="@+id/empty_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="QR code missing. Generate a new one to see it here."
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:visibility="visible"
+                    android:padding="16dp" />
+
+                <ImageView
+                    android:id="@+id/qrcode_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/share_button"
@@ -75,7 +87,21 @@
                 app:cornerRadius="@dimen/button_corner_radius"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/qrcode_view" />
+                app:layout_constraintTop_toBottomOf="@+id/event_qr_cardview" />
+
+            <Button
+                android:id="@+id/generate_button"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="@color/buttonPrimary"
+                android:text="Generate QR"
+                android:textColor="@color/buttonTextColor"
+                app:cornerRadius="@dimen/button_corner_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/event_qr_cardview" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

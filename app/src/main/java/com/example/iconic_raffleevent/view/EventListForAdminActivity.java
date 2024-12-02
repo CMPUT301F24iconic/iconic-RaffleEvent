@@ -74,6 +74,9 @@ public class EventListForAdminActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * refresh the event list when the activity resumes
+     */
     @Override
     protected void onResume() {
         super.onResume();

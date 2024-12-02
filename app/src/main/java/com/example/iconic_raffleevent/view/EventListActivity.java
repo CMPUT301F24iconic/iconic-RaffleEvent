@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -35,6 +36,7 @@ public class EventListActivity extends AppCompatActivity {
     public EventAdapter eventAdapter;
     public List<Event> eventList;
     private EventController eventController;
+    private TextView eventPlaceholder;
 
     // Nav bar
     private ImageButton homeButton;
@@ -71,6 +73,7 @@ public class EventListActivity extends AppCompatActivity {
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
+        eventPlaceholder = findViewById(R.id.empty_message);
 
         // Initialize ListView and Adapter
         eventListView = findViewById(R.id.eventListView);
@@ -153,6 +156,13 @@ public class EventListActivity extends AppCompatActivity {
                             eventIds.add(event.getEventId());
                             eventList.add(event);
                         }
+                    }
+                    if (eventList.isEmpty()) {
+                        eventPlaceholder.setVisibility(View.VISIBLE);
+                        eventListView.setVisibility(View.INVISIBLE);
+                    } else {
+                        eventPlaceholder.setVisibility(View.INVISIBLE);
+                        eventListView.setVisibility(View.VISIBLE);
                     }
                     eventAdapter.notifyDataSetChanged();
                 });

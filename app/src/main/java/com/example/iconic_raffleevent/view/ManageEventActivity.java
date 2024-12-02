@@ -5,12 +5,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.EventController;
+import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.User;
 import com.google.android.material.navigation.NavigationView;
 
 /**
@@ -18,15 +27,28 @@ import com.google.android.material.navigation.NavigationView;
  * attendee list, cancelled attendee list, and final attendee list.
  */
 public class ManageEventActivity extends AppCompatActivity {
-    private Button waitingListButton;
-    private Button attendeeListButton;
-    private Button cancelledAttendeeListButton;
-    private Button finalAttendeeListButton;
+    private CardView waitingListTile;
+    private CardView attendeeListTile;
+    private CardView cancelledAttendeeListTile;
+    private CardView finalAttendeeListTile;
     private String eventId;
 
     // Navigation UI
 //    private DrawerLayout drawerLayout;
 //    private NavigationView navigationView;
+
+    // Event details UI components
+    private ImageView eventImage;
+    private TextView eventTitle;
+    private TextView hosterTitle;
+
+    private EventController eventController;
+    private UserController organizerController;
+    private Event eventObj;
+    private User eventOrganizer;
+
+    private boolean isEventLoaded = false;
+    private boolean isOrganizerLoaded = false;
 
     // Nav bar
     private ImageButton homeButton;
@@ -56,6 +78,14 @@ public class ManageEventActivity extends AppCompatActivity {
 //        drawerLayout = findViewById(R.id.drawer_layout);
 //        navigationView = findViewById(R.id.navigation_view);
 
+        // Initialize event controller
+        eventController = new EventController();
+
+        // Link event details UI components
+        eventImage = findViewById(R.id.eventImage);
+        eventTitle = findViewById(R.id.eventTitle);
+        hosterTitle = findViewById(R.id.hosterTitle);
+
         // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
@@ -66,33 +96,36 @@ public class ManageEventActivity extends AppCompatActivity {
 //        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Link UI elements
-        waitingListButton = findViewById(R.id.waitingListButton);
-        attendeeListButton = findViewById(R.id.attendeeListButton);
-        cancelledAttendeeListButton = findViewById(R.id.cancelledAttendeeListButton);
-        finalAttendeeListButton = findViewById(R.id.finalAttendeeListButton);
+        waitingListTile = findViewById(R.id.waitingListTile);
+        attendeeListTile = findViewById(R.id.attendeeListTile);
+        cancelledAttendeeListTile = findViewById(R.id.cancelledAttendeeListTile);
+        finalAttendeeListTile = findViewById(R.id.finalAttendeeListTile);
+
+        // Fetch and update event details
+        fetchEventDetails();
 
         // Set onClickListeners for each button
-        waitingListButton.setOnClickListener(v -> {
+        waitingListTile.setOnClickListener(v -> {
             Intent intent = new Intent(ManageEventActivity.this, WaitingListActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
 
-        attendeeListButton.setOnClickListener(v -> {
+        attendeeListTile.setOnClickListener(v -> {
             Intent intent = new Intent(ManageEventActivity.this, InvitedListActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
 
         // Placeholder for cancelled attendee list functionality
-        cancelledAttendeeListButton.setOnClickListener(v -> {
+        cancelledAttendeeListTile.setOnClickListener(v -> {
             Intent intent = new Intent(ManageEventActivity.this, DeclinedListActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
 
         // Placeholder for final attendee list functionality
-        finalAttendeeListButton.setOnClickListener(v -> {
+        finalAttendeeListTile.setOnClickListener(v -> {
             Intent intent = new Intent(ManageEventActivity.this, ConfirmedListActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
@@ -116,5 +149,77 @@ public class ManageEventActivity extends AppCompatActivity {
         profileButton.setOnClickListener(v -> {
             startActivity(new Intent(ManageEventActivity.this, ProfileActivity.class));
         });
+    }
+
+    /**
+     * Fetches the event details from the server.
+     */
+    private void fetchEventDetails() {
+        eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
+            @Override
+            public void onEventDetailsFetched(Event event) {
+                eventObj = event;
+                isEventLoaded = true;
+                fetchOrganizerDetails(event.getOrganizerID());
+                checkUIUpdate();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(ManageEventActivity.this, "Error fetching event details: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Fetches the organizer details for the event.
+     *
+     * @param organizerId The organizer ID to fetch details for.
+     */
+    private void fetchOrganizerDetails(String organizerId) {
+        organizerController = new UserController(organizerId, this);
+        organizerController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                eventOrganizer = user;
+                isOrganizerLoaded = true;
+                checkUIUpdate();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(ManageEventActivity.this, "Error fetching organizer details: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * Updates the UI components with the fetched event and organizer details.
+     */
+    private void checkUIUpdate() {
+        if (isEventLoaded && isOrganizerLoaded) {
+            updateEventDetailsUI();
+        }
+    }
+
+    /**
+     * Updates the event details UI components.
+     */
+    private void updateEventDetailsUI() {
+        if (eventObj != null) {
+            // Load event image using Glide
+            Glide.with(this)
+                    .load(eventObj.getEventImageUrl())
+                    .into(eventImage);
+
+            // Set event title
+            eventTitle.setText(eventObj.getEventTitle());
+        }
+
+        if (eventOrganizer != null) {
+            // Set organizer name
+            String organizerText = "Organized by: " + eventOrganizer.getName();
+            hosterTitle.setText(organizerText);
+        }
     }
 }

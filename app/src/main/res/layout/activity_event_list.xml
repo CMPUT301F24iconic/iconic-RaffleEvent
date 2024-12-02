@@ -8,6 +8,8 @@
     android:fitsSystemWindows="true">
 
     <!-- Main Content Layout -->
+
+    <!-- Navigation Drawer Menu -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,24 +22,60 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Event List -->
-        <ListView
-            android:id="@+id/eventListView"
+        <TextView
+            android:id="@+id/event_list_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Your Events Dashboard"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/event_list_cardview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/top_navbar"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/event_list_cardview"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:layout_marginBottom="@dimen/medium_margin"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="@dimen/recycler_item_spacing"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@color/mapPlaceholder"
+            app:cardCornerRadius="12dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navbar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top_navbar"
-            app:layout_constraintVertical_bias="0.0"
-            tools:listitem="@layout/item_event" />
+            app:layout_constraintTop_toBottomOf="@id/event_list_header">
+
+            <!-- Overlay Message TextView -->
+            <TextView
+                android:id="@+id/empty_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Events you create or join will appear here for you to keep track of and access"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:padding="16dp" />
+
+            <!-- Event List -->
+            <ListView
+                android:id="@+id/eventListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:layout_marginBottom="@dimen/small_margin"
+                android:layout_marginTop="@dimen/small_margin"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="@dimen/recycler_item_spacing"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/event_list_cardview"
+                tools:listitem="@layout/item_event" />
+        </androidx.cardview.widget.CardView>
 
         <!-- Bottom Navigation Bar -->
         <include
@@ -48,7 +86,6 @@
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Navigation Drawer Menu -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
