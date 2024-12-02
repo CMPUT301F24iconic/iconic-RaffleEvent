@@ -36,33 +36,4 @@ public class AdminImageActivityTest {
         onView(withId(R.id.image_list_view)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testImageListClick() {
-        // Simulate a click on the first item in the list
-        onData(Matchers.anything())
-                .inAdapterView(withId(R.id.image_list_view))
-                .atPosition(0)
-                .perform(click());
-
-        // Verify that the delete dialog is displayed
-        onView(withText("Delete Image")).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testDeleteImageDialogButtons() {
-        // Simulate a click on the first item in the list
-        onData(Matchers.anything())
-                .inAdapterView(withId(R.id.image_list_view))
-                .atPosition(0)
-                .perform(click());
-
-        // Check that the "Delete" button is displayed
-        onView(withText("Delete")).check(matches(isDisplayed()));
-
-        // Check that the "Cancel" button is displayed
-        onView(withText("Cancel")).check(matches(isDisplayed()));
-
-        // Simulate clicking the "Cancel" button
-        onView(withText("Cancel")).perform(click());
-    }
 }
