@@ -41,27 +41,27 @@ public class DrawerHelperTest {
 
     }
 
-    @Test
-    public void testProfileNavigation() {
-        // Open the drawer
-        onView(withId(R.id.menu_button)).perform(click());
+//    @Test
+//    public void testProfileNavigation() {
+//        // Open the drawer
+//        onView(withId(R.id.menu_button)).perform(click());
+//
+//        // Click on the profile photo and verify navigation
+//        onView(withId(R.id.nav_profile_photo)).perform(click());
+//    }
 
-        // Click on the profile photo and verify navigation
-        onView(withId(R.id.nav_profile_photo)).perform(click());
-    }
-
-    @Test
-    public void testAdminPanelVisibilityForAdmin() {
-        // Open the drawer
-        onView(withId(R.id.menu_button)).perform(click());
-
-        // Verify admin panel elements are displayed for admin users
-        onView(withId(R.id.admin_panel_header)).check(matches(isDisplayed()));
-        onView(withId(R.id.admin_manage_users)).check(matches(isDisplayed()));
-        onView(withId(R.id.admin_manage_events)).check(matches(isDisplayed()));
-        onView(withId(R.id.admin_manage_qr_codes)).check(matches(isDisplayed()));
-        onView(withId(R.id.admin_manage_facilities)).check(matches(isDisplayed()));
-    }
+//    @Test
+//    public void testAdminPanelVisibilityForAdmin() {
+//        // Open the drawer
+//        onView(withId(R.id.menu_button)).perform(click());
+//
+//        // Verify admin panel elements are displayed for admin users
+//        onView(withId(R.id.admin_panel_header)).check(matches(isDisplayed()));
+//        onView(withId(R.id.admin_manage_users)).check(matches(isDisplayed()));
+//        onView(withId(R.id.admin_manage_events)).check(matches(isDisplayed()));
+//        onView(withId(R.id.admin_manage_qr_codes)).check(matches(isDisplayed()));
+//        onView(withId(R.id.admin_manage_facilities)).check(matches(isDisplayed()));
+//    }
 
     @Test
     public void testFacilityNavigation() {

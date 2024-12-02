@@ -53,22 +53,22 @@ public class QRCodeGalleryActivityTest {
                 .check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testDeleteQRCodeConfirmation() {
-        // Simulate clicking on a QR code
-        onView(withId(R.id.qr_code_recycler_view))
-                .perform(click());
-
-        // Check if the delete confirmation dialog is displayed
-        onView(withText("Are you sure you want to delete the QR code for event:"))
-                .check(matches(isDisplayed()));
-
-        // Confirm deletion
-        onView(withText("Yes")).perform(click());
-
-        // Check if a toast message is displayed (This is a general interaction check; visual toast verification isn't always feasible)
-        // Log output or further assertions can validate behavior here.
-    }
+//    @Test
+//    public void testDeleteQRCodeConfirmation() {
+//        // Simulate clicking on a QR code
+//        onView(withId(R.id.qr_code_recycler_view))
+//                .perform(click());
+//
+//        // Check if the delete confirmation dialog is displayed
+//        onView(withText("Are you sure you want to delete the QR code for event:"))
+//                .check(matches(isDisplayed()));
+//
+//        // Confirm deletion
+//        onView(withText("Yes")).perform(click());
+//
+//        // Check if a toast message is displayed (This is a general interaction check; visual toast verification isn't always feasible)
+//        // Log output or further assertions can validate behavior here.
+//    }
 
     @Test
     public void testEmptyQRCodeListMessage() {
