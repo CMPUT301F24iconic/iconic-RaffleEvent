@@ -107,9 +107,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testActivityCreation() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+        //    activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Verify UI elements are displayed
         onView(withId(R.id.userRecyclerView)).check(matches(isDisplayed()));
@@ -122,9 +122,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testLoadEventDetails() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+        //    activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Verify event details were fetched
         verify(mockFirebaseAttendee).getEventDetails(eq(TEST_EVENT_ID), any());
@@ -133,9 +133,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testLoadConfirmedList() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+         //   activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Verify each user was fetched
         for (User user : testUsers) {
@@ -146,9 +146,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testNavigationToHome() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+         //   activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Click home button
         onView(withId(R.id.home_button)).perform(click());
@@ -160,9 +160,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testNavigationToQRScanner() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+       // scenario.onActivity(activity -> {
+         //   activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Click QR button
         onView(withId(R.id.qr_button)).perform(click());
@@ -174,9 +174,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testNavigationToProfile() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+         //   activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Click profile button
         onView(withId(R.id.profile_button)).perform(click());
@@ -188,9 +188,9 @@ public class ConfirmedListActivityTest {
     @Test
     public void testNavigationToNotifications() {
         ActivityScenario<ConfirmedListActivity> scenario = ActivityScenario.launch(createTestIntent());
-        scenario.onActivity(activity -> {
-            activity.setFirebaseAttendee(mockFirebaseAttendee);
-        });
+        //scenario.onActivity(activity -> {
+         //   activity.setFirebaseAttendee(mockFirebaseAttendee);
+        //});
 
         // Click notifications button
         onView(withId(R.id.notification_icon)).perform(click());
