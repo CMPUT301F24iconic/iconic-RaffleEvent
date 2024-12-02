@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -470,12 +471,44 @@ public class FirebaseAttendee {
         writeBatch.update(eventRef, "waitingList", FieldValue.arrayRemove(user.getUserId()));
 
         if (event.isGeolocationRequired() == Boolean.TRUE) {
-            writeBatch.update(eventRef, "locations." + user.getUserId() + "-" + user.getName(), FieldValue.delete());
-        }
+            eventRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    Map<String, Object> locations = (Map<String, Object>) snapshot.get("locations");
 
-        writeBatch.commit()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                    if (locations != null) {
+                        // Find the matching key based on userId
+                        String matchingKey = null;
+                        for (String key : locations.keySet()) {
+                            if (key.startsWith(user.getUserId() + "-")) {
+                                matchingKey = key;
+                                break;
+                            }
+                        }
+
+                        if (matchingKey != null) {
+                            // Remove location from the event object (if applicable)
+                            event.deleteLocation(matchingKey);
+
+                            // Remove the key from Firestore
+                            writeBatch.update(eventRef, "locations." + matchingKey, FieldValue.delete());
+                        }
+                    }
+
+                    // Commit the batch write
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                } else {
+                    callback.onError("Failed to retrieve event data");
+                }
+            });
+        } else {
+            // Commit the batch write when geolocation is not required
+            writeBatch.commit()
+                    .addOnSuccessListener(aVoid -> callback.onSuccess())
+                    .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+        }
     }
 
     /**

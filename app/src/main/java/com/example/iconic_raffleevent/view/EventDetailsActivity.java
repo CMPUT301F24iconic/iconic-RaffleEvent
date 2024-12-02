@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -302,13 +304,13 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void joinWaitingList(Event event) {
         // Format start date text
-        String endDate = event.getEventEndDate() + ", " + event.getEventEndTime();
+        String startDate = event.getEventStartDate() + ", " + event.getEventStartTime();
         LocalDateTime targetDateTime;
         LocalDateTime currentDateTime;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd, hh:mm a");
             try {
-                targetDateTime = LocalDateTime.parse(endDate, formatter);
+                targetDateTime = LocalDateTime.parse(startDate, formatter);
                 // Get the current date and time
                 currentDateTime = LocalDateTime.now();
 
@@ -440,10 +442,11 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // request the permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            } else {
+                // Permissions accepted, get user location
+                // Add entrant to waitlist if location is valid
+                getUserLocation();
             }
-            // Permissions accepted, get user location
-            // Add entrant to waitlist if location is valid
-            getUserLocation();
             // close dialog
             dialog.dismiss();
         });
@@ -453,6 +456,33 @@ public class EventDetailsActivity extends AppCompatActivity {
             dialog.dismiss();
         });
     }
+
+    /*
+    // Handle the permissions request result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 101) {
+            // Check if all permissions were granted
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted) {
+                getUserLocation();
+            } else {
+                // Handle the case where permissions are denied
+                Toast.makeText(this, "Location permission is required to get user location", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+     */
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.

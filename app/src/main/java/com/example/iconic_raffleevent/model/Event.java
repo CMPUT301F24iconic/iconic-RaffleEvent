@@ -8,6 +8,7 @@ import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class Event {
         registeredAttendees = new ArrayList<>();
         this.waitingListLimit = Integer.MAX_VALUE;
         this.maxAttendees = Integer.MAX_VALUE;
+        this.locations = new HashMap<>();
     }
 
     // Getters and setters
@@ -499,5 +501,13 @@ public class Event {
      */
     public Object getLocation(String key) {
         return this.locations.get(key);
+    }
+
+    /**
+     * Deletes a location based on a key
+     * @param key entrant id
+     */
+    public void deleteLocation(String key) {
+        locations.remove(key);
     }
 }
