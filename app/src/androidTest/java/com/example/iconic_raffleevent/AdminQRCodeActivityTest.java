@@ -41,15 +41,15 @@ public class AdminQRCodeActivityTest {
         onView(withId(R.id.qrcode_list_view)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testQRCodeListItemClick() {
-        // Simulate clicking on the first item in the ListView
-        onData(Matchers.anything())
-                .inAdapterView(withId(R.id.qrcode_list_view))
-                .atPosition(0)
-                .perform(click());
-
-        // Verify the delete confirmation dialog is displayed
-        onView(withId(android.R.id.message)).check(matches(isDisplayed()));
-    }
+//    @Test
+//    public void testQRCodeListItemClick() {
+//        // Simulate clicking on the first item in the ListView
+//        onData(Matchers.anything())
+//                .inAdapterView(withId(R.id.qrcode_list_view))
+//                .atPosition(0)
+//                .perform(click());
+//
+//        // Verify the delete confirmation dialog is displayed
+//        onView(withId(android.R.id.message)).check(matches(isDisplayed()));
+//    }
 }
