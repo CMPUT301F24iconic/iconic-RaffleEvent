@@ -235,24 +235,26 @@ public class WaitingListActivity extends AppCompatActivity {
      * @param userIds the list of user IDs on the event's waiting list.
      */
     private void fetchUsersFromWaitingList(List<String> userIds) {
-        for (String userId : userIds) {
-            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-                @Override
-                public void onUserFetched(User user) {
-                    if (user != null) {
-                        userAdapter.addUser(user);
-                        userAdapter.notifyDataSetChanged();
-                        usersObj.add(user);
-                    } else {
-                        // Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+        if (!userIds.isEmpty()) {
+            for (String userId : userIds) {
+                firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        if (user != null) {
+                            userAdapter.addUser(user);
+                            userAdapter.notifyDataSetChanged();
+                            usersObj.add(user);
+                        } else {
+                            // Toast.makeText(WaitingListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
 
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(WaitingListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 

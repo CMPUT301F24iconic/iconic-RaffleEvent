@@ -6,8 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.model.Notification;
 
 import java.util.List;
@@ -47,11 +51,36 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_notification, parent, false);
         }
-
+        NotificationController notificationController = new NotificationController();
         TextView notificationMessageTextView = convertView.findViewById(R.id.notification_message);
+        ImageButton deleteButton = convertView.findViewById(R.id.cancel_button);
 
         Notification notification = notificationList.get(position);
         notificationMessageTextView.setText(notification.getMessage());
+
+        // Set up the cancel button click listener
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Remove the item from the list
+                notificationController.deleteNotification(notification.getNotificationId(), new NotificationController.DeleteNotificationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        notificationList.remove(position);
+                        // Notify the adapter of data change
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(context, "Unable to delete notification", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        // Allow the general click listener in the ListView to work
+        deleteButton.setFocusable(false);
 
         return convertView;
     }

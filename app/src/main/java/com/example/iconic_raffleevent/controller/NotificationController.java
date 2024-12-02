@@ -58,6 +58,19 @@ public class NotificationController {
     }
 
     /**
+     * Deletes a notification from firebase
+     *
+     * @param notificationId The ID of the notification to be deleted.
+     * @param callback       The callback interface to handle the success or failure of the operation.
+     */
+    public void deleteNotification(String notificationId, DeleteNotificationCallback callback) {
+        notificationsCollection.document(notificationId)
+                .delete()
+                .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
+    /**
      * Callback interface for retrieving notifications for a user.
      */
     public interface GetNotificationsCallback {
@@ -80,6 +93,22 @@ public class NotificationController {
     public interface MarkNotificationAsReadCallback {
         /**
          * Callback which is called upon successful mark notification as read operation
+         */
+        void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for marking a notification as read.
+     */
+    public interface DeleteNotificationCallback {
+        /**
+         * Callback which is called upon successful delete notification operation
          */
         void onSuccess();
 
