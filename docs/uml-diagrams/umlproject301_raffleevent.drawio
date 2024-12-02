@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="25.0.1">
   <diagram name="Page-1" id="4ZhbL-180pKZ8wJhIQRb">
-    <mxGraphModel dx="12920" dy="9020" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="7735" dy="6160" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -5827,6 +5827,49 @@
               <mxPoint x="-1280" y="2060" />
               <mxPoint x="-1270" y="3710" />
               <mxPoint x="-455" y="3710" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-95" value="FirestoreListenerService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="5160" y="1216" width="530" height="274" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-96" value="- CHANNEL_ID: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="32" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-97" value="- db: FirebaseFirestore" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="58" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-98" value="- listenerRegistration: ListenerRegistration" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="84" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-107" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="110" width="530" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-108" value="+ onStartCommand(Intent intent, int flags, int startId): int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="118" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-109" value="- generateSystemNotification(HashMap&lt;String, Object&gt; notification, AtomicInteger notiID): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="144" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-110" value="- createNotificationChannel(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="170" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-111" value="- getUserId(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="196" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-112" value="+ onDestroy(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="222" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-113" value="+ onBind(Intent intent): IBinder" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;" vertex="1" parent="VewpkTvtyMVOQPdH6-6W-95">
+          <mxGeometry y="248" width="530" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="VewpkTvtyMVOQPdH6-6W-114" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="9q3b3NpzNePrlrsoZvoz-765" target="VewpkTvtyMVOQPdH6-6W-96">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="4320" y="1550" as="sourcePoint" />
+            <mxPoint x="4480" y="1550" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="4320" y="1470" />
+              <mxPoint x="4320" y="1270" />
             </Array>
           </mxGeometry>
         </mxCell>
