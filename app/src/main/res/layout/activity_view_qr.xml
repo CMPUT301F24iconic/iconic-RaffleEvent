@@ -28,6 +28,20 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- Title -->
+            <TextView
+                android:id="@+id/QRtitle"
+                style="@style/TextHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/medium_margin"
+                android:text="View QR"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textColor="@color/textColorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/qrcode_title"
                 style="@style/TextHeading"
@@ -101,6 +115,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/event_qr_cardview" />
+
+            <!-- Bottom Navigation Bar -->
+            <include
+                android:id="@+id/bottom_navbar"
+                layout="@layout/bottom_navbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

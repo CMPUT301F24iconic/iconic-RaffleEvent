@@ -76,7 +76,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         enableSwitch = findViewById(R.id.enable_notification_switch);
         saveButton = findViewById(R.id.save_button);
         saveButton.setVisibility(View.GONE);  // hide save button until changes made
-        backButton = findViewById(R.id.back_page_button);
+        backButton = findViewById(R.id.back_button);
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);

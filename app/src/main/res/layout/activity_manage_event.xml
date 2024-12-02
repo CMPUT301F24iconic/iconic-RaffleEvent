@@ -15,17 +15,19 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Title -->
     <TextView
         android:id="@+id/manageEventTitle"
         style="@style/TextHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Event"
+        android:layout_margin="@dimen/medium_margin"
+        android:text="Manage Entrants"
+        android:textAppearance="?attr/textAppearanceHeadline6"
         android:textColor="@color/textColorPrimary"
-        android:layout_marginTop="@dimen/medium_margin"
-        app:layout_constraintTop_toBottomOf="@id/top_navbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Event Poster -->
     <androidx.cardview.widget.CardView
@@ -34,9 +36,9 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/manageEventTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_navbar">
 
         <ImageView
             android:id="@+id/eventImage"
@@ -112,7 +114,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Waiting List"
+                    android:text="Waiting Attendees List"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/text_size_small"
                     android:layout_marginTop="8dp" />
@@ -149,7 +151,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invited Attendee List"
+                    android:text="Invited Attendees List"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/text_size_small"
                     android:layout_marginTop="8dp" />
@@ -186,7 +188,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancelled Attendee List"
+                    android:text="Cancelled Attendees List"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/text_size_small"
                     android:layout_marginTop="8dp" />
@@ -223,7 +225,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Confirmed Attendee List"
+                    android:text="Confirmed Attendees List"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="@dimen/text_size_small"
                     android:layout_marginTop="8dp" />

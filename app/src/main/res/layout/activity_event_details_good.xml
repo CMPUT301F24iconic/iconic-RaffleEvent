@@ -25,6 +25,20 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Heading: Event Details -->
+        <TextView
+            android:id="@+id/event_details_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:text="Event Details"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="@color/textColorPrimary"
+            style="@style/TextHeading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <!-- Event Image with Rounded Corners -->
         <androidx.cardview.widget.CardView
             android:id="@+id/eventImageCard"
