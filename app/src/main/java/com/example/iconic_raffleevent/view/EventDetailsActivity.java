@@ -32,6 +32,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * This Activity displays the details of a specific event. It allows users to view event information,
  * join or leave the waiting list, and access event location via a map. It also provides functionality
@@ -145,7 +149,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         leaveWaitingListButton.setEnabled(false);
 
         joinWaitingListButton.setOnClickListener(v -> {
-            joinWaitingList();
+            joinWaitingList(eventObj);
         });
         leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
         declineInvitationButton.setOnClickListener(v -> {
@@ -296,12 +300,34 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Joins the user to the event's waiting list.
      * Checks for valid email and phone number, and handles geolocation if required.
      */
-    private void joinWaitingList() {
+    private void joinWaitingList(Event event) {
+        // Format start date text
+        String endDate = event.getEventEndDate() + ", " + event.getEventEndTime();
+        LocalDateTime targetDateTime;
+        LocalDateTime currentDateTime;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd, hh:mm a");
+            try {
+                targetDateTime = LocalDateTime.parse(endDate, formatter);
+                // Get the current date and time
+                currentDateTime = LocalDateTime.now();
+
+                if (!currentDateTime.isBefore(targetDateTime)) {
+                    Toast.makeText(EventDetailsActivity.this, "You cannot join a waitlist after the event has started", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (DateTimeParseException e) {
+                System.err.println("Invalid date and time format: " + e.getMessage());
+            }
+        }
+
         // Ensure user has valid email and name
         if (userObj.getEmail().isEmpty() || userObj.getName().isEmpty()) {
             Toast.makeText(EventDetailsActivity.this, "You must have a valid name and email to join", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
             finish();
+        } else if (eventObj.getDeclinedList().contains(userObj.getUserId())) {
+            Toast.makeText(EventDetailsActivity.this, "You have been blacklisted from this event by the organizer", Toast.LENGTH_SHORT).show();
         }
         // Check if event requires geolocation
         else if (eventObj.isGeolocationRequired()) {

@@ -14,8 +14,10 @@ import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
+import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.controller.UserController;
 import com.example.iconic_raffleevent.model.Event;
+import com.example.iconic_raffleevent.model.Notification;
 import com.example.iconic_raffleevent.model.User;
 
 import java.util.List;
@@ -135,6 +137,7 @@ public class EventListUtils {
         List<String> waitingList = event.getWaitingList();
         List<String> invitedList = event.getInvitedList();
         List<String> registeredAttendees = event.getRegisteredAttendees();
+        List<String> cancelledList = event.getDeclinedList();
 
         boolean removedFromWaiting = waitingList != null && waitingList.remove(userId);
         boolean removedFromInvited = invitedList != null && invitedList.remove(userId);
@@ -142,10 +145,14 @@ public class EventListUtils {
 
         // If the user was found in any list, update Firestore
         if (removedFromWaiting || removedFromInvited || removedFromRegistered) {
-            firebaseAttendee.updateEventLists(event.getEventId(), invitedList, waitingList, registeredAttendees, new FirebaseAttendee.UpdateCallback() {
+            // Add user to cancelled list
+            cancelledList.add(userId);
+            firebaseAttendee.updateEventLists(event.getEventId(), invitedList, waitingList, registeredAttendees, cancelledList,new FirebaseAttendee.UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(context, "User successfully deleted from all lists.", Toast.LENGTH_SHORT).show();
+                    // create notification
+                    createNotification(event, userId);
                     callback.run(); // Refresh the UI
                 }
 
@@ -157,5 +164,35 @@ public class EventListUtils {
         } else {
             Toast.makeText(context, "User not found in any list.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Create a notification and send it to the cancelled entrant
+     *
+     * @param event Event that the entrant is cancelled from
+     * @param userId ID of the user that the notification is being sent too
+     */
+    public static void createNotification(Event event, String userId) {
+        NotificationController notificationController = new NotificationController();
+        Notification cancelledNotification = new Notification();
+        cancelledNotification.setEventId(event.getEventId());
+        cancelledNotification.setEventTitle(event.getEventTitle());
+        String notiMessage = "You have been removed by an admin or organizer from the event: " + event.getEventTitle();
+        cancelledNotification.setMessage(notiMessage);
+        cancelledNotification.setNotificationType("Cancelled");
+        cancelledNotification.setUserId(userId);
+        cancelledNotification.setRead(Boolean.FALSE);
+        notificationController.sendNotification(cancelledNotification, new NotificationController.SendNotificationCallback() {
+            @Override
+            public void onSuccess(Boolean success) {
+                // Successfully sent notification
+            }
+
+            @Override
+            public void onError(String message) {
+                // Unable to send notification
+            }
+        });
+
     }
 }
