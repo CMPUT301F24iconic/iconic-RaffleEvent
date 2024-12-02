@@ -31,7 +31,7 @@ public class User {
     public User() {
         this.waitingListEventIds = new ArrayList<>();
         this.registeredEventIds = new ArrayList<>();
-        this.generalNotificationPref = true;
+        this.generalNotificationPref = false;
         this.locationPermission = false;
         this.userId = "";
         this.username = "";

@@ -202,7 +202,11 @@ public class FirebaseAttendee {
      * @param user The user organizing the event.
      */
     public void addEvent(Event event, User user) {
-        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        DocumentReference eventRef = eventsCollection.document();
+        String eventId = eventRef.getId();
+
+        // Set the ID in the notification object
+        event.setEventId(eventId);
         event.setOrganizerID(user.getUserId());
         eventRef.set(event);
     }
