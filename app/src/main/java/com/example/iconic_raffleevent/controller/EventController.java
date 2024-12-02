@@ -225,13 +225,13 @@ public class EventController {
     }
 
     /**
-     * Deletes an event from the system.
+     * Deletes an event along with its associated media (poster and QR code).
      *
-     * @param eventId   The ID of the event to delete.
-     * @param callback  The callback to handle success or error.
+     * @param eventId  The ID of the event to be deleted.
+     * @param callback The callback interface to notify the success or failure of the operation.
      */
-    public void deleteEvent(String eventId, DeleteEventCallback callback) {
-        firebaseAttendee.deleteEvent(eventId, new FirebaseAttendee.DeleteEventCallback() {
+    public void deleteEventWithMedia(String eventId, DeleteEventCallback callback) {
+        firebaseAttendee.deleteEventWithMedia(eventId, new FirebaseAttendee.DeleteEventCallback() {
             @Override
             public void onSuccess() {
                 callback.onSuccess();
@@ -239,9 +239,19 @@ public class EventController {
 
             @Override
             public void onError(String message) {
-                callback.onError(message);
+                callback.onError("Failed to delete event: " + message);
             }
         });
+    }
+
+    /**
+     * Deletes an event by its ID.
+     *
+     * @param eventId  The ID of the event to be deleted.
+     * @param callback The callback interface to notify the success or failure of the operation.
+     */
+    public void deleteEvent(String eventId, DeleteEventCallback callback) {
+        deleteEventWithMedia(eventId, callback);
     }
 
     /**
@@ -441,11 +451,11 @@ public class EventController {
     }
 
     /**
-     * Callback interface for deleting an event.
+     * Callback interface for handling success or failure of an event deletion operation.
      */
     public interface DeleteEventCallback {
         /**
-         * Called when delete event operation is successful
+         * Callback which is called upon successful delete event operation
          */
         void onSuccess();
 
