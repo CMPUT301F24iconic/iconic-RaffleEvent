@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -34,8 +35,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // Zhiyuan Li - upload image error checking
 import android.util.Log;
@@ -120,7 +123,7 @@ public class FirebaseAttendee {
      * @param callback Callback to handle the result of the operation.
      */
     public void deleteUser(String userId, DeleteUserCallback callback) {
-        db.collection("users").document(userId).delete()
+        db.collection("User").document(userId).delete()
                 .addOnSuccessListener(aVoid -> callback.onUserDeleted(true))
                 .addOnFailureListener(e -> callback.onUserDeleted(false));
     }
@@ -146,35 +149,14 @@ public class FirebaseAttendee {
     }
 
     /**
-     * Updates the notification preference for a user in Firebase Firestore.
-     *
-     * @param user The user whose notification preference is to be updated.
-     */
-    public void updateNotificationPreference(User user) {
-        DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("notificationsEnabled", user.isNotificationsEnabled());
-    }
-
-    /**
      * Updates the user's win notification preference in the Firebase database.
      * The preference is stored in the user's document under the field "winNotificationPref".
      *
      * @param user The user whose win notification preference needs to be updated.
      */
-    public void updateWinNotificationPreference(User user) {
+    public void updateGeneralNotificationPreference(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("winNotificationPref", user.isWinNotificationPref());
-    }
-
-    /**
-     * Updates the user's lose notification preference in the Firebase database.
-     * The preference is stored in the user's document under the field "loseNotificationPref".
-     *
-     * @param user The user whose lose notification preference needs to be updated.
-     */
-    public void updateLoseNotificationPreference(User user) {
-        DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("loseNotificationPref", user.isLoseNotificationPref());
+        userRef.update("generalNotificationPref", user.isGeneralNotificationPref());
     }
 
     // Event-related methods
@@ -247,13 +229,114 @@ public class FirebaseAttendee {
     }
 
     /**
+     * Deletes an event along with its associated media (poster and QR code), and cleans up user references.
+     *
+     * @param eventId  The ID of the event to be deleted.
+     * @param callback The callback interface to notify the success or failure of the operation.
+     */
+    public void deleteEventWithMedia(String eventId, DeleteEventCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(eventId);
+
+        eventRef.get().addOnSuccessListener(eventSnapshot -> {
+            if (eventSnapshot.exists()) {
+                Event event = eventSnapshot.toObject(Event.class);
+
+                List<Task<Void>> deletionTasks = new ArrayList<>();
+
+                // Delete the event document
+                Task<Void> deleteEventTask = eventRef.delete();
+                deletionTasks.add(deleteEventTask);
+
+                // Delete poster from Firebase Storage
+                String posterPath = "event_posters/" + eventId;
+                StorageReference posterRef = storageReference.child(posterPath);
+                Task<Void> deletePosterTask = posterRef.delete().addOnFailureListener(e -> {
+                    // Handle file not found gracefully
+                    if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
+                        // Log the error
+                        System.err.println("Error deleting poster: " + e.getMessage());
+                    }
+                });
+                deletionTasks.add(deletePosterTask);
+
+                // Delete QR code from Firebase Storage
+                if (event.getQrCode() != null && !event.getQrCode().isEmpty()) {
+                    String qrCodePath = "event_qrcodes/" + event.getQrCode();
+                    StorageReference qrCodeRef = storageReference.child(qrCodePath);
+                    Task<Void> deleteQrCodeTask = qrCodeRef.delete().addOnFailureListener(e -> {
+                        // Handle file not found gracefully
+                        if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
+                            // Log the error
+                            System.err.println("Error deleting QR code: " + e.getMessage());
+                        }
+                    });
+                    deletionTasks.add(deleteQrCodeTask);
+                }
+
+                // Remove event references from users
+                Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
+                deletionTasks.add(removeUserReferencesTask);
+
+                // Wait for all tasks to complete successfully
+                Tasks.whenAllSuccess(deletionTasks)
+                        .addOnSuccessListener(tasks -> {
+                            callback.onSuccess();
+                        })
+                        .addOnFailureListener(e -> {
+                            callback.onError("Failed to delete event and associated data: " + e.getMessage());
+                        });
+            } else {
+                callback.onError("Event not found.");
+            }
+        }).addOnFailureListener(e -> {
+            callback.onError("Failed to fetch event: " + e.getMessage());
+        });
+    }
+
+    /**
+     * NOT BEING USED SINCE WE ARE NOT UPDATING THE LIST FIELDS IN A USER OBJECT
+     * Removes references to the event from user documents.
+     *
+     * @param eventId The ID of the event.
+     * @param event   The event object.
+     * @return A Task representing the completion of all user updates.
+     */
+    private Task<Void> removeEventReferencesFromUsers(String eventId, Event event) {
+        Set<String> userIds = new HashSet<>();
+
+        if (event.getWaitingList() != null) {
+            userIds.addAll(event.getWaitingList());
+        }
+        if (event.getRegisteredAttendees() != null) {
+            userIds.addAll(event.getRegisteredAttendees());
+        }
+        if (event.getInvitedList() != null) {
+            userIds.addAll(event.getInvitedList());
+        }
+
+        List<Task<Void>> userUpdateTasks = new ArrayList<>();
+
+//        for (String userId : userIds) {
+//            DocumentReference userRef = usersCollection.document(userId);
+//            Map<String, Object> updates = new HashMap<>();
+//            updates.put("waitingListEventIds", FieldValue.arrayRemove(eventId));
+//            updates.put("registeredEventIds", FieldValue.arrayRemove(eventId));
+//            updates.put("invitedEventIds", FieldValue.arrayRemove(eventId));
+//            Task<Void> updateTask = userRef.update(updates);
+//            userUpdateTasks.add(updateTask);
+//        }
+
+        return Tasks.forResult(null);
+    }
+
+    /**
      * Deletes an event with the specified event ID from Firestore.
      *
      * @param eventId  The ID of the event to delete.
      * @param callback Callback interface to notify the success or failure of the deletion.
      */
     public void deleteEvent(String eventId, DeleteEventCallback callback) {
-        db.collection("events").document(eventId)
+        db.collection("Event").document(eventId)
                 .delete()
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
@@ -388,12 +471,44 @@ public class FirebaseAttendee {
         writeBatch.update(eventRef, "waitingList", FieldValue.arrayRemove(user.getUserId()));
 
         if (event.isGeolocationRequired() == Boolean.TRUE) {
-            writeBatch.update(eventRef, "locations." + user.getUserId() + "-" + user.getName(), FieldValue.delete());
-        }
+            eventRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    Map<String, Object> locations = (Map<String, Object>) snapshot.get("locations");
 
-        writeBatch.commit()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                    if (locations != null) {
+                        // Find the matching key based on userId
+                        String matchingKey = null;
+                        for (String key : locations.keySet()) {
+                            if (key.startsWith(user.getUserId() + "-")) {
+                                matchingKey = key;
+                                break;
+                            }
+                        }
+
+                        if (matchingKey != null) {
+                            // Remove location from the event object (if applicable)
+                            event.deleteLocation(matchingKey);
+
+                            // Remove the key from Firestore
+                            writeBatch.update(eventRef, "locations." + matchingKey, FieldValue.delete());
+                        }
+                    }
+
+                    // Commit the batch write
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                } else {
+                    callback.onError("Failed to retrieve event data");
+                }
+            });
+        } else {
+            // Commit the batch write when geolocation is not required
+            writeBatch.commit()
+                    .addOnSuccessListener(aVoid -> callback.onSuccess())
+                    .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+        }
     }
 
     /**
@@ -594,11 +709,12 @@ public class FirebaseAttendee {
      * @param waitingList The list of users who have declined the invitation.
      * @param callback The callback to notify the success or failure of the operation.
      */
-    public void updateEventLists(String eventId, List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, UpdateCallback callback) {
+    public void updateEventLists(String eventId, List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, List<String> cancelledList, UpdateCallback callback) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("waitingList", waitingList);
         updates.put("invitedList", invitedList);
         updates.put("registeredAttendees", registeredAttendees);
+        updates.put("declinedList", cancelledList);
 
         eventsCollection.document(eventId)
                 .update(updates)

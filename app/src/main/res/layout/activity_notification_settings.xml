@@ -42,99 +42,41 @@
             android:orientation="vertical"
             android:layout_weight="1">
             <TextView
-                android:id="@+id/win_notification_text"
+                android:id="@+id/general_notification_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/textColorPrimary"
-                android:text="Win Notification"/>
+                android:text="General Notifications"/>
             <TextView
-                android:id="@+id/win_notification_desc"
+                android:id="@+id/general_notification_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textColorSecondary"
-                android:text="Get notified when you win a lottery"/>
+                android:text="Get notified by organizers and admins"/>
         </LinearLayout>
         <Switch
-            android:id="@+id/win_notification_switch"
+            android:id="@+id/general_notification_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lose_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/win_box"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="18dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/lose_notification_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/textColorPrimary"
-                android:text="Lose Notification"/>
-            <TextView
-                android:id="@+id/lose_notification_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorSecondary"
-                android:text="Receive updates when you are not selected"/>
-        </LinearLayout>
-        <Switch
-            android:id="@+id/lose_notification_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/enable_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/lose_box"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
-        android:padding="18dp">
-        <TextView
-            android:id="@+id/enable_notification_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enable notifications"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:layout_weight="1"/>
-        <Switch
-            android:id="@+id/enable_notification_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <Button
         android:id="@+id/save_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Save"
-        android:textColor="@color/textColorOnPrimary"
         android:backgroundTint="@color/buttonPrimary"
         android:padding="10dp"
+        android:text="Save"
+        android:textColor="@color/textColorOnPrimary"
         android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginEnd="@dimen/medium_margin"
+        android:layout_marginStart="@dimen/medium_margin"
         app:cornerRadius="@dimen/button_corner_radius"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/enable_box" />
+        app:layout_constraintTop_toBottomOf="@+id/win_box" />
 
     <include
         android:id="@+id/footer"

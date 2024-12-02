@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -31,6 +33,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.GeoPoint;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * This Activity displays the details of a specific event. It allows users to view event information,
@@ -145,7 +151,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         leaveWaitingListButton.setEnabled(false);
 
         joinWaitingListButton.setOnClickListener(v -> {
-            joinWaitingList();
+            joinWaitingList(eventObj);
         });
         leaveWaitingListButton.setOnClickListener(v -> leaveWaitingList());
         declineInvitationButton.setOnClickListener(v -> {
@@ -296,12 +302,34 @@ public class EventDetailsActivity extends AppCompatActivity {
      * Joins the user to the event's waiting list.
      * Checks for valid email and phone number, and handles geolocation if required.
      */
-    private void joinWaitingList() {
+    private void joinWaitingList(Event event) {
+        // Format start date text
+        String startDate = event.getEventStartDate() + ", " + event.getEventStartTime();
+        LocalDateTime targetDateTime;
+        LocalDateTime currentDateTime;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd, hh:mm a");
+            try {
+                targetDateTime = LocalDateTime.parse(startDate, formatter);
+                // Get the current date and time
+                currentDateTime = LocalDateTime.now();
+
+                if (!currentDateTime.isBefore(targetDateTime)) {
+                    Toast.makeText(EventDetailsActivity.this, "You cannot join a waitlist after the event has started", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (DateTimeParseException e) {
+                System.err.println("Invalid date and time format: " + e.getMessage());
+            }
+        }
+
         // Ensure user has valid email and name
         if (userObj.getEmail().isEmpty() || userObj.getName().isEmpty()) {
             Toast.makeText(EventDetailsActivity.this, "You must have a valid name and email to join", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(EventDetailsActivity.this, ProfileActivity.class));
             finish();
+        } else if (eventObj.getDeclinedList().contains(userObj.getUserId())) {
+            Toast.makeText(EventDetailsActivity.this, "You have been blacklisted from this event by the organizer", Toast.LENGTH_SHORT).show();
         }
         // Check if event requires geolocation
         else if (eventObj.isGeolocationRequired()) {
@@ -414,10 +442,11 @@ public class EventDetailsActivity extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // request the permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            } else {
+                // Permissions accepted, get user location
+                // Add entrant to waitlist if location is valid
+                getUserLocation();
             }
-            // Permissions accepted, get user location
-            // Add entrant to waitlist if location is valid
-            getUserLocation();
             // close dialog
             dialog.dismiss();
         });
@@ -427,6 +456,33 @@ public class EventDetailsActivity extends AppCompatActivity {
             dialog.dismiss();
         });
     }
+
+    /*
+    // Handle the permissions request result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 101) {
+            // Check if all permissions were granted
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (allGranted) {
+                getUserLocation();
+            } else {
+                // Handle the case where permissions are denied
+                Toast.makeText(this, "Location permission is required to get user location", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+     */
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.

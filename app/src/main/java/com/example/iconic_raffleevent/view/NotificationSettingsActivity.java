@@ -32,17 +32,13 @@ public class NotificationSettingsActivity extends AppCompatActivity {
     private UserController userController;
     private User userObj;
 
-    private Switch winSwitch;
-    private Switch loseSwitch;
-    private Switch enableSwitch;
+    private Switch generalSwitch;
     private Button saveButton;
     private ImageButton backButton;
 
     private boolean switchesChanged = false;
     // initial states of switches
-    private boolean initialWinState;
-    private boolean initialLoseState;
-    private boolean initialEnableState;
+    private boolean initialGeneralState;
 
     // Nav bar
     private ImageButton homeButton;
@@ -71,9 +67,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
      * This includes switches, buttons, and image buttons for navigation.
      */
     private void initializeViews() {
-        winSwitch = findViewById(R.id.win_notification_switch);
-        loseSwitch = findViewById(R.id.lose_notification_switch);
-        enableSwitch = findViewById(R.id.enable_notification_switch);
+        generalSwitch = findViewById(R.id.general_notification_switch);
         saveButton = findViewById(R.id.save_button);
         saveButton.setVisibility(View.GONE);  // hide save button until changes made
         backButton = findViewById(R.id.back_button);
@@ -100,34 +94,8 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> navigateToNotifications());
 
         // Enable notifications switch logic
-        enableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!isChecked) {
-                    // Turn win and lose preference switches off
-                    winSwitch.setChecked(false);
-                    loseSwitch.setChecked(false);
-                    // Disable the two switches
-                    winSwitch.setEnabled(false);
-                    loseSwitch.setEnabled(false);
-                } else {
-                    // Enable the two switches
-                    winSwitch.setEnabled(true);
-                    loseSwitch.setEnabled(true);
-                }
-                if (isChecked != initialEnableState) {
-                    switchesChanged = true;
-                    updateSaveButtonVisibility();
-                }
-        });
-
-        winSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked != initialWinState) {
-                switchesChanged = true;
-                updateSaveButtonVisibility();
-            }
-        });
-
-        loseSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked != initialLoseState) {
+        generalSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked != initialGeneralState) {
                 switchesChanged = true;
                 updateSaveButtonVisibility();
             }
@@ -162,10 +130,8 @@ public class NotificationSettingsActivity extends AppCompatActivity {
 
         switchesChanged = false;
 
-        boolean winNotificationEnabled = winSwitch.isChecked();
-        boolean loseNotificationEnabled = loseSwitch.isChecked();
-        boolean notificationsEnabled = enableSwitch.isChecked();
-        if (notificationsEnabled) {
+        boolean generalNotificationEnabled = generalSwitch.isChecked();
+        if (generalNotificationEnabled) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 // Check for permission POST_NOTIFICATIONS
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -178,10 +144,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         }
 
         try {
-            userController.setWinNotificationsEnabled(userObj, winNotificationEnabled);
-            userController.setLoseNotificationsEnabled(userObj, loseNotificationEnabled);
-            userController.setNotificationsEnabled(userObj, notificationsEnabled);
-
+            userController.setGeneralNotificationsEnabled(userObj, generalNotificationEnabled);
             Toast.makeText(this, "Notification settings saved", Toast.LENGTH_SHORT).show();
             navigateToNotifications();
         } catch (Exception e) {
@@ -224,14 +187,10 @@ public class NotificationSettingsActivity extends AppCompatActivity {
      * @param user The user object containing the notification preferences.
      */
     private void updateSwitchStates(User user) {
-        winSwitch.setChecked(user.isWinNotificationPref());
-        loseSwitch.setChecked(user.isLoseNotificationPref());
-        enableSwitch.setChecked(user.isNotificationsEnabled());
+        generalSwitch.setChecked(user.isGeneralNotificationPref());
 
         // save initial values
-        initialWinState = winSwitch.isChecked();
-        initialLoseState = loseSwitch.isChecked();
-        initialEnableState = enableSwitch.isChecked();
+        initialGeneralState = generalSwitch.isChecked();
         switchesChanged = false;
         updateSaveButtonVisibility();
     }

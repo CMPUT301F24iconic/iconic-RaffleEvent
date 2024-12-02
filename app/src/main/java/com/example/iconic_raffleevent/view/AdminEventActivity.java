@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseOrganizer;
 import com.example.iconic_raffleevent.model.Event;
 
@@ -25,6 +26,7 @@ public class AdminEventActivity extends AppCompatActivity {
     private ArrayAdapter<String> eventAdapter;
     private ArrayList<Event> eventList;
     private FirebaseOrganizer firebaseOrganizer;
+    private EventController eventController;
 
     /**
      * Called when the activity is first created. Initializes views and loads the list of events.
@@ -39,6 +41,7 @@ public class AdminEventActivity extends AppCompatActivity {
 
         eventListView = findViewById(R.id.event_list_view);
         firebaseOrganizer = new FirebaseOrganizer();
+        eventController = new EventController();
         loadEventList();
     }
 
@@ -75,7 +78,7 @@ public class AdminEventActivity extends AppCompatActivity {
     private void showDeleteDialog(Event event) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event")
-                .setMessage("Are you sure you want to delete this event?")
+                .setMessage("Deleting this event will also delete all associated media and remove user references. This action cannot be undone.\n\nAre you sure you want to proceed?")
                 .setPositiveButton("Delete", (dialog, which) -> deleteEvent(event))
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -87,7 +90,7 @@ public class AdminEventActivity extends AppCompatActivity {
      * @param event The Event object to be deleted.
      */
     private void deleteEvent(Event event) {
-        firebaseOrganizer.deleteEvent(event.getEventId(), new FirebaseOrganizer.DeleteEventCallback() {
+        eventController.deleteEventWithMedia(event.getEventId(), new EventController.DeleteEventCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(AdminEventActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();

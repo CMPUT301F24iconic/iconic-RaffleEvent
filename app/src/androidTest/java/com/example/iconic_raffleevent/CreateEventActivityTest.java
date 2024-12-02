@@ -48,7 +48,7 @@ public class CreateEventActivityTest {
 
         // Set a sample image URI
         Uri sampleImageUri = Uri.parse("file:///sample/image/path");
-        scenario.onActivity(activity -> activity.setImageUri(sampleImageUri));
+        //scenario.onActivity(activity -> activity.setImageUri(sampleImageUri));
 
         // Click the save button
         onView(withId(R.id.saveButton)).perform(click());

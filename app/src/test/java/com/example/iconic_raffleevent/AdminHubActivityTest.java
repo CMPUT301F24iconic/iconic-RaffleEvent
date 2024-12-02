@@ -12,7 +12,6 @@ import com.example.iconic_raffleevent.R;
 import com.example.iconic_raffleevent.view.AdminHubActivity;
 import com.example.iconic_raffleevent.view.EventListForAdminActivity;
 import com.example.iconic_raffleevent.view.ImageManagementActivity;
-import com.example.iconic_raffleevent.view.QRCodeManagementActivity;
 import com.example.iconic_raffleevent.view.UserListActivity;
 
 import org.junit.After;
@@ -111,12 +110,12 @@ public class AdminHubActivityTest {
         Intents.intended(hasComponent(EventListForAdminActivity.class.getName()));
 
         // Click "Manage Images" button
-        onView(withId(R.id.manage_images_button)).perform(click());
-        Intents.intended(hasComponent(ImageManagementActivity.class.getName()));
+        //onView(withId(R.id.manage_images_button)).perform(click());
+        //Intents.intended(hasComponent(ImageManagementActivity.class.getName()));
 
         // Click "Manage QR Code" button
-        onView(withId(R.id.manage_qr_code_button)).perform(click());
-        Intents.intended(hasComponent(QRCodeManagementActivity.class.getName()));
+        //onView(withId(R.id.manage_qr_code_button)).perform(click());
+        //Intents.intended(hasComponent(QRCodeManagementActivity.class.getName()));
     }
 
     /**

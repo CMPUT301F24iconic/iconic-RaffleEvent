@@ -127,10 +127,26 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
         Button deleteButton = dialogView.findViewById(R.id.deleteFacilityButton);
         deleteButton.setOnClickListener(v -> {
             dialog.dismiss();
-            deleteFacility(facility.getId());
+            showDeletionConfirmationDialog(facility);
         });
 
         dialog.show();
+    }
+
+    /**
+     * Shows a confirmation dialog warning the admin about the consequences of deleting a facility.
+     *
+     * @param facility The facility to be deleted.
+     */
+    private void showDeletionConfirmationDialog(Facility facility) {
+        new AlertDialog.Builder(FacilityListForAdminActivity.this)
+                .setTitle("Delete Facility")
+                .setMessage("Deleting this facility will also delete all associated events and their media (posters and QR codes). This action cannot be undone.\n\nAre you sure you want to proceed?")
+                .setPositiveButton("Delete", (dialogInterface, i) -> {
+                    deleteFacility(facility.getId());
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     /**

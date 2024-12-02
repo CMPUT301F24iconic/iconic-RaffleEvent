@@ -62,7 +62,7 @@ public class ProfileActivityTest {
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
         testUser.setPhoneNo("123-456-7890");
-        testUser.setNotificationsEnabled(true);
+        testUser.setGeneralNotificationPref(true);
 
         // Mock user controller behavior for void method
         doAnswer(invocation -> {
