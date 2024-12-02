@@ -208,7 +208,7 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         });
     }
 
-
+    /*
      * Generates dialog prompting the admin to delete an event
      * Deletes an event if confirmed, does nothing otherwise
      */
