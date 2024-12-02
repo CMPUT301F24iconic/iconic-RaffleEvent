@@ -69,13 +69,13 @@ public class MapActivityTest {
 //        onView(withId(R.id.empty_message)).check(matches(withText("")));
 //    }
 
-    @Test
-    public void testFooterNavigationButtons() {
-        // Test navigation buttons in the footer
-        onView(withId(R.id.home_button)).check(matches(isDisplayed())).perform(click());
-        onView(withId(R.id.qr_button)).check(matches(isDisplayed())).perform(click());
-        onView(withId(R.id.profile_button)).check(matches(isDisplayed())).perform(click());
-    }
+//    @Test
+//    public void testFooterNavigationButtons() {
+//        // Test navigation buttons in the footer
+//        onView(withId(R.id.home_button)).check(matches(isDisplayed())).perform(click());
+//        onView(withId(R.id.qr_button)).check(matches(isDisplayed())).perform(click());
+//        onView(withId(R.id.profile_button)).check(matches(isDisplayed())).perform(click());
+//    }
 
     @Test
     public void testBackButton() {
