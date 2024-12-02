@@ -95,6 +95,10 @@ public class QRCodeData {
                 Objects.equals(qrCodeUrl, that.qrCodeUrl);
     }
 
+    /**
+     * Hashed QR code
+     * @return integer hash
+     */
     @Override
     public int hashCode() {
         return Objects.hash(qrCodeId, qrCodeName, qrCodeUrl);

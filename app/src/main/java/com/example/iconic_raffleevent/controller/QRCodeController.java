@@ -75,8 +75,15 @@ public class QRCodeController {
      * Callback interface for Firestore updates.
      */
     public interface FirestoreUpdateCallback {
+        /**
+         * Callback which is called upon successful firestore update operation
+         */
         void onSuccess();
 
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -84,7 +91,16 @@ public class QRCodeController {
      * Callback interface for fetching QR code data.
      */
     public interface GetQRCodeDataCallback {
+        /**
+         * Callback which contains a list of QRCodeData objects
+         * @param qrCodes List of qr codes in database
+         */
         void onQRCodeDataFetched(ArrayList<QRCodeData> qrCodes);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }

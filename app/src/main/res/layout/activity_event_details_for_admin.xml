@@ -8,16 +8,25 @@
     android:background="@color/backgroundColor"
     tools:context=".view.EventDetailsActivity">
 
+    <!-- Include Top Navbar -->
+    <include
+        android:id="@+id/top_navbar"
+        layout="@layout/top_navbar_with_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Heading: Event Details -->
     <TextView
         android:id="@+id/event_details_title"
-        style="@style/TextHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:text="Event Details"
+        android:textAppearance="?attr/textAppearanceHeadline6"
         android:textColor="@color/textColorPrimary"
+        style="@style/TextHeading"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,18 +35,18 @@
         android:id="@+id/eventImageCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_margin"
-        app:cardCornerRadius="@dimen/button_corner_radius"
+        app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/event_details_title">
+        app:layout_constraintTop_toBottomOf="@id/top_navbar">
 
         <ImageView
             android:id="@+id/eventImage"
             android:layout_width="match_parent"
             android:layout_height="@dimen/event_image_height"
-            android:scaleType="centerCrop"
             android:background="@drawable/sample_event_image_background"
+            android:scaleType="centerCrop"
             android:src="@drawable/sample_event_image" />
+
     </androidx.cardview.widget.CardView>
 
     <!-- Event Title -->
@@ -46,37 +55,131 @@
         style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/small_margin"
-        android:layout_marginEnd="@dimen/medium_margin"
         android:text="@string/sample_event_name"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/eventImageCard" />
 
-    <!-- Event Date -->
     <TextView
-        android:id="@+id/eventDate"
-        style="@style/TextBody"
+        android:id="@+id/hosterTitle"
+        style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/small_margin"
-        android:text="@string/sample_event_date"
-        app:layout_constraintTop_toBottomOf="@id/eventTitle"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="Organized by: Regan Dexter"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+    <!-- Event Date -->
+    <LinearLayout
+        android:id="@+id/eventDateLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hosterTitle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/startTime"
+                style="@style/TextBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:text="Start Time: "
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+
+            <TextView
+                android:id="@+id/eventDateStart"
+                style="@style/TextBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/medium_margin"
+                android:text="2024/12/06 "
+                android:textSize="@dimen/text_size_large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/medium_margin">
+
+            <TextView
+                android:id="@+id/endTime"
+                style="@style/TextBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:text="End Time: "
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/eventDateEnd"
+                style="@style/TextBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/medium_margin"
+                android:text="2024/12/06 "
+                android:textSize="@dimen/text_size_large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/eventTitle" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <!-- Event Location -->
-    <TextView
-        android:id="@+id/eventLocation"
-        style="@style/TextBody"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/eventLocationLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
-        android:layout_marginTop="@dimen/small_margin"
-        android:text="@string/sample_event_location"
-        app:layout_constraintTop_toBottomOf="@id/eventDate"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventDateLayout" >
 
+        <TextView
+            android:id="@+id/eventLocation"
+            style="@style/TextBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:text="@string/sample_event_location"
+            android:textSize="@dimen/text_size_large"
+            android:drawablePadding="8dp"
+            app:drawableStartCompat="@drawable/location_icon_green"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
     <!-- Event Description -->
     <TextView
         android:id="@+id/eventDescription"
@@ -84,9 +187,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/medium_margin"
-        android:text="@string/sample_event_description"
         android:ellipsize="end"
-        app:layout_constraintTop_toBottomOf="@id/eventLocation" />
+        android:text="@string/sample_event_description"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintTop_toBottomOf="@id/eventLocationLayout"
+        tools:layout_editor_absoluteX="16dp" />
 
     <!-- Delete Warning Message -->
     <TextView
@@ -110,6 +215,7 @@
         android:layout_marginEnd="@dimen/medium_margin"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="@dimen/medium_margin">
@@ -150,6 +256,14 @@
             app:cornerRadius="@dimen/button_corner_radius"
             android:visibility="gone"/>
     </LinearLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <include
+        android:id="@+id/bottom_navbar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

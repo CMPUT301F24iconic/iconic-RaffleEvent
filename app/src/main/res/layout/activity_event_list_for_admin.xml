@@ -8,16 +8,25 @@
     android:background="@color/backgroundColor"
     tools:context=".view.AdminEventActivity">
 
+    <!-- Include Top Navbar -->
+    <include
+        android:id="@+id/top_navbar"
+        layout="@layout/top_navbar_with_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Title: Manage Events -->
     <TextView
         android:id="@+id/eventListTitle"
-        style="@style/TextHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:text="Manage Events"
+        android:textAppearance="?attr/textAppearanceHeadline6"
         android:textColor="@color/textColorPrimary"
+        style="@style/TextHeading"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,9 +42,18 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="@dimen/recycler_item_spacing"
         app:layout_constraintTop_toBottomOf="@id/eventListTitle"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_event" />
+
+    <!-- Bottom Navigation Bar -->
+    <include
+        android:id="@+id/bottom_navbar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

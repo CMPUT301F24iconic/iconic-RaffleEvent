@@ -1,6 +1,8 @@
 package com.example.iconic_raffleevent.view;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,10 +24,21 @@ public class QRCodeGalleryActivity extends AppCompatActivity {
     private QRCodeGalleryAdapter qrCodeGalleryAdapter;
     private QRCodeController qrCodeController;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton backButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_code_gallery);
+
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        backButton = findViewById(R.id.back_button);
 
         // Initialize RecyclerView and QRCodeController
         qrCodeRecyclerView = findViewById(R.id.qr_code_recycler_view);
@@ -38,6 +51,21 @@ public class QRCodeGalleryActivity extends AppCompatActivity {
 
         // Fetch QR codes and populate RecyclerView
         fetchQRCodeData();
+
+        backButton.setOnClickListener(v -> finish());
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(QRCodeGalleryActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(QRCodeGalleryActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(QRCodeGalleryActivity.this, ProfileActivity.class));
+        });
     }
 
     /**

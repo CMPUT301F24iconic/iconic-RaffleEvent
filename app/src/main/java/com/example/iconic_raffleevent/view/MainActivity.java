@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Initializes the user controller using the device's unique ID.
-     *
      * @return True if the user controller was successfully initialized, false otherwise.
      */
     public boolean initializeUserController() {
@@ -85,10 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 if (user == null) {
                     Log.i(TAG, "User not found. Redirecting to registration.");
                     navigateToActivity(NewUserActivity.class); // Direct new users to registration
-                } else if (user.checkAdminRole()) {
-                    Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
-                    startService(intent);
-                    navigateToActivity(RoleSelectionActivity.class);
                 } else {
                     Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
                     startService(intent);

@@ -103,12 +103,18 @@ public class NotificationsActivity extends AppCompatActivity {
         backButton = findViewById(R.id.back_button);
     }
 
+    /**
+     * Initialize the user controller with given user id
+     */
     private void initializeUserController() {
         UserControllerViewModel userControllerViewModel = new ViewModelProvider(this).get(UserControllerViewModel.class);
         userControllerViewModel.setUserController(getUserID(), getApplicationContext());
         userController = userControllerViewModel.getUserController();
     }
 
+    /**
+     * Load user information from firebase
+     */
     private void loadUserProfile() {
         userController.getUserInformation(new UserController.UserFetchCallback() {
             @Override
@@ -128,6 +134,11 @@ public class NotificationsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get device ID
+     *
+     * @return String device ID
+     */
     private String getUserID() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
@@ -185,7 +196,6 @@ public class NotificationsActivity extends AppCompatActivity {
                     // System.out.println(notifications);
                 }
             }
-
             @Override
             public void onError(String message) {
                 Toast.makeText(NotificationsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();

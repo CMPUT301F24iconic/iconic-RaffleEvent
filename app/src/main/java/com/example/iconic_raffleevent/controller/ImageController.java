@@ -59,7 +59,16 @@ public class ImageController {
      * Callback interface for retrieving a list of images.
      */
     public interface ImageListCallback {
+        /**
+         * Callback which contains an array of ImageData objects
+         * @param images List of images
+         */
         void onImagesFetched(ArrayList<ImageData> images);
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 
@@ -67,7 +76,15 @@ public class ImageController {
      * Callback interface for deleting an image.
      */
     public interface DeleteImageCallback {
+        /**
+         * Callback which is called upon successful delete image operation
+         */
         void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
         void onError(String message);
     }
 }

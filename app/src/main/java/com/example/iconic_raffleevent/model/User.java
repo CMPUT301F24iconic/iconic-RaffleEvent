@@ -25,7 +25,6 @@ public class User {
     private boolean loseNotificationPref;
     private String facilityId;
     private List<String> roles;
-    private String fcm;
 
     /**
      * Default constructor initializing user with default values.
@@ -48,8 +47,6 @@ public class User {
         this.roles = new ArrayList<>();
         this.roles.add("entrant");
     }
-
-    // Getters and Setters
 
     /**
      * Gets the unique user ID.
@@ -307,29 +304,6 @@ public class User {
      */
     public boolean checkAdminRole() {
         return this.roles.contains("admin");
-    }
-
-    public String getUserFCM() {
-        return this.fcm;
-    }
-
-    public void setUserFCM(String fcm) {
-        this.fcm = fcm;
-    }
-
-    // Utility methods
-
-    /**
-     * Updates user information with provided name, email, and phone number.
-     * Typically called during event sign-up.
-     * @param name    User's name.
-     * @param email   User's email address.
-     * @param phoneNo User's phone number.
-     */
-    public void signUpForEvent(String name, String email, String phoneNo) {
-        this.name = name;
-        this.email = email;
-        this.phoneNo = phoneNo;
     }
 }
 

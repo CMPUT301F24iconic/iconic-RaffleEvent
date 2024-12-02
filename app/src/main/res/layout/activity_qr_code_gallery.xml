@@ -8,16 +8,25 @@
     android:background="@color/backgroundColor"
     tools:context=".view.QRCodeGalleryActivity">
 
+    <!-- Include Top Navbar -->
+    <include
+        android:id="@+id/top_navbar"
+        layout="@layout/top_navbar_with_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Title -->
     <TextView
         android:id="@+id/gallery_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="QR Code Gallery"
         android:textAppearance="?attr/textAppearanceHeadline6"
         android:textColor="@color/textColorPrimary"
+        style="@style/TextHeading"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,7 +37,16 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         app:layout_constraintTop_toBottomOf="@id/gallery_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Bottom Navigation Bar -->
+    <include
+        android:id="@+id/bottom_navbar"
+        layout="@layout/bottom_navbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

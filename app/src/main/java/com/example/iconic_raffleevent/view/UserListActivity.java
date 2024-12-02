@@ -1,10 +1,12 @@
 package com.example.iconic_raffleevent.view;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,12 @@ public class UserListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private UserController userController;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton backButton;
+
     /**
      * Called when the activity is created. Sets up the layout and initializes the components.
      *
@@ -36,6 +44,11 @@ public class UserListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
+
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        backButton = findViewById(R.id.back_button);
 
         // Initialize RecyclerView and UserAdapter
         userRecyclerView = findViewById(R.id.userRecyclerView);
@@ -71,6 +84,21 @@ public class UserListActivity extends AppCompatActivity {
 
         // Load and display all users
         loadUserList();
+
+        backButton.setOnClickListener(v -> finish());
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(UserListActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(UserListActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(UserListActivity.this, ProfileActivity.class));
+        });
     }
 
     /**
@@ -99,6 +127,11 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Create a dialog showing the profile image of a user
+     *
+     * @param user User who's profile image is being displayed
+     */
     private void showProfileImageDialog(User user) {
         // Inflate the dialog layout
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_zoomed_profile_photo, null);
