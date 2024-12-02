@@ -53,7 +53,6 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
     private TextView eventStartDateTextView;
     private TextView eventEndDateTextView;
     private TextView hosterTextView;
-    private TextView warningMessage;
     private Button deleteEventButton, cancelButton, deleteEventPosterButton;
 
     // Nav bar
@@ -101,7 +100,6 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         eventStartDateTextView = findViewById(R.id.eventDateStart);
         eventEndDateTextView = findViewById(R.id.eventDateEnd);
         hosterTextView = findViewById(R.id.hosterTitle);
-        warningMessage = findViewById(R.id.warning_message);
         cancelButton = findViewById(R.id.cancel_button);
         deleteEventButton = findViewById(R.id.delete_event_button);
         deleteEventPosterButton = findViewById(R.id.delete_event_poster_button);

@@ -35,6 +35,10 @@ public class EventQRViewActivity extends AppCompatActivity {
     private Button shareButton;
     private Button generateButton;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
     private ImageButton backButton;
 
     // Controllers and data related to objects
@@ -59,6 +63,9 @@ public class EventQRViewActivity extends AppCompatActivity {
         eventTitle = findViewById(R.id.qrcode_title);
         emptyMessage = findViewById(R.id.empty_message);
         eventQrCodeView = findViewById(R.id.qrcode_view);
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
         shareButton = findViewById(R.id.share_button);
         generateButton = findViewById(R.id.generate_button);
@@ -71,6 +78,19 @@ public class EventQRViewActivity extends AppCompatActivity {
 
         // Set click listeners for back and share button
         backButton.setOnClickListener(v -> finish());
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventQRViewActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventQRViewActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventQRViewActivity.this, ProfileActivity.class));
+        });
 
         shareButton.setOnClickListener(v -> {
             // Allow user to share qr code externally
