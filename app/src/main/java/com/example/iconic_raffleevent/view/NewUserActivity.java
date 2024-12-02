@@ -82,7 +82,7 @@ public class NewUserActivity extends AppCompatActivity {
         newUser.setName(name);
         newUser.setUserId(getUserId());
 
-                // Now add user to database
+        // Now add user to database
         userController.addUser(newUser, new UserController.AddUserCallback() {
             @Override
             public void onSuccess() {

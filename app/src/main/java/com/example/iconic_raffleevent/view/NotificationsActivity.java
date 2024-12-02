@@ -42,7 +42,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
 
-     private ImageButton backButton;
+    private ImageButton backButton;
 //     private DrawerLayout drawerLayout;
 //     private NavigationView navigationView;
 
@@ -187,19 +187,19 @@ public class NotificationsActivity extends AppCompatActivity {
     private void fetchNotifications() {
         notificationController.getNotifications(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID),
                 new NotificationController.GetNotificationsCallback() {
-            @Override
-            public void onNotificationsFetched(List<Notification> notifications) {
-                if (notifications != null && !notifications.isEmpty()) {
-                    notificationList.clear();
-                    notificationList.addAll(notifications);
-                    notificationAdapter.notifyDataSetChanged();
-                    // System.out.println(notifications);
-                }
-            }
-            @Override
-            public void onError(String message) {
-                Toast.makeText(NotificationsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
+                     @Override
+                    public void onNotificationsFetched(List<Notification> notifications) {
+                        if (notifications != null && !notifications.isEmpty()) {
+                            notificationList.clear();
+                            notificationList.addAll(notifications);
+                            notificationAdapter.notifyDataSetChanged();
+                            // System.out.println(notifications);
+                        }
+                    }
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(NotificationsActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

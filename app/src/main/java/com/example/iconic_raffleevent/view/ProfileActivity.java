@@ -55,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText phoneEditText;
     private Switch notificationsSwitch;
     private Button saveButton;
-//    private Button backButton;
+    //private Button backButton;
     private Button uploadPhotoButton;
     private Button removePhotoButton;
 
