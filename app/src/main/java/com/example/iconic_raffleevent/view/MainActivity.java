@@ -85,10 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 if (user == null) {
                     Log.i(TAG, "User not found. Redirecting to registration.");
                     navigateToActivity(NewUserActivity.class); // Direct new users to registration
-                } else if (user.checkAdminRole()) {
-                    Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
-                    startService(intent);
-                    navigateToActivity(RoleSelectionActivity.class);
                 } else {
                     Intent intent = new Intent(MainActivity.this, FirestoreListenerService.class);
                     startService(intent);
