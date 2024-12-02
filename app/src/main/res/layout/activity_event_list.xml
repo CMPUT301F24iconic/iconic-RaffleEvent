@@ -22,19 +22,19 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Title: Your Events -->
-        <TextView
-            android:id="@+id/event_list_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:text="Your Events"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:textColor="@color/textColorPrimary"
-            style="@style/TextHeading"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        &lt;!&ndash; Title: Your Events &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/event_list_header"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/medium_margin"-->
+<!--            android:text="Your Events"-->
+<!--            android:textAppearance="?attr/textAppearanceHeadline6"-->
+<!--            android:textColor="@color/textColorPrimary"-->
+<!--            style="@style/TextHeading"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <androidx.cardview.widget.CardView
             android:id="@+id/event_list_cardview"
