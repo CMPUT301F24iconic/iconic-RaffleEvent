@@ -48,9 +48,6 @@ import java.time.format.DateTimeParseException;
  * or a participant.
  */
 public class EventDetailsActivity extends AppCompatActivity {
-    // Navigation UI
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
 
     // View elements
     private ImageView eventImageView;
@@ -75,9 +72,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton backButton;
-
-    // Top Nav bar
-//    private ImageButton notificationButton;
 
     // Controllers and data related to objects
     private EventController eventController;
@@ -112,10 +106,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         isUserLoaded = false;
         isEventLoaded = false;
         isOrganizerLoaded = false;
-
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
 
         // Link UI to views
         eventImageView = findViewById(R.id.eventImage);
@@ -167,8 +157,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
 
-//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView, userObj != null ? userObj.getUserId() : "");
-
         /*
             Setup geolocation services to obtain location when joining waitlist
          */
@@ -218,13 +206,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
-
-        // Top nav bar
-//        notificationButton = findViewById(R.id.notification_icon);
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(EventDetailsActivity.this, NotificationsActivity.class))
-//        );
-
     }
 
     /**
@@ -456,33 +437,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             dialog.dismiss();
         });
     }
-
-    /*
-    // Handle the permissions request result
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 101) {
-            // Check if all permissions were granted
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-
-            if (allGranted) {
-                getUserLocation();
-            } else {
-                // Handle the case where permissions are denied
-                Toast.makeText(this, "Location permission is required to get user location", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-     */
 
     /**
      * Retrieves the user's current location and proceeds to join the waiting list if successful.

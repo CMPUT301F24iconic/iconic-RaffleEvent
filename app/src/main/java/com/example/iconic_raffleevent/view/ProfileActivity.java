@@ -68,9 +68,6 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton backButton;
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-//    private ImageButton notificationButton;
 
     private boolean profileChanged = false;
 
@@ -87,21 +84,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
-
         // Navigation Bars
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
-
-        // Top nav bar
-//        notificationButton = findViewById(R.id.notification_icon);
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(ProfileActivity.this, NotificationsActivity.class))
-//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
@@ -154,7 +141,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         uploadPhotoButton = findViewById(R.id.upload_photo_button);
         removePhotoButton = findViewById(R.id.remove_photo_button);
-//        backButton = findViewById(R.id.back_to_hub_button);
 
         profileImageView = findViewById(R.id.profile_image);
 
@@ -182,9 +168,6 @@ public class ProfileActivity extends AppCompatActivity {
         uploadPhotoButton.setOnClickListener(v -> chooseImage());
         removePhotoButton.setOnClickListener(v -> removeProfileImage());
         saveButton.setOnClickListener(v -> saveProfile());
-//        backButton.setOnClickListener(v -> {
-//            handleBackNavigation();
-//        });
 
         // Add OnCheckedChangeListener to track changes in Switch
         notificationsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -486,7 +469,6 @@ public class ProfileActivity extends AppCompatActivity {
                 if (user != null) {
                     currentUser = user;
                     runOnUiThread(() -> updateUIWithUserData(user));
-//                    DrawerHelper.setupDrawer(ProfileActivity.this, drawerLayout, navigationView, user.getUserId());
                 } else {
                     runOnUiThread(() -> Toast.makeText(ProfileActivity.this,
                             "Unable to load user profile", Toast.LENGTH_SHORT).show());

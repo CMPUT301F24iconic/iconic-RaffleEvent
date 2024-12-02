@@ -259,26 +259,6 @@ public class EventDetailsForAdminActivity extends AppCompatActivity {
         }
     }
 
-//    /**
-//     * Fetches the event details from the server.
-//     * Updates the UI with event information once the event details are successfully fetched.
-//     */
-//    private void fetchEventDetails() {
-//        eventController.getEventDetails(eventId, new EventController.EventDetailsCallback() {
-//            @Override
-//            public void onEventDetailsFetched(Event event) {
-//                eventObj = event;
-//                isEventLoaded = true;
-//                checkUIUpdate();
-//            }
-//
-//            @Override
-//            public void onError(String message) {
-//                Toast.makeText(EventDetailsForAdminActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
     /**
      * Updates the UI with the provided event details.
      * Adjusts button visibility based on the user's role (organizer or participant).
