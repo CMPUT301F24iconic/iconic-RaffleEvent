@@ -93,7 +93,6 @@
         <activity android:name=".view.AdminHubActivity" android:exported="false" />
         <activity android:name=".view.UserListActivity" android:exported="false" />
         <activity android:name=".view.ImageManagementActivity" android:exported="false" />
-        <activity android:name=".view.QRCodeManagementActivity" android:exported="false" />
         <activity android:name=".view.AdminEventActivity" android:exported="false" />
         <activity android:name=".view.AdminProfileActivity" android:exported="false" />
         <activity android:name=".view.AdminImageActivity" android:exported="false" />

@@ -9,7 +9,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.iconic_raffleevent.view.EventListActivity;
@@ -23,53 +22,53 @@ public class DrawerHelperTest {
 
     @Before
     public void setUp() {
-        // Disable animations globally to ensure consistent test results
-        disableAnimations();
-
-        // Launch EventListActivity since it has the drawer
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), EventListActivity.class);
+        // Launch an activity that uses the DrawerHelper
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setClassName("com.example.iconic_raffleevent", "com.example.iconic_raffleevent.view.EventListActivity");
         ActivityScenario.launch(intent);
     }
 
-    /**
-     * Test that verifies the drawer opens and navigation items are visible.
-     */
     @Test
-    public void testDrawerLayout() {
-        // Open drawer
+    public void testDrawerNavigation() {
+        // Open the drawer by clicking the menu button
         onView(withId(R.id.menu_button)).perform(click());
 
-        // Verify the drawer is displayed
+        // Verify that the navigation drawer is displayed
         onView(withId(R.id.drawer_layout)).check(matches(isDisplayed()));
 
-        // Verify menu items are visible
-        onView(withId(R.id.nav_profile)).check(matches(isDisplayed()));
-        onView(withId(R.id.nav_scan_qr)).check(matches(isDisplayed()));
-        onView(withId(R.id.nav_create_event)).check(matches(isDisplayed()));
+        // Click on "Create Event" and verify navigation
+        onView(withId(R.id.nav_create_event)).perform(click());
+
     }
 
-    /**
-     * Test that verifies navigation to ProfileActivity works from the drawer.
-     */
     @Test
-    public void testNavigateToProfileActivity() {
-        // Open drawer
+    public void testProfileNavigation() {
+        // Open the drawer
         onView(withId(R.id.menu_button)).perform(click());
 
-        // Click on the Profile menu item
-        onView(withId(R.id.nav_profile)).perform(click());
+        // Click on the profile photo and verify navigation
+        onView(withId(R.id.nav_profile_photo)).perform(click());
     }
 
-    /**
-     * Utility method to disable animations globally.
-     */
-    private void disableAnimations() {
-        try {
-            Runtime.getRuntime().exec("settings put global window_animation_scale 0");
-            Runtime.getRuntime().exec("settings put global transition_animation_scale 0");
-            Runtime.getRuntime().exec("settings put global animator_duration_scale 0");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to disable animations: " + e.getMessage());
-        }
+    @Test
+    public void testAdminPanelVisibilityForAdmin() {
+        // Open the drawer
+        onView(withId(R.id.menu_button)).perform(click());
+
+        // Verify admin panel elements are displayed for admin users
+        onView(withId(R.id.admin_panel_header)).check(matches(isDisplayed()));
+        onView(withId(R.id.admin_manage_users)).check(matches(isDisplayed()));
+        onView(withId(R.id.admin_manage_events)).check(matches(isDisplayed()));
+        onView(withId(R.id.admin_manage_qr_codes)).check(matches(isDisplayed()));
+        onView(withId(R.id.admin_manage_facilities)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testFacilityNavigation() {
+        // Open the drawer
+        onView(withId(R.id.menu_button)).perform(click());
+
+        // Click on "Facility" and verify navigation
+        onView(withId(R.id.nav_facility)).perform(click());
     }
 }

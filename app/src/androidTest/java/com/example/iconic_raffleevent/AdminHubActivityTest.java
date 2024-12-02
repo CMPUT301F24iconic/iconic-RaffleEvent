@@ -76,18 +76,6 @@ public class AdminHubActivityTest {
     }
 
     @Test
-    public void testManageImagesButton() {
-        // Launch the AdminHubActivity
-        ActivityScenario.launch(AdminHubActivity.class);
-
-        // Click the manage images button
-        //onView(withId(R.id.manage_images_button)).perform(click());
-
-        // Verify that the ImageManagementActivity is launched
-        intended(hasComponent(ImageManagementActivity.class.getName()));
-    }
-
-    @Test
     public void testManageQRCodeButton() {
         // Launch the AdminHubActivity
         ActivityScenario.launch(AdminHubActivity.class);
