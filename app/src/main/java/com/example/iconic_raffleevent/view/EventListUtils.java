@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.iconic_raffleevent.AvatarGenerator;
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.EventController;
 import com.example.iconic_raffleevent.controller.FirebaseAttendee;
 import com.example.iconic_raffleevent.controller.NotificationController;
 import com.example.iconic_raffleevent.controller.UserController;
@@ -147,7 +148,7 @@ public class EventListUtils {
         if (removedFromWaiting || removedFromInvited || removedFromRegistered) {
             // Add user to cancelled list
             cancelledList.add(userId);
-            firebaseAttendee.updateEventLists(event.getEventId(), invitedList, waitingList, registeredAttendees, cancelledList,new FirebaseAttendee.UpdateCallback() {
+            firebaseAttendee.updateEventLists(event.getEventId(), invitedList, waitingList, registeredAttendees, cancelledList, new FirebaseAttendee.UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(context, "User successfully deleted from all lists.", Toast.LENGTH_SHORT).show();
@@ -185,7 +186,8 @@ public class EventListUtils {
         notificationController.sendNotification(cancelledNotification, new NotificationController.SendNotificationCallback() {
             @Override
             public void onSuccess(Boolean success) {
-                // Successfully sent notification
+                // Delete location from locations map
+                removeLocation(event, userId);
             }
 
             @Override
@@ -194,5 +196,28 @@ public class EventListUtils {
             }
         });
 
+    }
+
+    /**
+     * Remove a users location from the events location map if geolocation is enabled
+     *
+     * @param event The Event that we are removing the users location from
+     * @param userId ID of the user to be removed
+     */
+    public static void removeLocation(Event event, String userId) {
+        if (event.isGeolocationRequired()) {
+            EventController eventController = new EventController();
+            eventController.leaveLocationsList(event, userId, new EventController.LeaveLocationsListCallback() {
+                @Override
+                public void onSuccess() {
+                    // Successful adjusted list
+                }
+
+                @Override
+                public void onError(String message) {
+                    System.out.println("Issue deleting location");
+                }
+            });
+        }
     }
 }

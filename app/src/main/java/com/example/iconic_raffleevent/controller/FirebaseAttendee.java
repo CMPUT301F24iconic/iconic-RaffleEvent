@@ -202,7 +202,11 @@ public class FirebaseAttendee {
      * @param user The user organizing the event.
      */
     public void addEvent(Event event, User user) {
-        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        DocumentReference eventRef = eventsCollection.document();
+        String eventId = eventRef.getId();
+
+        // Set the ID in the notification object
+        event.setEventId(eventId);
         event.setOrganizerID(user.getUserId());
         eventRef.set(event);
     }
@@ -481,6 +485,60 @@ public class FirebaseAttendee {
                         String matchingKey = null;
                         for (String key : locations.keySet()) {
                             if (key.startsWith(user.getUserId() + "-")) {
+                                matchingKey = key;
+                                break;
+                            }
+                        }
+
+                        if (matchingKey != null) {
+                            // Remove location from the event object (if applicable)
+                            event.deleteLocation(matchingKey);
+
+                            // Remove the key from Firestore
+                            writeBatch.update(eventRef, "locations." + matchingKey, FieldValue.delete());
+                        }
+                    }
+
+                    // Commit the batch write
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                } else {
+                    callback.onError("Failed to retrieve event data");
+                }
+            });
+        } else {
+            // Commit the batch write when geolocation is not required
+            writeBatch.commit()
+                    .addOnSuccessListener(aVoid -> callback.onSuccess())
+                    .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+        }
+    }
+
+    /**
+     * Removes a user from the event's locations map.
+     * This method updates the "locations" field of the event document by removing the user's location.
+     *
+     * @param event The event we are removing the user from
+     * @param userId The id of the user we are removing from the waiting list.
+     * @param callback The callback to notify the success or failure of the operation.
+     */
+    public void leaveLocationsList(Event event, String userId, EventController.LeaveLocationsListCallback callback) {
+        DocumentReference eventRef = eventsCollection.document(event.getEventId());
+        WriteBatch writeBatch = FirebaseFirestore.getInstance().batch();
+
+        // Remove from locations map
+        if (event.isGeolocationRequired() == Boolean.TRUE) {
+            eventRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    Map<String, Object> locations = (Map<String, Object>) snapshot.get("locations");
+
+                    if (locations != null) {
+                        // Find the matching key based on userId
+                        String matchingKey = null;
+                        for (String key : locations.keySet()) {
+                            if (key.startsWith(userId + "-")) {
                                 matchingKey = key;
                                 break;
                             }

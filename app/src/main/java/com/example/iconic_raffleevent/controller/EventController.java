@@ -110,6 +110,17 @@ public class EventController {
     }
 
     /**
+     * Removes a user from the event's locations map.
+     *
+     * @param event     The event we are removing the users location from
+     * @param userId      The user ID.
+     * @param callback  The callback to handle success or error.
+     */
+    public void leaveLocationsList(Event event, String userId, LeaveLocationsListCallback callback) {
+        firebaseAttendee.leaveLocationsList(event, userId, callback);
+    }
+
+    /**
      * Accepts an event invitation for the user.
      *
      * @param eventId   The ID of the event.
@@ -356,6 +367,22 @@ public class EventController {
     public interface LeaveWaitingListCallback {
         /**
          * Called when leave waitlist operation is successful
+         */
+        void onSuccess();
+
+        /**
+         * Callback which contains an error message
+         * @param message description of the error
+         */
+        void onError(String message);
+    }
+
+    /**
+     * Callback interface for removing a location.
+     */
+    public interface LeaveLocationsListCallback {
+        /**
+         * Called when delete location operation is successful
          */
         void onSuccess();
 
