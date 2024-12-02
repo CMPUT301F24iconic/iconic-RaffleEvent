@@ -278,8 +278,8 @@ public class FirebaseAttendee {
                 }
 
                 // Remove event references from users
-                Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
-                deletionTasks.add(removeUserReferencesTask);
+//                Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
+//                deletionTasks.add(removeUserReferencesTask);
 
                 // Wait for all tasks to complete successfully
                 Tasks.whenAllSuccess(deletionTasks)
