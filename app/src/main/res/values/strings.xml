@@ -46,7 +46,7 @@
     <string name="save">Save</string>
 
     <!-- Waiting List Screen -->
-    <string name="waiting_list">Waitlist Entrants</string>
+    <string name="waiting_list">Waitlist Attendees</string>
     <string name="set_waiting_list_limit">Set Waiting List Limit</string>
     <string name="map">Map</string>
 

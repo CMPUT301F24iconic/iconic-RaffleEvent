@@ -3,6 +3,7 @@ package com.example.iconic_raffleevent.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -129,6 +130,15 @@ public class EventListForAdminActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     eventList.clear();
                     eventList.addAll(events);
+
+                    if (eventList.isEmpty()) {
+                        findViewById(R.id.empty_message).setVisibility(View.VISIBLE);
+                        findViewById(R.id.eventListView).setVisibility(View.INVISIBLE);
+                    } else {
+                        findViewById(R.id.empty_message).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.eventListView).setVisibility(View.VISIBLE);
+                    }
+
                     eventAdapter.notifyDataSetChanged();
                 });
             }

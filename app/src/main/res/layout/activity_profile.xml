@@ -20,6 +20,20 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Title -->
+        <TextView
+            android:id="@+id/yourProfileTitle"
+            style="@style/TextHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:text="Your Profile"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <!-- Content area between the top and bottom navbars -->
         <LinearLayout
             android:id="@+id/content_area"
@@ -46,7 +60,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Upload Photo"
-                tools:ignore="HardcodedText" />
+                android:textColor="@color/buttonTextColor"
+                android:backgroundTint="@color/buttonPrimary"
+                app:cornerRadius="@dimen/button_corner_radius" />
 
             <Button
                 android:id="@+id/remove_photo_button"
@@ -54,7 +70,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Remove Photo"
-                tools:ignore="HardcodedText" />
+                android:textColor="@color/textColorOnSecondary"
+                android:backgroundTint="@color/white"
+                app:cornerRadius="@dimen/button_corner_radius" />
 
             <EditText
                 android:id="@+id/name_edit_text"
@@ -87,20 +105,6 @@
                 android:text="Enable Notifications"
                 tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
-            <Button
-                android:id="@+id/save_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textColorOnPrimary"
-                android:backgroundTint="@color/buttonPrimary"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:layout_marginStart="@dimen/medium_margin"
-                android:layout_marginEnd="@dimen/medium_margin"
-                android:padding="10dp"
-                app:cornerRadius="@dimen/button_corner_radius"
-                android:text="Save"
-                tools:ignore="HardcodedText" />
-
 <!--            <Button-->
 <!--                android:id="@+id/back_to_hub_button"-->
 <!--                android:layout_width="match_parent"-->
@@ -115,6 +119,22 @@
 <!--                android:text="Back"-->
 <!--                tools:ignore="HardcodedText" />-->
         </LinearLayout>
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/buttonPrimary"
+            android:padding="10dp"
+            android:text="Save"
+            android:textColor="@color/textColorOnPrimary"
+            app:cornerRadius="@dimen/button_corner_radius"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/medium_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/content_area"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="HardcodedText" />
 
         <!-- Include Bottom Navbar -->
         <include
