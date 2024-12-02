@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class QRCodeGalleryActivity extends AppCompatActivity {
 
     private RecyclerView qrCodeRecyclerView;
-    private QRCodeGalleryAdapter qrCodeGalleryAdapter;
+    public QRCodeGalleryAdapter qrCodeGalleryAdapter;
     private QRCodeController qrCodeController;
 
     // Nav bar
