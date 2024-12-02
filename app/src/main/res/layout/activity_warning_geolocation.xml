@@ -57,20 +57,20 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/small_margin"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/buttonPrimary"
             android:text="@string/allow_access"
             android:textSize="@dimen/text_size_large"
-            android:textColor="@color/textColorOnSecondary" />
+            android:textColor="@color/textColorOnPrimary" />
 
         <!-- Decline Button -->
         <Button
             android:id="@+id/declineButton"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
-            android:backgroundTint="@color/buttonPrimary"
+            android:backgroundTint="@color/white"
             android:text="@string/decline"
             android:textSize="@dimen/text_size_large"
-            android:textColor="@color/textColorOnPrimary" />
+            android:textColor="@color/textColorOnSecondary" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

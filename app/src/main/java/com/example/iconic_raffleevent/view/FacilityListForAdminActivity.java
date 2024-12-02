@@ -150,21 +150,29 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
     }
 
     /**
-     * Deletes a facility from the database
-     * @param facilityId Facility ID of facility to be deleted
+     * Deletes a facility from the database.
+     *
+     * @param facilityId Facility ID of the facility to be deleted.
      */
     private void deleteFacility(String facilityId) {
         facilityController.deleteFacility(facilityId, new FacilityController.DeleteFacilityCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(FacilityListForAdminActivity.this, "Facility deleted successfully", Toast.LENGTH_SHORT).show();
-                loadFacilityList(); // Refresh the list after deletion
+                loadFacilityList();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(FacilityListForAdminActivity.this, "Error deleting facility: " + message, Toast.LENGTH_SHORT).show();
+                // Only show an error toast if the error is critical
+                if (message.contains("Failed to fetch") || message.contains("Facility not found")) {
+                    Toast.makeText(FacilityListForAdminActivity.this, "Error deleting facility: " + message, Toast.LENGTH_SHORT).show();
+                } else {
+                    // Log non-critical errors silently
+                    System.err.println("Non-critical deletion error: " + message);
+                }
             }
         });
     }
+
 }

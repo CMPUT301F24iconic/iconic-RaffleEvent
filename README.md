@@ -18,27 +18,71 @@ This project follows the **Model-View-Controller (MVC)** architecture pattern. B
 
 ### `model/`
 Contains the core data classes of the application, including:
-- `Event.java`: Represents an event, storing details such as title, date, capacity, and registrants.
-- `User.java`: Represents a user, which could be an entrant, organizer, or admin.
-- `WaitingList.java`: Manages the waiting list for an event and handles lottery drawings.
-- `QRHash.java`: Stores and verifies QR code hash data.
-- `Notification.java`: Represents a notification sent to users about event updates or lottery results.
-- `FirebaseModel.java`: Manages interactions with Firebase for storing and retrieving event, user, and waiting list data.
+- `Event.java`: Represents an event within the raffle system.
+- `User.java`: Represents a user in the system.
+- `Facility.java`: Represents a facility associated with an event, containing details such as name, location, additional information, and the creator (organizer).
+- `QRCodeData.java`: Represents data for a QR code used in the raffle event.
+- `Notification.java`: Represents a notification sent to a user about their lottery results or updates.
+- `ImageData.java`: Represents image data, including an image identifier, title, and the URL to the image.
 
 ### `view/`
 Contains all the Android activities and UI components that interact with users:
-- `MainActivity.java`: The main screen that provides navigation options to view events or profiles.
-- `EventDetailsActivity.java`: Shows the details of an event after scanning a QR code, allowing users to register.
-- `ProfileActivity.java`: Allows users to view and edit their profile information.
-- `EventCreationActivity.java`: Lets organizers create and manage events.
-- `WaitingListActivity.java`: Displays the waiting list for organizers and manages the lottery drawing process.
+- `FirestoreListenerService.java`: A background service that listens to Firestore updates for notifications.
+- `AdminEventActivity.java`: Displays a list of events and allows the admin to delete events through Firebase.
+- `AdminFacilityActivity.java`: Displays a list of facilities and allows the admin to delete facilities through Firebase.
+- `AdminHubActivity.java`: Serves as the main hub for administrative actions within the application.
+- `AdminImageActivity.java`: Provides an interface for managing images within the application.
+- `AdminProfileActivity.java`: Displays a list of user profiles fetched from Firebase and allows administrators to delete profiles.
+- `AdminQRCodeActivity.java`: Displays a list of QR codes fetched from Firebase and allows administrators to delete QR codes.
+- `ConfirmedListActivity.java`: Displays a list of users who have confirmed their attendance for an event.
+- `CreateEventActivity.java`: Activity for creating an event within the Iconic Raffle Event application.
+- `CreateFacilityActivity.java`: Activity for creating a new facility in the application.
+- `DeclinedListActivity.java`: Displays a list of users who have declined an event invitation.
+- `DisplayQRCodeActivity.java`: Displays a list of QR codes
+- `DrawerHelper.java`: Helper class for setting up and managing the navigation drawer in the application.
+- `EventAdapter.java`: Custom ArrayAdapter for displaying a list of Event objects in a ListView.
+- `EventDetailsActivity.java`: Displays the details of a specific event.
+- `EventDetailsForAdminActivity.java`: Displays the details of a specific event for admin.
+- `EventListActivity.java`: Displays a list of events available to the user and allows navigation to other sections of the app such as QR scanner, profile, and notifications.
+- `EventListForAdminActivity.java`: Displays a list of events available to the user and allows navigation to other sections of the app such as QR scanner, profile, and notifications.
+- `EventListUtils.java`: Helper function for user list related views
+- `EventManagementActivity.java`: Activity that provides an interface for administrators to manage events.
+- `EventQRViewActivity.java`: Activity for viewing event QR code
+- `FacilityAdapter.java`: Adapter for displaying facilities in a RecyclerView.
+- `FacilityListForAdminActivity.java`: Activity that displays a list of facilities for the admin to manage.
+- `ImageManagementActivity.java`: Activity class for managing a list of images. Provides functionality to display, refresh, and delete images from the list.
+- `InvitedListActivity.java`: Displays a list of users who have been invited to an event.
+- `MainActivity.java`: The main activity for the Iconic Raffle Event application.
+- `ManageEventActivity.java`: Activity for managing various lists associated with an event.
+- `MapActivity.java`: Displays the map for a specific event, showing the locations of entrants on the map.
+- `NewUserActivity.java`: Responsible for handling the creation of a new user within the application.
+- `NotificationAdapter.java`: Adapter class to bind a list of notifications to a ListView.
+- `NotificationsActivity.java`: Activity class to display the list of notifications for the user.
+- `NotificationSettingsActivity.java`: Activity that handles user notification settings.
+- `NotificationUtils.java`: Utility class for creating and sending notifications.
+- `ProfileActivity.java`: Manages the user's profile.
+- `ProfileManagementActivity.java`: Activity that manages the user profiles, allowing the removal of profiles from the list.
+- `QRCodeGalleryActivity.java`: Activity to display a gallery of QR codes.
+- `QRCodeGalleryAdapter.java`: Adapter for displaying QR codes in a RecyclerView.
+- `QRScannerActivity.java`: Responsible for scanning QR codes using the device's camera, retrieving user information, fetching the user's location, and processing the QR code data.
+- `RoleSelectionActivity.java`: Allows the user to choose between different roles (e.g., Entrant/Organizer or Admin).
+- `UserAdapter.java`: Adapter class for displaying a list of User objects in a RecyclerView.
+- `UserControllerViewModel.java`: ViewModel class for managing an instance of UserController.
+- `UserListActivity.java`: Activity that displays a list of all users in the app and provides management options for each user.
+- `WaitingListActivity.java`: Activity that displays a waiting list of users for a specified event and allows the organizer to randomly select attendees based on event capacity.
+- `AvatarGenerator.java`: Utility class for generating circular avatar images with initials.
 
 ### `controller/`
 Handles the application logic, ensuring smooth interaction between the views and models:
-- `EventController.java`: Manages event creation, retrieval, and validation.
-- `UserController.java`: Manages user profile updates and registration.
-- `WaitingListController.java`: Manages the waiting list, including adding/removing entrants and conducting the lottery.
-- `QRController.java`: Handles QR code generation, verification, and event detail retrieval.
+- `EventController.java`: Handles the logic related to event creation, modification, and management.
+- `FacilityController.java`: Handles the business logic related to facilities.
+- `FirebaseAttendee.java`: Interacts with Firebase Firestore and Firebase Storage to manage user profiles, events, and notifications.
+- `FirebaseOrganizer.java`: Responsible for handling operations related to the firebase database, such as creating, deleting, and fetching data related to users, facilities, events, images, and QR codes.
+- `ImageController.java`: Responsible for managing image data stored in Firestore.
+- `NotificationController.java`: Responsible for managing notifications for users.
+- `OnUserRetrievedListener.java`: Interface for listening to user retrieval callbacks.
+- `QRCodeController.java`: Controller class to manage QR code data from the Event collection.
+- `UserController.java`: Controller class that manages user-related functionalities such as adding a user, updating user profiles, uploading/removing profile images, enabling/disabling notifications, and fetching user data from Firebase.
 
 ### `resources/`
 Contains the app’s XML layout files, images, and other resources:

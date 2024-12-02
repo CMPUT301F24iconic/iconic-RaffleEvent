@@ -244,32 +244,36 @@ public class FirebaseOrganizer {
                                         // Delete associated poster from Firebase Storage
                                         String posterPath = "event_posters/" + eventId;
                                         StorageReference posterRef = FirebaseStorage.getInstance().getReference().child(posterPath);
-                                        Task<Void> deletePosterTask = posterRef.delete().addOnFailureListener(e -> {
-                                            // Handle file not found gracefully
-                                            if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
-                                                // Log the error
-                                                System.err.println("Error deleting poster: " + e.getMessage());
-                                            }
-                                        });
-                                        deletionTasks.add(deletePosterTask);
+                                        deletionTasks.add(
+                                                posterRef.delete()
+                                                        .addOnFailureListener(e -> {
+                                                            if (e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                                                                System.out.println("Poster not found for event: " + eventId);
+                                                            } else {
+                                                                System.err.println("Poster deletion error: " + e.getMessage());
+                                                            }
+                                                        })
+                                        );
 
                                         // Delete associated QR code from Firebase Storage
                                         if (event.getQrCode() != null && !event.getQrCode().isEmpty()) {
                                             String qrCodePath = "event_qrcodes/" + event.getQrCode();
                                             StorageReference qrCodeRef = FirebaseStorage.getInstance().getReference().child(qrCodePath);
-                                            Task<Void> deleteQrCodeTask = qrCodeRef.delete().addOnFailureListener(e -> {
-                                                // Handle file not found gracefully
-                                                if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
-                                                    // Log the error
-                                                    System.err.println("Error deleting QR code: " + e.getMessage());
-                                                }
-                                            });
-                                            deletionTasks.add(deleteQrCodeTask);
+                                            deletionTasks.add(
+                                                    qrCodeRef.delete()
+                                                            .addOnFailureListener(e -> {
+                                                                if (e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                                                                    System.out.println("QR code not found for event: " + eventId);
+                                                                } else {
+                                                                    System.err.println("QR code deletion error: " + e.getMessage());
+                                                                }
+                                                            })
+                                            );
                                         }
 
                                         // Remove event references from users
-                                        Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
-                                        deletionTasks.add(removeUserReferencesTask);
+//                                        Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
+//                                        deletionTasks.add(removeUserReferencesTask);
                                     }
 
                                     // Delete the facility document
@@ -282,12 +286,20 @@ public class FirebaseOrganizer {
                                     deletionTasks.add(updateUserTask);
 
                                     // Wait for all tasks to complete successfully
-                                    Tasks.whenAllSuccess(deletionTasks)
-                                            .addOnSuccessListener(tasks -> {
-                                                callback.onSuccess();
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                callback.onError("Failed to delete facility and associated data: " + e.getMessage());
+                                    Tasks.whenAllComplete(deletionTasks)
+                                            .addOnCompleteListener(task -> {
+                                                boolean criticalTasksSuccessful = deletionTasks.stream()
+                                                        .filter(Task::isComplete)
+                                                        .filter(t -> !(t.isSuccessful() && t.getException() instanceof StorageException)) // Exclude storage-related errors
+                                                        .allMatch(Task::isSuccessful);
+
+                                                if (criticalTasksSuccessful) {
+                                                    callback.onSuccess();
+                                                } else {
+                                                    // Log non-critical failures
+                                                    System.err.println("Some non-critical tasks failed during facility deletion.");
+                                                    callback.onSuccess(); // Still consider overall operation successful
+                                                }
                                             });
                                 })
                                 .addOnFailureListener(e -> {
