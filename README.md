@@ -9,7 +9,6 @@ The **iconic-RaffleEvent Application** is an Android mobile application that all
 - **Lottery System**: Organizers can draw participants from a waiting list.
 - **QR Code Scanning**: Entrants can scan QR codes to view event details and join waiting lists.
 - **Firebase Integration**: Stores event details, waiting lists, and real-time updates.
-- **Multi-User Interaction**: Includes roles for entrants, organizers, and admins.
 - **Image Upload**: Organizers can upload event posters.
 - **Geolocation Verification (Optional)**: Optionally verify where users are joining the waiting list from.
 
