@@ -207,7 +207,8 @@ public class EventListActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-                    DrawerHelper.setupDrawer(EventListActivity.this, drawerLayout, navigationView, userObj.getUserId());
+                    System.out.println("User fetched successfully: " + user.getName());
+                    DrawerHelper.setupDrawer(EventListActivity.this, drawerLayout, userObj.getUserId());
                 } else {
                     runOnUiThread(() ->
                             Toast.makeText(EventListActivity.this,
