@@ -66,6 +66,16 @@ public class EventListActivity extends AppCompatActivity {
     }
 
     /**
+     * refresh the event list when the activity resumes
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the event list when the activity resumes
+        loadData();
+    }
+
+    /**
      * Initializes the views for the activity, including navigation drawer, event list view,
      * and navigation buttons.
      */
