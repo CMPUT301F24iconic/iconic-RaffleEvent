@@ -20,9 +20,7 @@ public class User {
     private boolean locationPermission;
     private List<String> waitingListEventIds;
     private List<String> registeredEventIds;
-    private boolean notificationsEnabled;
-    private boolean winNotificationPref;
-    private boolean loseNotificationPref;
+    private boolean generalNotificationPref;
     private String facilityId;
     private List<String> roles;
 
@@ -33,9 +31,7 @@ public class User {
     public User() {
         this.waitingListEventIds = new ArrayList<>();
         this.registeredEventIds = new ArrayList<>();
-        this.notificationsEnabled = true;
-        this.winNotificationPref = true;
-        this.loseNotificationPref = true;
+        this.generalNotificationPref = true;
         this.locationPermission = false;
         this.userId = "";
         this.username = "";
@@ -209,51 +205,19 @@ public class User {
     }
 
     /**
-     * Checks if notifications are enabled for the user.
-     * @return True if notifications are enabled, false otherwise.
+     * Checks if the user has opted for general notifications.
+     * @return True if general notifications are enabled, false otherwise.
      */
-    public boolean isNotificationsEnabled() {
-        return notificationsEnabled;
+    public boolean isGeneralNotificationPref() {
+        return generalNotificationPref;
     }
 
     /**
-     * Sets the notifications enabled status for the user.
-     * @param notificationsEnabled The notifications enabled status to set.
+     * Sets the general notifications preference for the user.
+     * @param generalNotificationPref The general notification preference to set.
      */
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
-        this.notificationsEnabled = notificationsEnabled;
-    }
-
-    /**
-     * Checks if the user has opted for win notifications.
-     * @return True if win notifications are enabled, false otherwise.
-     */
-    public boolean isWinNotificationPref() {
-        return winNotificationPref;
-    }
-
-    /**
-     * Sets the win notifications preference for the user.
-     * @param winNotificationPref The win notification preference to set.
-     */
-    public void setWinNotificationPref(boolean winNotificationPref) {
-        this.winNotificationPref = winNotificationPref;
-    }
-
-    /**
-     * Checks if the user has opted for lose notifications.
-     * @return True if lose notifications are enabled, false otherwise.
-     */
-    public boolean isLoseNotificationPref() {
-        return loseNotificationPref;
-    }
-
-    /**
-     * Sets the lose notifications preference for the user.
-     * @param loseNotificationPref The lose notification preference to set.
-     */
-    public void setLoseNotificationPref(boolean loseNotificationPref) {
-        this.loseNotificationPref = loseNotificationPref;
+    public void setGeneralNotificationPref(boolean generalNotificationPref) {
+        this.generalNotificationPref = generalNotificationPref;
     }
 
     /**

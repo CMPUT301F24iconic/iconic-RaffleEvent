@@ -444,7 +444,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        userController.setNotificationsEnabled(currentUser, notificationsEnabled);
+        userController.setGeneralNotificationsEnabled(currentUser, notificationsEnabled);
     }
 
     /**
@@ -512,7 +512,7 @@ public class ProfileActivity extends AppCompatActivity {
         nameEditText.setText(user.getName());
         emailEditText.setText(user.getEmail());
         phoneEditText.setText(user.getPhoneNo());
-        notificationsSwitch.setChecked(user.isNotificationsEnabled());
+        notificationsSwitch.setChecked(user.isGeneralNotificationPref());
 
         profileChanged = false;
         photoChanged = false;

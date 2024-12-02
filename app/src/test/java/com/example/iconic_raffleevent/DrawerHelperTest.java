@@ -189,7 +189,7 @@ public class DrawerHelperTest {
     }
 
     private void simulateDrawerSetup() {
-        DrawerHelper.setupDrawer(mockContext, mockDrawerLayout, mockNavigationView, TEST_USER_ID);
+        DrawerHelper.setupDrawer(mockContext, mockDrawerLayout, TEST_USER_ID);
         verify(mockNavigationView).setNavigationItemSelectedListener(listenerCaptor.capture());
     }
 

@@ -24,7 +24,7 @@ public class UserModelTest {
         testUser.setUsername("Testname");
         testUser.setEmail("test123@ualberta.ca");
         testUser.setLocationPermission(false);
-        testUser.setNotificationsEnabled(false);
+        testUser.setGeneralNotificationPref(false);
         testUser.setProfileImageUrl("");  // Initialize with empty string instead of null
         testUser.setPhoneNo("");  // Initialize with empty string instead of null
     }
@@ -68,7 +68,7 @@ public class UserModelTest {
 
     @Test
     void testCheckNotificationsEnabled() {
-        assertFalse(testUser.isNotificationsEnabled());
+        assertFalse(testUser.isGeneralNotificationPref());
     }
 
     @Test
@@ -129,8 +129,8 @@ public class UserModelTest {
 
     @Test
     void testSetNotificationsEnabled() {
-        testUser.setNotificationsEnabled(true);
-        assertTrue(testUser.isNotificationsEnabled());
+        testUser.setGeneralNotificationPref(true);
+        assertTrue(testUser.isGeneralNotificationPref());
     }
 
     @Test
@@ -166,25 +166,17 @@ public class UserModelTest {
         assertEquals("", defaultUser.getProfileImageUrl());
 
         // Check default boolean flags
-        assertTrue(defaultUser.isNotificationsEnabled());
-        assertTrue(defaultUser.isWinNotificationPref());
-        assertTrue(defaultUser.isLoseNotificationPref());
+        assertTrue(defaultUser.isGeneralNotificationPref());
         assertFalse(defaultUser.isLocationPermission());
     }
 
     @Test
     void testNotificationPreferences() {
-        // Test win notification preference
-        testUser.setWinNotificationPref(true);
-        assertTrue(testUser.isWinNotificationPref());
-        testUser.setWinNotificationPref(false);
-        assertFalse(testUser.isWinNotificationPref());
-
-        // Test lose notification preference
-        testUser.setLoseNotificationPref(true);
-        assertTrue(testUser.isLoseNotificationPref());
-        testUser.setLoseNotificationPref(false);
-        assertFalse(testUser.isLoseNotificationPref());
+        // Test general notification preference
+        testUser.setGeneralNotificationPref(true);
+        assertTrue(testUser.isGeneralNotificationPref());
+        testUser.setGeneralNotificationPref(false);
+        assertFalse(testUser.isGeneralNotificationPref());
     }
 
     @Test

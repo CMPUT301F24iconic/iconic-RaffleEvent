@@ -62,8 +62,8 @@ public class UserControllerTest {
 
     @Test
     public void setNotificationsEnabled_setsNotificationPreference() {
-        testUser.setNotificationsEnabled(true);
-        userController.setNotificationsEnabled(testUser, false);
-        assertFalse(testUser.isNotificationsEnabled());
+        testUser.setGeneralNotificationPref(true);
+        userController.setGeneralNotificationsEnabled(testUser, false);
+        assertFalse(testUser.isGeneralNotificationPref());
     }
 }

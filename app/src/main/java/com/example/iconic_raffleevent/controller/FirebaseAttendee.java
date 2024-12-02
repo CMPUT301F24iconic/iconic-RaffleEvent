@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -148,35 +149,14 @@ public class FirebaseAttendee {
     }
 
     /**
-     * Updates the notification preference for a user in Firebase Firestore.
-     *
-     * @param user The user whose notification preference is to be updated.
-     */
-    public void updateNotificationPreference(User user) {
-        DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("notificationsEnabled", user.isNotificationsEnabled());
-    }
-
-    /**
      * Updates the user's win notification preference in the Firebase database.
      * The preference is stored in the user's document under the field "winNotificationPref".
      *
      * @param user The user whose win notification preference needs to be updated.
      */
-    public void updateWinNotificationPreference(User user) {
+    public void updateGeneralNotificationPreference(User user) {
         DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("winNotificationPref", user.isWinNotificationPref());
-    }
-
-    /**
-     * Updates the user's lose notification preference in the Firebase database.
-     * The preference is stored in the user's document under the field "loseNotificationPref".
-     *
-     * @param user The user whose lose notification preference needs to be updated.
-     */
-    public void updateLoseNotificationPreference(User user) {
-        DocumentReference userRef = usersCollection.document(user.getUserId());
-        userRef.update("loseNotificationPref", user.isLoseNotificationPref());
+        userRef.update("generalNotificationPref", user.isGeneralNotificationPref());
     }
 
     // Event-related methods
@@ -491,12 +471,44 @@ public class FirebaseAttendee {
         writeBatch.update(eventRef, "waitingList", FieldValue.arrayRemove(user.getUserId()));
 
         if (event.isGeolocationRequired() == Boolean.TRUE) {
-            writeBatch.update(eventRef, "locations." + user.getUserId() + "-" + user.getName(), FieldValue.delete());
-        }
+            eventRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    Map<String, Object> locations = (Map<String, Object>) snapshot.get("locations");
 
-        writeBatch.commit()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                    if (locations != null) {
+                        // Find the matching key based on userId
+                        String matchingKey = null;
+                        for (String key : locations.keySet()) {
+                            if (key.startsWith(user.getUserId() + "-")) {
+                                matchingKey = key;
+                                break;
+                            }
+                        }
+
+                        if (matchingKey != null) {
+                            // Remove location from the event object (if applicable)
+                            event.deleteLocation(matchingKey);
+
+                            // Remove the key from Firestore
+                            writeBatch.update(eventRef, "locations." + matchingKey, FieldValue.delete());
+                        }
+                    }
+
+                    // Commit the batch write
+                    writeBatch.commit()
+                            .addOnSuccessListener(aVoid -> callback.onSuccess())
+                            .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+                } else {
+                    callback.onError("Failed to retrieve event data");
+                }
+            });
+        } else {
+            // Commit the batch write when geolocation is not required
+            writeBatch.commit()
+                    .addOnSuccessListener(aVoid -> callback.onSuccess())
+                    .addOnFailureListener(e -> callback.onError("Failed to leave waiting list"));
+        }
     }
 
     /**
@@ -697,11 +709,12 @@ public class FirebaseAttendee {
      * @param waitingList The list of users who have declined the invitation.
      * @param callback The callback to notify the success or failure of the operation.
      */
-    public void updateEventLists(String eventId, List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, UpdateCallback callback) {
+    public void updateEventLists(String eventId, List<String> invitedList, List<String> waitingList, List<String> registeredAttendees, List<String> cancelledList, UpdateCallback callback) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("waitingList", waitingList);
         updates.put("invitedList", invitedList);
         updates.put("registeredAttendees", registeredAttendees);
+        updates.put("declinedList", cancelledList);
 
         eventsCollection.document(eventId)
                 .update(updates)

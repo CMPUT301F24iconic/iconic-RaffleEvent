@@ -52,6 +52,20 @@ public class UserController {
         this.firebaseAttendee = new FirebaseAttendee();
     }
 
+    /**
+     * Constructor for UserController without needing context.
+     *
+     * @param userID The current user ID.
+     */
+    public UserController(String userID) {
+        this.currentUserID = userID;
+        this.context = null;
+        this.firestore = FirebaseFirestore.getInstance();
+        this.firebaseStorage = FirebaseStorage.getInstance();
+        this.storageReference = firebaseStorage.getReference();
+        this.firebaseAttendee = new FirebaseAttendee();
+    }
+
     // Regex pattern for validating phone numbers (US/international format)
     // private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+?1?-?)?\\d{3}-\\d{3}-\\d{4}$");
 
@@ -189,35 +203,13 @@ public class UserController {
     }
 
     /**
-     * Sets the notification preference for the user.
+     * Sets the general notification preference for the user.
      *
-     * @param user The user whose notification preference is being updated.
-     * @param enabled True to enable notifications, false to disable.
+     * @param user The user whose general notification preference is being updated.
+     * @param enabled True to enable general notifications, false to disable.
      */
-    public void setNotificationsEnabled(User user, boolean enabled) {
-        user.setNotificationsEnabled(enabled);
-        updateUser(user);
-    }
-
-    /**
-     * Sets the win notification preference for the user.
-     *
-     * @param user The user whose win notification preference is being updated.
-     * @param enabled True to enable win notifications, false to disable.
-     */
-    public void setWinNotificationsEnabled(User user, boolean enabled) {
-        user.setWinNotificationPref(enabled);
-        updateUser(user);
-    }
-
-    /**
-     * Sets the lose notification preference for the user.
-     *
-     * @param user The user whose lose notification preference is being updated.
-     * @param enabled True to enable lose notifications, false to disable.
-     */
-    public void setLoseNotificationsEnabled(User user, boolean enabled) {
-        user.setLoseNotificationPref(enabled);
+    public void setGeneralNotificationsEnabled(User user, boolean enabled) {
+        user.setGeneralNotificationPref(enabled);
         updateUser(user);
     }
 
@@ -325,7 +317,6 @@ public class UserController {
      * @param user The user whose data is being updated.
      */
     private void updateUser(User user) {
-        System.out.println("Here 2");
         firebaseAttendee.updateUser(user);
     }
 

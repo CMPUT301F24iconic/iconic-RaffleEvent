@@ -11,13 +11,19 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 import android.Manifest;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.iconic_raffleevent.R;
+import com.example.iconic_raffleevent.controller.UserController;
+import com.example.iconic_raffleevent.model.User;
 import com.example.iconic_raffleevent.view.NotificationsActivity;
+import com.example.iconic_raffleevent.view.ProfileActivity;
+import com.example.iconic_raffleevent.view.UserControllerViewModel;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,6 +42,9 @@ public class FirestoreListenerService extends Service {
     private static final String CHANNEL_ID = "RAFFLE_EVENTS";
     private FirebaseFirestore db;
     private ListenerRegistration listenerRegistration;
+
+    private User userObj;
+    private UserController userController;
 
     /**
      * Called when the service is started. Initializes firestore and places a listener to check for
@@ -56,6 +65,9 @@ public class FirestoreListenerService extends Service {
         AtomicReference<Boolean> initialAppLoad = new AtomicReference<>(Boolean.TRUE);
         AtomicInteger notiID = new AtomicInteger(1);
 
+        initializeControllers();
+        fetchUser();
+
         createNotificationChannel();
         db = FirebaseFirestore.getInstance();
         CollectionReference notificationsCollection = db.collection("Notification");
@@ -65,25 +77,43 @@ public class FirestoreListenerService extends Service {
                 return;
             }
             if (snapshot != null) {
-                // Handle snapshot updates here (e.g., notify UI or trigger some action)
-                if (!initialAppLoad.get()) {
-                    for (DocumentChange change : snapshot.getDocumentChanges()) {
-                        switch (change.getType()) {
-                            case ADDED, MODIFIED:
-                                // Get notification
-                                HashMap<String, Object> notification = (HashMap<String, Object>) change.getDocument().getData();
-                                if (notification.get("userId").toString().equals(getUserId())) {
-                                    // Generate Notification for user device
-                                    generateSystemNotification(notification, notiID);
+                userController.getUserInformation(new UserController.UserFetchCallback() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        if (user != null) {
+                            userObj = user;
+                            // Handle snapshot updates here (e.g., notify UI or trigger some action)
+                            if (!initialAppLoad.get()) {
+                                for (DocumentChange change : snapshot.getDocumentChanges()) {
+                                    switch (change.getType()) {
+                                        case ADDED, MODIFIED:
+                                            // Get notification
+                                            HashMap<String, Object> notification = (HashMap<String, Object>) change.getDocument().getData();
+                                            if (notification.get("userId").toString().equals(getUserId())) {
+                                                // Generate Notification for user device
+                                                if (notification.get("notificationType").toString().equals("General") && !userObj.isGeneralNotificationPref()) {
+                                                    // system notification disabled, don't send
+                                                    System.out.println("Opted out");
+                                                } else {
+                                                    generateSystemNotification(notification, notiID);
+                                                }
+                                            }
+                                            break;
+                                        case REMOVED:
+                                            Log.d("FirestoreListener", "Removed document: " + change.getDocument().getData());
+                                            break;
+                                    }
                                 }
-                                break;
-                            case REMOVED:
-                                Log.d("FirestoreListener", "Removed document: " + change.getDocument().getData());
-                                break;
+                            }
+                            initialAppLoad.set(Boolean.FALSE);
                         }
                     }
-                }
-                initialAppLoad.set(Boolean.FALSE);
+
+                    @Override
+                    public void onError(String message) {
+                        System.out.println("Error with fetching user");
+                    }
+                });
             }
         });
 
@@ -148,6 +178,40 @@ public class FirestoreListenerService extends Service {
      */
     private String getUserId() {
         return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * Initializes the UserController using ViewModel to manage user data.
+     */
+    private void initializeControllers() {
+        userController = new UserController(getUserId());
+    }
+
+    /**
+     * Loads the user's profile information from the controller and updates the UI.
+     */
+    private void loadUserProfile() {
+        userController.getUserInformation(new UserController.UserFetchCallback() {
+            @Override
+            public void onUserFetched(User user) {
+                if (user != null) {
+                    userObj = user;
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                System.out.println("Error with fetching user");
+            }
+        });
+    }
+
+    /**
+     * Fetches user info so system can check to see if notifications are enabled
+     */
+    private void fetchUser() {
+        initializeControllers();
+        loadUserProfile();
     }
 
     @Override
