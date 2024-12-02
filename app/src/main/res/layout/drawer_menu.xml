@@ -1,81 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/white">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:padding="16dp">
 
-    <!-- Profile Button -->
-    <TextView
-        android:id="@+id/nav_profile"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Profile"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
+        android:orientation="vertical">
 
-    <!-- Events Button -->
-    <TextView
-        android:id="@+id/nav_events"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Events"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
+        <!-- Profile Photo -->
+        <ImageView
+            android:id="@+id/nav_profile_photo"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="32dp"
+            android:contentDescription="Profile Photo"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_profile" />
 
-    <!-- Notifications Button -->
-    <TextView
-        android:id="@+id/nav_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Notifications"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
+        <!-- Create New Event Button -->
+        <TextView
+            android:id="@+id/nav_create_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Create New Event"
+            android:textSize="18sp"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:textColor="@color/black" />
 
-    <!-- Scan QR Code Button -->
-    <TextView
-        android:id="@+id/nav_scan_qr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Scan QR Code"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
+        <!-- Create New Facility Button -->
+        <TextView
+            android:id="@+id/nav_facility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Facility"
+            android:textSize="18sp"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:textColor="@color/black" />
 
-    <!-- Create new Event Button -->
-    <TextView
-        android:id="@+id/nav_create_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Create New Event"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
+        <!-- Admin Control Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_gravity="bottom">
 
-    <!-- Create new Facility Button -->
-    <TextView
-        android:id="@+id/nav_facility"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Facility"
-        android:textSize="18sp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical"
-        android:textColor="@color/black" />
-</LinearLayout>
+            <!-- Admin Control Panel Header -->
+            <TextView
+                android:id="@+id/admin_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Admin Control Panel"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:visibility="gone"/>
+
+            <!-- Manage Users Button -->
+            <TextView
+                android:id="@+id/admin_manage_users"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Manage Users"
+                android:textSize="18sp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:visibility="gone"/>
+
+            <!-- Manage Events Button -->
+            <TextView
+                android:id="@+id/admin_manage_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Manage Events"
+                android:textSize="18sp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:visibility="gone"/>
+
+            <!-- Manage QR Codes Button -->
+            <TextView
+                android:id="@+id/admin_manage_qr_codes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Manage QR Codes"
+                android:textSize="18sp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:visibility="gone"/>
+
+            <!-- Manage Facilities Button -->
+            <TextView
+                android:id="@+id/admin_manage_facilities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Manage Facilities"
+                android:textSize="18sp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

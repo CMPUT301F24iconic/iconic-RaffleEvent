@@ -1,9 +1,11 @@
 package com.example.iconic_raffleevent.view;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,12 @@ import java.util.ArrayList;
  */
 public class FacilityListForAdminActivity extends AppCompatActivity {
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton backButton;
+
     private RecyclerView facilityRecyclerView;
     private FacilityAdapter facilityAdapter;
     private FacilityController facilityController;
@@ -32,6 +40,11 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facility_list_for_admin);
+
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        backButton = findViewById(R.id.back_button);
 
         // Initialize RecyclerView and FacilityAdapter
         facilityRecyclerView = findViewById(R.id.facilityRecyclerView);
@@ -47,6 +60,21 @@ public class FacilityListForAdminActivity extends AppCompatActivity {
 
         // Load facilities
         loadFacilityList();
+
+        backButton.setOnClickListener(v -> finish());
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(FacilityListForAdminActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(FacilityListForAdminActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(FacilityListForAdminActivity.this, ProfileActivity.class));
+        });
     }
 
     /**

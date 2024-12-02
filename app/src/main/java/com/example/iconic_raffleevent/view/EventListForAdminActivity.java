@@ -3,6 +3,7 @@ package com.example.iconic_raffleevent.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,12 @@ public class EventListForAdminActivity extends AppCompatActivity {
     public List<Event> eventList;
     private EventController eventController;
 
+    // Nav bar
+    private ImageButton homeButton;
+    private ImageButton qrButton;
+    private ImageButton profileButton;
+    private ImageButton backButton;
+
     public User userObj;
     private UserController userController;
 
@@ -41,10 +48,30 @@ public class EventListForAdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list_for_admin);
 
+        homeButton = findViewById(R.id.home_button);
+        qrButton = findViewById(R.id.qr_button);
+        profileButton = findViewById(R.id.profile_button);
+        backButton = findViewById(R.id.back_button);
+
         initializeViews();
         initializeControllers();
         setupListeners();
         loadEventList();
+
+        backButton.setOnClickListener(v -> finish());
+
+        // Footer buttons logic
+        homeButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventListForAdminActivity.this, EventListActivity.class));
+        });
+
+        qrButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventListForAdminActivity.this, QRScannerActivity.class));
+        });
+
+        profileButton.setOnClickListener(v -> {
+            startActivity(new Intent(EventListForAdminActivity.this, ProfileActivity.class));
+        });
     }
 
     /**
