@@ -28,10 +28,6 @@ public class DeclinedListActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private String eventId;
 
-    // Navigation UI
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
@@ -40,9 +36,6 @@ public class DeclinedListActivity extends AppCompatActivity {
 
     private ArrayList<User> usersObj;
     private Event eventObj;
-
-    // Top Nav bar
-//    private ImageButton notificationButton;
 
     private Button notificationButton;
 
@@ -59,18 +52,12 @@ public class DeclinedListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_declined_list);
 
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
-
         // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
         notificationButton = findViewById(R.id.sendNotification);
-
-//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Initialize UI elements
         userRecyclerView = findViewById(R.id.userRecyclerView);
@@ -94,10 +81,6 @@ public class DeclinedListActivity extends AppCompatActivity {
         // Fetch and display waiting list
         loadDeclinedList();
 
-        // Top nav bar
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(DeclinedListActivity.this, NotificationsActivity.class))
-//        );
         backButton.setOnClickListener(v -> finish());
 
         // Footer buttons logic

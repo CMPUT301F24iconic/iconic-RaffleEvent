@@ -46,11 +46,6 @@ public class AdminHubActivity extends AppCompatActivity {
         manageFacilitiesButton = findViewById(R.id.manage_facilities_button);
         backToRoleSelectionButton = findViewById(R.id.back_to_role_selection_button);
 
-//        // Show password dialog to confirm admin access
-//        if (!isAdminAuthenticated) {
-//            showPasswordDialog();
-//        }
-
         // Set up button listeners (only active if authenticated)
         manageUsersButton.setOnClickListener(v -> {
             startActivity(new Intent(this, UserListActivity.class));
@@ -72,48 +67,4 @@ public class AdminHubActivity extends AppCompatActivity {
             startActivity(new Intent(this, RoleSelectionActivity.class));
         });
     }
-
-//    /**
-//     * Displays a dialog prompting the user to enter the admin password.
-//     * If the password is correct, the user gains access to administrative features.
-//     * If the password is incorrect, the activity closes.
-//     */
-//    private void showPasswordDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Admin Password");
-//
-//        // Set up the input field for password
-//        final EditText input = new EditText(this);
-//        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//        builder.setView(input);
-//
-//        // Set up dialog buttons
-//        builder.setPositiveButton("OK", (dialog, which) -> {
-//            String password = input.getText().toString();
-//            verifyPassword(password);
-//        });
-//        builder.setNegativeButton("Cancel", (dialog, which) -> {
-//            dialog.cancel();
-//            finish();  // Close activity if admin access is denied
-//        });
-//
-//        builder.show();
-//    }
-//
-//    /**
-//     * Verifies the entered password against the stored admin password.
-//     * If the password is correct, sets the admin authentication flag to true.
-//     * If the password is incorrect, displays a toast and closes the activity.
-//     *
-//     * @param password The password entered by the user.
-//     */
-//    private void verifyPassword(String password) {
-//        if (password.equals(ADMIN_PASSWORD)) {
-//            isAdminAuthenticated = true;
-//            Toast.makeText(this, "Admin access granted", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show();
-//            finish(); // Close activity on incorrect password
-//        }
-//    }
 }

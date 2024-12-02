@@ -72,9 +72,6 @@ public class CreateEventActivity extends AppCompatActivity {
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton backButton;
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-//    private ImageButton notificationButton;
 
     // IDs
     String eventId;
@@ -113,21 +110,11 @@ public class CreateEventActivity extends AppCompatActivity {
         // upload poster preview
         posterPreviewImageView = findViewById(R.id.posterPreviewImageView);
 
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
-
         // Navigation Bars
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
-
-        // Top nav bar
-//        notificationButton = findViewById(R.id.notification_icon);
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(CreateEventActivity.this, NotificationsActivity.class))
-//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
@@ -236,10 +223,6 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onUserFetched(User user) {
                 if (user != null) {
                     userObj = user;
-//                    runOnUiThread(() -> {
-//                        // Set up the drawer only after fetching the user information
-//                        DrawerHelper.setupDrawer(CreateEventActivity.this, drawerLayout, navigationView, userObj.getUserId());
-//                    });
                 } else {
                     Toast.makeText(CreateEventActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
                 }

@@ -44,15 +44,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private SupportMapFragment mapFragment;
     private TextView placeholderText;
 
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
     private ImageButton profileButton;
     private ImageButton backButton;
-//    private ImageButton notificationButton;
 
 
     /**
@@ -65,10 +61,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_map);
-
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
 
         // in onCreate
         homeButton = findViewById(R.id.home_button);
@@ -86,12 +78,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         String mapHeaderText = eventTitle + "'s Waitlist Locations";
         eventHeader.setText(mapHeaderText);
         placeholderText = findViewById(R.id.empty_message);
-
-        // Top nav bar
-//        notificationButton = findViewById(R.id.notification_icon);
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(MapActivity.this, NotificationsActivity.class))
-//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {

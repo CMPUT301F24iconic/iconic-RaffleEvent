@@ -37,10 +37,6 @@ public class InvitedListActivity extends AppCompatActivity {
     private String eventId;
     private Event eventObj;
 
-    // Navigation UI
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-
     // Nav bar
     private ImageButton homeButton;
     private ImageButton qrButton;
@@ -50,9 +46,6 @@ public class InvitedListActivity extends AppCompatActivity {
     private Button notificationButton;
 
     private ArrayList<User> usersObj;
-
-    // Top Nav bar
-//    private ImageButton notificationButton;
 
     /**
      * Called when the activity is first created.
@@ -67,19 +60,13 @@ public class InvitedListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invited_list);
 
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
-
         // in onCreate
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
-//        notificationButton = findViewById(R.id.notification_icon);
         backButton = findViewById(R.id.back_button);
         notificationButton = findViewById(R.id.sendNotification);
 
-//        DrawerHelper.setupDrawer(this, drawerLayout, navigationView);
 
         // Initialize UI elements
         userRecyclerView = findViewById(R.id.userRecyclerView);
@@ -122,10 +109,6 @@ public class InvitedListActivity extends AppCompatActivity {
         // Fetch and display waiting list
         loadInvitedList();
 
-        // Top nav bar
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(InvitedListActivity.this, NotificationsActivity.class))
-//        );
         backButton.setOnClickListener(v -> finish());
 
         // Footer buttons logic

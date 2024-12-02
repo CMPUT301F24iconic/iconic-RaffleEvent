@@ -43,8 +43,6 @@ public class NotificationsActivity extends AppCompatActivity {
     private ImageButton profileButton;
 
     private ImageButton backButton;
-//     private DrawerLayout drawerLayout;
-//     private NavigationView navigationView;
 
     private UserController userController;
     private User userObj;
@@ -97,9 +95,6 @@ public class NotificationsActivity extends AppCompatActivity {
         profileButton = findViewById(R.id.profile_button);
         settingsButton = findViewById(R.id.settings_icon);
 
-        // Setting up hamburger button
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
         backButton = findViewById(R.id.back_button);
     }
 

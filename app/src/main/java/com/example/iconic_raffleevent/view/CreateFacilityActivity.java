@@ -48,9 +48,6 @@ public class CreateFacilityActivity extends AppCompatActivity {
     private ImageButton qrButton;
     ImageButton profileButton;
     private ImageButton backButton;
-//    private DrawerLayout drawerLayout;
-//    private NavigationView navigationView;
-//    private ImageButton notificationButton;
 
     // Input Error
     public Boolean inputError;
@@ -68,21 +65,11 @@ public class CreateFacilityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_facility);
 
-        // Initialize DrawerLayout and NavigationView
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//        navigationView = findViewById(R.id.navigation_view);
-
         // Navigation Bars
         homeButton = findViewById(R.id.home_button);
         qrButton = findViewById(R.id.qr_button);
         profileButton = findViewById(R.id.profile_button);
         backButton = findViewById(R.id.back_button);
-
-        // Top nav bar
-//        notificationButton = findViewById(R.id.notification_icon);
-//        notificationButton.setOnClickListener(v ->
-//                startActivity(new Intent(CreateFacilityActivity.this, NotificationsActivity.class))
-//        );
 
         // Footer buttons logic
         homeButton.setOnClickListener(v -> {
