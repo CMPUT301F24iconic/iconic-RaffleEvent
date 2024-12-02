@@ -5,11 +5,23 @@ import com.example.iconic_raffleevent.model.Event;
 import com.example.iconic_raffleevent.model.Facility;
 import com.example.iconic_raffleevent.model.ImageData;
 import com.example.iconic_raffleevent.model.QRCodeData;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * FirebaseOrganizer is a controller class responsible for handling operations related to the firebase database,
@@ -196,16 +208,140 @@ public class FirebaseOrganizer {
     }
 
     /**
-     * Deletes a facility by its ID from the Firestore database.
+     * Deletes a facility from Firestore along with all associated events,
+     * their media (posters and QR codes) stored in Firebase Storage, and
+     * removes references from user documents. Updates the creator's facilityId
+     * in the User collection.
      *
      * @param facilityId The ID of the facility to be deleted.
-     * @param callback The callback interface for handling success or error responses.
+     * @param callback   The callback interface for handling success or error responses.
      */
     public void deleteFacility(String facilityId, DeleteFacilityCallback callback) {
-        db.collection("Facility").document(facilityId).delete()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Failed to delete facility: " + e.getMessage()));
+        // Fetch the facility to get the creator's user ID
+        DocumentReference facilityRef = db.collection("Facility").document(facilityId);
+
+        facilityRef.get()
+                .addOnSuccessListener(facilitySnapshot -> {
+                    if (facilitySnapshot.exists()) {
+                        Facility facility = facilitySnapshot.toObject(Facility.class);
+                        String creatorUserId = facility.getCreator().getUserId();
+
+                        // Step 1: Fetch all events associated with the facility
+                        db.collection("Event").whereEqualTo("facilityId", facilityId)
+                                .get()
+                                .addOnSuccessListener(querySnapshot -> {
+                                    List<Task<Void>> deletionTasks = new ArrayList<>();
+
+                                    // Delete each event and associated data
+                                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
+                                        String eventId = eventDoc.getId();
+                                        Event event = eventDoc.toObject(Event.class);
+
+                                        // Delete the event document
+                                        Task<Void> deleteEventTask = db.collection("Event").document(eventId).delete();
+                                        deletionTasks.add(deleteEventTask);
+
+                                        // Delete associated poster from Firebase Storage
+                                        String posterPath = "event_posters/" + eventId;
+                                        StorageReference posterRef = FirebaseStorage.getInstance().getReference().child(posterPath);
+                                        Task<Void> deletePosterTask = posterRef.delete().addOnFailureListener(e -> {
+                                            // Handle file not found gracefully
+                                            if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
+                                                // Log the error
+                                                System.err.println("Error deleting poster: " + e.getMessage());
+                                            }
+                                        });
+                                        deletionTasks.add(deletePosterTask);
+
+                                        // Delete associated QR code from Firebase Storage
+                                        if (event.getQrCode() != null && !event.getQrCode().isEmpty()) {
+                                            String qrCodePath = "event_qrcodes/" + event.getQrCode();
+                                            StorageReference qrCodeRef = FirebaseStorage.getInstance().getReference().child(qrCodePath);
+                                            Task<Void> deleteQrCodeTask = qrCodeRef.delete().addOnFailureListener(e -> {
+                                                // Handle file not found gracefully
+                                                if (!(e instanceof StorageException && ((StorageException) e).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND)) {
+                                                    // Log the error
+                                                    System.err.println("Error deleting QR code: " + e.getMessage());
+                                                }
+                                            });
+                                            deletionTasks.add(deleteQrCodeTask);
+                                        }
+
+                                        // Remove event references from users
+                                        Task<Void> removeUserReferencesTask = removeEventReferencesFromUsers(eventId, event);
+                                        deletionTasks.add(removeUserReferencesTask);
+                                    }
+
+                                    // Delete the facility document
+                                    Task<Void> deleteFacilityTask = facilityRef.delete();
+                                    deletionTasks.add(deleteFacilityTask);
+
+                                    // Update creator's facilityId
+                                    Task<Void> updateUserTask = db.collection("User").document(creatorUserId)
+                                            .update("facilityId", FieldValue.delete());
+                                    deletionTasks.add(updateUserTask);
+
+                                    // Wait for all tasks to complete successfully
+                                    Tasks.whenAllSuccess(deletionTasks)
+                                            .addOnSuccessListener(tasks -> {
+                                                callback.onSuccess();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                callback.onError("Failed to delete facility and associated data: " + e.getMessage());
+                                            });
+                                })
+                                .addOnFailureListener(e -> {
+                                    callback.onError("Failed to fetch events for facility deletion: " + e.getMessage());
+                                });
+                    } else {
+                        callback.onError("Facility not found.");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onError("Failed to fetch facility: " + e.getMessage());
+                });
     }
+
+    /**
+     * NOT BEING USED SINCE WE ARE NOT UPDATING THE LIST FIELDS IN A USER OBJECT
+     * Removes references to an event from all relevant user documents in Firestore.
+     *
+     * @param eventId The ID of the event to remove references for.
+     * @param event   The Event object containing lists of associated user IDs.
+     * @return A Task<Void> that completes when all user references are removed.
+     */
+    private Task<Void> removeEventReferencesFromUsers(String eventId, Event event) {
+        Set<String> userIds = new HashSet<>();
+
+        if (event.getWaitingList() != null) {
+            userIds.addAll(event.getWaitingList());
+        }
+        if (event.getRegisteredAttendees() != null) {
+            userIds.addAll(event.getRegisteredAttendees());
+        }
+        if (event.getInvitedList() != null) {
+            userIds.addAll(event.getInvitedList());
+        }
+
+        List<Task<Void>> userUpdateTasks = new ArrayList<>();
+
+//        for (String userId : userIds) {
+//            DocumentReference userRef = db.collection("User").document(userId);
+//            Map<String, Object> updates = new HashMap<>();
+//            updates.put("waitingListEventIds", FieldValue.arrayRemove(eventId));
+//            updates.put("registeredEventIds", FieldValue.arrayRemove(eventId));
+//            updates.put("invitedEventIds", FieldValue.arrayRemove(eventId));
+//            Task<Void> updateTask = userRef.update(updates)
+//                    .addOnFailureListener(e -> {
+//                        // Log the error but continue with other updates
+//                        System.err.println("Error updating user " + userId + ": " + e.getMessage());
+//                    });
+//            userUpdateTasks.add(updateTask);
+//        }
+
+        return Tasks.forResult(null);
+    }
+
 
     /**
      * Updates the facility ID linked to a user

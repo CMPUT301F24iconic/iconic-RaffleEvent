@@ -76,7 +76,7 @@ public class AdminFacilityActivity extends AppCompatActivity {
     private void showDeleteDialog(Facility facility) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Facility")
-                .setMessage("Are you sure you want to delete this facility?")
+                .setMessage("Deleting this facility will also delete all associated events and their media (posters and QR codes). This action cannot be undone.\n\nAre you sure you want to proceed?")
                 .setPositiveButton("Delete", (dialog, which) -> deleteFacility(facility))
                 .setNegativeButton("Cancel", null)
                 .show();
