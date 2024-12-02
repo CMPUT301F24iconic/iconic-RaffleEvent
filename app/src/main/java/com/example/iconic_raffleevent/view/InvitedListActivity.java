@@ -191,24 +191,26 @@ public class InvitedListActivity extends AppCompatActivity {
      * @param userIds List of user IDs who have been invited to the event.
      */
     private void fetchUsersFromInvitedList(List<String> userIds) {
-        for (String userId : userIds) {
-            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-                @Override
-                public void onUserFetched(User user) {
-                    if (user != null) {
-                        userAdapter.addUser(user);
-                        userAdapter.notifyDataSetChanged();
-                        usersObj.add(user);
-                    } else {
-                        Toast.makeText(InvitedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+        if (!userIds.isEmpty()) {
+            for (String userId : userIds) {
+                firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        if (user != null) {
+                            userAdapter.addUser(user);
+                            userAdapter.notifyDataSetChanged();
+                            usersObj.add(user);
+                        } else {
+                            Toast.makeText(InvitedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
 
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(InvitedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(InvitedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 

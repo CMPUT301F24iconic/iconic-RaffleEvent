@@ -151,7 +151,7 @@ public class EventListUtils {
             firebaseAttendee.updateEventLists(event.getEventId(), invitedList, waitingList, registeredAttendees, cancelledList, new FirebaseAttendee.UpdateCallback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(context, "User successfully deleted from all lists.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "User successfully deleted from list.", Toast.LENGTH_SHORT).show();
                     // create notification
                     createNotification(event, userId);
                     callback.run(); // Refresh the UI

@@ -153,24 +153,26 @@ public class DeclinedListActivity extends AppCompatActivity {
      * @param userIds List of user IDs who declined the event.
      */
     public void fetchUsersFromDeclinedList(List<String> userIds) {
-        for (String userId : userIds) {
-            firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
-                @Override
-                public void onUserFetched(User user) {
-                    if (user != null) {
-                        userAdapter.addUser(user);
-                        userAdapter.notifyDataSetChanged();
-                        usersObj.add(user);
-                    } else {
-                        Toast.makeText(DeclinedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+        if (!userIds.isEmpty()) {
+            for (String userId : userIds) {
+                firebaseAttendee.getUser(userId, new UserController.UserFetchCallback() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        if (user != null) {
+                            userAdapter.addUser(user);
+                            userAdapter.notifyDataSetChanged();
+                            usersObj.add(user);
+                        } else {
+                            Toast.makeText(DeclinedListActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
 
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(DeclinedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(DeclinedListActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 
